@@ -1,0 +1,68 @@
+{
+  "useProfile": "auto",
+  "httpAPI": {
+    "basicAuth": {
+      "enabled": false,
+      "username": "",
+      "passwordHash": "",
+      "passwordSalt": ""
+    },
+    "excludeHealthCheckFromAuth": false,
+    "permitRemoteAccess": [
+      "getNodeInfo",
+      "getBalances",
+      "checkConsistency",
+      "getTipInfo",
+      "getTransactionsToApprove",
+      "getInclusionStates",
+      "getNodeAPIConfiguration",
+      "wereAddressesSpentFrom",
+      "broadcastTransactions",
+      "findTransactions",
+      "storeTransactions",
+      "getTrytes"
+    ],
+    "whitelistedAddresses": [],
+    "bindAddress": "0.0.0.0:14265",
+    "limits": {
+      "bodyLengthBytes": 1000000,
+      "findTransactions": 1000,
+      "getTrytes": 1000,
+      "requestsList": 1000
+    }
+  },
+  "snapshots": {
+    "loadType": "global",
+    "global": {
+        "path": "/app/snapshots/private-tangle/snapshot.csv",
+        "spentAddressesPaths": [],
+        "index": 0
+    }
+  },
+  "spentAddresses": {
+    "enabled": true
+  },
+  "network": {
+    "preferIPv6": false,
+    "gossip": {
+      "bindAddress": "0.0.0.0:15600",
+      "reconnectAttemptIntervalSeconds": 60
+    }
+  },
+  "node": {
+    "alias": "coo",
+    "showAliasInGetNodeInfo": true,
+    "disablePlugins": [],
+    "enablePlugins": ["Coordinator"]
+  },
+  "coordinator": {
+    "address": "$MERKLE_TREE_ADDR",
+    "securityLevel": 2,
+    "merkleTreeDepth": 10,
+    "mwm": 5,
+    "stateFilePath": "/app/db/coordinator.state",
+    "merkleTreeFilePath": "/app/db/coordinator.tree",
+    "intervalSeconds": 60,
+    "checkpointTransactions": 5
+  }
+}

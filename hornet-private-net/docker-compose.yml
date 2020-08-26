@@ -1,0 +1,12 @@
+version: '3'
+services:
+  hornet-coo:
+    image: gohornet/hornet
+    container_name: hornet-coo
+    environment:
+      COO_SEED: 
+    volumes:
+      - ./config/config-coo.json:/app/config.json:ro
+      - ./config/profiles.json:/app/profiles.json
+      - ./config/peering.json:/app/peering.json
+      - ./db/private-tangle:/app/db
