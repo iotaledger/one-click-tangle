@@ -56,7 +56,7 @@
     "enablePlugins": ["Coordinator"]
   },
   "coordinator": {
-    "address": "$MERKLE_TREE_ADDR",
+    "address": "WABHCYCNZR9XKJFPWKALICHDJFYVUKQDFFA9QNNFZPSKLJQVCFUASTRXHUWQGRKNAIQVHGTYHSOUUOYM9",
     "securityLevel": 2,
     "merkleTreeDepth": 10,
     "mwm": 5,
