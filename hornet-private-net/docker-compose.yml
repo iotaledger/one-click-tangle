@@ -1,12 +1,40 @@
-version: '3'
+version: "3.5"
 services:
-  hornet-coo:
+  coo:
+    network_mode: host
     image: gohornet/hornet
-    container_name: hornet-coo
+    container_name: coo
     environment:
       COO_SEED: 
     volumes:
       - ./config/config-coo.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
-      - ./config/peering.json:/app/peering.json
+      - ./config/peering-coo.json:/app/peering.json
       - ./db/private-tangle:/app/db
+      - ./snapshots:/app/snapshots
+  
+  node:
+    network_mode: host
+    image: gohornet/hornet
+    container_name: node1
+    environment:
+      COO_SEED: 
+    volumes:
+      - ./config/config-node.json:/app/config.json:ro
+      - ./config/profiles.json:/app/profiles.json
+      - ./config/peering-node.json:/app/peering.json
+      - ./db/private-tangle:/app/db
+      - ./snapshots:/app/snapshots
+  
+  spammer:
+    network_mode: host
+    image: gohornet/hornet
+    container_name: spammer
+    environment:
+      COO_SEED: 
+    volumes:
+      - ./config/config-spammer.json:/app/config.json:ro
+      - ./config/profiles.json:/app/profiles.json
+      - ./config/peering-node.json:/app/peering.json
+      - ./db/private-tangle:/app/db
+      - ./snapshots:/app/snapshots

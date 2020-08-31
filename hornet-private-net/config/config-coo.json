@@ -52,11 +52,11 @@
   "node": {
     "alias": "coo",
     "showAliasInGetNodeInfo": true,
-    "disablePlugins": [],
+    "disablePlugins": ["Dashboard", "Autopeering"],
     "enablePlugins": ["Coordinator"]
   },
   "coordinator": {
-    "address": "WABHCYCNZR9XKJFPWKALICHDJFYVUKQDFFA9QNNFZPSKLJQVCFUASTRXHUWQGRKNAIQVHGTYHSOUUOYM9",
+    "address": "TPR9BYE9MUIW9FYB9MIUPOIPBYFLGMTNUKEJGYILQSMHN9AGYIGHWAXVHYA9XNRQOJNROAHQMZXXWCMQC",
     "securityLevel": 2,
     "merkleTreeDepth": 10,
     "mwm": 5,

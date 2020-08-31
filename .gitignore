@@ -1,5 +1,7 @@
 # Logs
 *.seed
+*.root
+*.addr
 
 db
 .DS_Store

@@ -1,0 +1,11 @@
+{
+  "acceptAnyConnection": false,
+  "maxPeers": 5,
+  "peers": [
+    {
+      "identity": "node1:15600",
+      "alias": "Hornet Node",
+      "preferIPv6": false
+    }
+  ]
+}
