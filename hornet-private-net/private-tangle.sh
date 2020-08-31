@@ -19,6 +19,8 @@ fi
 startTangle () {
   setupCoordinator
 
+  sleep 3
+
   # Run the coordinator
   docker-compose --log-level ERROR up -d coo
 
@@ -37,9 +39,14 @@ generateMerkleTree () {
 
   echo "Done. Check coordinator.seed"
 
-  rm ./db/private-tangle/coordinator.tree 2> /dev/null
-  rm ./db/private-tangle/coordinator.state 2> /dev/null
+  if [ -f ./db/private-tangle/coordinator.tree ]; then
+    rm ./db/private-tangle/coordinator.tree
+  fi
 
+  if [ -f ./db/private-tangle/coordinator.state ]; then
+    rm ./db/private-tangle/coordinator.state
+  fi
+  
   echo "Generating Merkle Tree... This can take time ⏳ ..."
 
   MERKLE_TREE_ADDR=$(docker-compose run --rm -e COO_SEED=$COO_SEED coo hornet tool merkle | grep "Merkle tree root"  \
@@ -63,7 +70,7 @@ setupCoordinator () {
   rm config/config-node-tmp.json
 
   cp config/config-spammer.json config/config-spammer-tmp.json
-  sed 's/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/1' config/config-spammer-tmp.json > config/config-spammer.json
+  sed '0,/"address"/s/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/' config/config-spammer-tmp.json > config/config-spammer.json
   rm config/config-spammer-tmp.json
 
   echo "Bootstrapping the Coordinator..."
