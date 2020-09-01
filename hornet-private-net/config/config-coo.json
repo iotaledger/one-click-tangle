@@ -56,9 +56,9 @@
     "enablePlugins": ["Coordinator"]
   },
   "coordinator": {
-    "address": "KRKZH9HZCOXMIQQVGYAPSYSUDTZZERSOAJYWGYVZMLQMXRBXVYASUQNQLRAYTADYFDHLKDJDSZ99UEYAY",
+    "address": "",
     "securityLevel": 2,
-    "merkleTreeDepth": 10,
+    "merkleTreeDepth": 25,
     "mwm": 5,
     "stateFilePath": "/app/db/coordinator.state",
     "merkleTreeFilePath": "/app/db/coordinator.tree",

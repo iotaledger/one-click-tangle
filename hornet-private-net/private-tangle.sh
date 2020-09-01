@@ -7,14 +7,26 @@
 set -e
 
 help () {
-  echo "usage: private_tangle [start|stop]"
+  echo "usage: private_tangle [start|stop] <merkle_tree_depth>"
 }
 
-if (( $# != 1 )); then
-    echo "Illegal number of parameters"
+if [ $#  -lt 1 ]; then
+  echo "Illegal number of parameters"
+  help
+  exit 1
+fi
+
+command="$1"
+
+if [ "$command" == "start" ]; then
+  if [ $# != 2 ]; then
+    echo "Please provide the depth of the Merkle Tree"
     help
     exit 1
+  fi
 fi
+
+MERKLE_TREE_DEPTH=$2
 
 startTangle () {
   setupCoordinator
@@ -47,7 +59,12 @@ generateMerkleTree () {
     rm ./db/private-tangle/coordinator.state
   fi
   
-  echo "Generating Merkle Tree... This can take time ⏳ ..."
+  echo "Generating Merkle Tree... of depth ${MERKLE_TREE_DEPTH}. This can take time ⏳ ..."
+
+  # Add the Merkle Tree Depth to the Configuration
+  cp config/config-coo.json config/config-coo-tmp.json
+  sed 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-coo-tmp.json > config/config-coo.json
+  rm config/config-coo-tmp.json
 
   MERKLE_TREE_ADDR=$(docker-compose run --rm -e COO_SEED=$COO_SEED coo hornet tool merkle | grep "Merkle tree root"  \
   | cut  -d ":" -f 2 - | sed "s/ //g" | tr -d "\n" | tr -d "\r")
@@ -85,7 +102,6 @@ stopContainers () {
 	docker-compose --log-level ERROR down -v --remove-orphans
 }
 
-command="$1"
 case "${command}" in
 	"help")
     help
