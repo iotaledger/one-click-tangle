@@ -2,6 +2,7 @@ version: "3"
 
 services:
   coo:
+    hostname: coo
     # network_mode: host
     networks:
       - default
@@ -17,6 +18,7 @@ services:
       - ./snapshots:/app/snapshots
   
   node:
+    hostname: node1
     # network_mode: host
     networks:
       - default
@@ -24,6 +26,10 @@ services:
     container_name: node1
     environment:
       COO_SEED: 
+    expose: 
+      - 14265
+    ports:
+      - 14265:14265
     volumes:
       - ./config/config-node.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
@@ -32,6 +38,7 @@ services:
       - ./snapshots:/app/snapshots
   
   spammer:
+    hostname: spammer
     # network_mode: host
     networks:
       - default
@@ -42,7 +49,7 @@ services:
     volumes:
       - ./config/config-spammer.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
-      - ./config/peering-node.json:/app/peering.json
+      - ./config/peering-spammer.json:/app/peering.json
       - ./db/private-tangle:/app/db
       - ./snapshots:/app/snapshots
 

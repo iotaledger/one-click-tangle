@@ -63,13 +63,13 @@
     }
   },
   "node": {
-    "alias": "tangle-node",
+    "alias": "node1",
     "showAliasInGetNodeInfo": false,
     "disablePlugins": ["Autopeering"],
     "enablePlugins": []
   },
   "coordinator": {
-    "address": "MTORBDKJMIHMDSBSKUJDWHUAJHE9GDQWSVRGAG9IUJPKIUMXVWQXA9IOJQGQRRRZ9DCSPYMDTSUGHI9YW"
+    "address": "CJ9KUYKWLDTFNJYEKPZJMVEDSLNYGONBZOKYOBQCOOQ9KGPGAFSAMPNTHHI9LQXKDBKPFAKDBMBNQZMYC"
   },
   "profiling": {
     "bindAddress": "localhost:6060"

@@ -3,13 +3,13 @@
   "maxPeers": 5,
   "peers": [
     {
-      "identity": "coo:15600",
-      "alias": "coo",
+      "identity": "node1:15600",
+      "alias": "node1",
       "preferIPv6": false
     },
     {
-      "identity": "spammer:15600",
-      "alias": "spammer",
+      "identity": "coo:15600",
+      "alias": "coo",
       "preferIPv6": false
     }
   ]

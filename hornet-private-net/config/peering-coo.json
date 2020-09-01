@@ -6,6 +6,11 @@
       "identity": "node1:15600",
       "alias": "Hornet Node",
       "preferIPv6": false
+    },
+    {
+      "identity": "coo:15600",
+      "alias": "coo",
+      "preferIPv6": false
     }
   ]
 }

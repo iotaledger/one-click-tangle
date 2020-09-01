@@ -68,7 +68,8 @@ startTangle () {
 
   setupCoordinator
 
-  sleep 3
+  echo "Waiting coordinator bootstrap to stop gracefully..."
+  sleep 10
 
   # Run the coordinator
   docker-compose --log-level ERROR up -d coo
