@@ -1,4 +1,7 @@
 {
+  "db": {
+    "path": "/app/db/node.db"
+  },
   "useProfile": "auto",
   "httpAPI": {
     "basicAuth": {
@@ -66,7 +69,7 @@
     "enablePlugins": []
   },
   "coordinator": {
-    "address": ""
+    "address": "MTORBDKJMIHMDSBSKUJDWHUAJHE9GDQWSVRGAG9IUJPKIUMXVWQXA9IOJQGQRRRZ9DCSPYMDTSUGHI9YW"
   },
   "profiling": {
     "bindAddress": "localhost:6060"

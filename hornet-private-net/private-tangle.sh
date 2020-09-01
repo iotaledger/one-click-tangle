@@ -30,7 +30,42 @@ MERKLE_TREE_DEPTH=$2
 
 MERKLE_TREE_LOG_FILE=./logs/merkle-tree-generation.log.html
 
+clean () {
+  # TODO: Differentiate between start, restart and remove
+  stopContainers
+  
+  if [ -f $MERKLE_TREE_LOG_FILE ]; then
+    rm $MERKLE_TREE_LOG_FILE
+  fi
+
+  if [ -f ./db/private-tangle/coordinator.tree ]; then
+    rm ./db/private-tangle/coordinator.tree
+  fi
+
+  if [ -f ./db/private-tangle/coordinator.state ]; then
+    rm ./db/private-tangle/coordinator.state
+  fi
+
+  if [ -d ./db/private-tangle/coo.db ]; then
+    rm -Rf ./db/private-tangle/coo.db
+  fi
+
+  if [ -d ./db/private-tangle/node.db ]; then
+    rm -Rf ./db/private-tangle/node.db
+  fi
+
+
+  if [ -d ./db/private-tangle/spammer.db ]; then
+    rm -Rf ./db/private-tangle/spammer.db
+  fi
+
+}
+
 startTangle () {
+  # TODO: In the feature differentitate between "start", "stop", "remove"
+  # And only cleaning when we want to really remove all previous state
+  clean
+
   setupCoordinator
 
   sleep 3
@@ -52,14 +87,6 @@ generateMerkleTree () {
   echo $COO_SEED > coordinator.seed 
 
   echo "Done. Check coordinator.seed"
-
-  if [ -f ./db/private-tangle/coordinator.tree ]; then
-    rm ./db/private-tangle/coordinator.tree
-  fi
-
-  if [ -f ./db/private-tangle/coordinator.state ]; then
-    rm ./db/private-tangle/coordinator.state
-  fi
   
   echo "Generating Merkle Tree... of depth ${MERKLE_TREE_DEPTH}. This can take time ⏳ ..."
 
@@ -79,17 +106,15 @@ generateMerkleTree () {
       echo "Warning: NGINX Server could not be started. You can check logs at $MERKLE_TREE_LOG_FILE"
   fi
 
-  if [ -f $MERKLE_TREE_LOG_FILE ]; then
-    rm $MERKLE_TREE_LOG_FILE
-  fi
-
   echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="30"></head><body><pre>' >> $MERKLE_TREE_LOG_FILE
   docker-compose run --rm -e COO_SEED=$COO_SEED coo hornet tool merkle >> $MERKLE_TREE_LOG_FILE
 
-  MERKLE_TREE_ADDR=$(tail -f "$MERKLE_TREE_LOG_FILE" | grep "Merkle tree root"  \
+  MERKLE_TREE_ADDR=$(cat "$MERKLE_TREE_LOG_FILE" | grep "Merkle tree root"  \
   | cut  -d ":" -f 2 - | sed "s/ //g" | tr -d "\n" | tr -d "\r")
 
   echo $MERKLE_TREE_ADDR > merkle-tree.addr
+
+  docker-compose rm -s -f nginx
 
   echo "Done. Check merkle-tree.addr"
 }
@@ -118,7 +143,7 @@ setupCoordinator () {
 }
 
 stopContainers () {
-  echo "Stopping containers"
+  echo "Stopping containers..."
 	docker-compose --log-level ERROR down -v --remove-orphans
 }
 

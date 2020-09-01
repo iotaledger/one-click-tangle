@@ -1,4 +1,7 @@
 {
+  "db": {
+    "path": "/app/db/coo.db"
+  },
   "useProfile": "auto",
   "httpAPI": {
     "basicAuth": {
@@ -56,9 +59,9 @@
     "enablePlugins": ["Coordinator"]
   },
   "coordinator": {
-    "address": "",
+    "address": "MTORBDKJMIHMDSBSKUJDWHUAJHE9GDQWSVRGAG9IUJPKIUMXVWQXA9IOJQGQRRRZ9DCSPYMDTSUGHI9YW",
     "securityLevel": 2,
-    "merkleTreeDepth": 20,
+    "merkleTreeDepth": 10,
     "mwm": 5,
     "stateFilePath": "/app/db/coordinator.state",
     "merkleTreeFilePath": "/app/db/coordinator.tree",

@@ -1,4 +1,7 @@
 {
+  "db": {
+    "path": "/app/db/spammer.db"
+  },
   "useProfile": "auto",
   "httpAPI": {
     "basicAuth": {
@@ -56,7 +59,7 @@
     "enablePlugins": [ "Spammer" ]
   },
   "coordinator": {
-    "address": ""
+    "address": "MTORBDKJMIHMDSBSKUJDWHUAJHE9GDQWSVRGAG9IUJPKIUMXVWQXA9IOJQGQRRRZ9DCSPYMDTSUGHI9YW"
   },
   "spammer": {
     "address": "HORNET99INTEGRATED99SPAMMER999999999999999999999999999999999999999999999999999999",
