@@ -10,6 +10,8 @@ services:
     container_name: coo
     environment:
       COO_SEED: 
+    expose:
+      - 15600
     volumes:
       - ./config/config-coo.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
@@ -26,10 +28,11 @@ services:
     container_name: node1
     environment:
       COO_SEED: 
-    expose: 
+    expose:
       - 14265
+      - 15600
     ports:
-      - 14265:14265
+      - "14265:14265"
     volumes:
       - ./config/config-node.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
@@ -46,6 +49,9 @@ services:
     container_name: spammer
     environment:
       COO_SEED: 
+    expose:
+      - 14265
+      - 15600
     volumes:
       - ./config/config-spammer.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
