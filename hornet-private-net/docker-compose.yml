@@ -1,4 +1,5 @@
-version: "3.5"
+version: "3"
+
 services:
   coo:
     network_mode: host
@@ -38,3 +39,10 @@ services:
       - ./config/peering-node.json:/app/peering.json
       - ./db/private-tangle:/app/db
       - ./snapshots:/app/snapshots
+
+  nginx:
+      network_mode: host
+      imagine: nginx
+      container_name: nginx
+      volumes: 
+        - ./logs/merkle-tree-generation.log:/usr/share/nginx/html
