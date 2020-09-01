@@ -57,4 +57,4 @@ services:
       ports:
         - 9000:80
       volumes: 
-        - ./logs/merkle-tree-generation.log:/usr/share/nginx/html
+        - ./logs:/usr/share/nginx/html

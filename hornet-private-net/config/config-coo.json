@@ -58,7 +58,7 @@
   "coordinator": {
     "address": "",
     "securityLevel": 2,
-    "merkleTreeDepth": 25,
+    "merkleTreeDepth": 20,
     "mwm": 5,
     "stateFilePath": "/app/db/coordinator.state",
     "merkleTreeFilePath": "/app/db/coordinator.tree",
