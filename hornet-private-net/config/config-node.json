@@ -65,13 +65,15 @@
   "node": {
     "alias": "node1",
     "showAliasInGetNodeInfo": false,
-    "disablePlugins": ["Autopeering"],
-    "enablePlugins": []
+    "disablePlugins": [
+      "Autopeering", "WarpSync",
+      "Profiling", "Prometheus", 
+      "MQTT", "ZMQ",
+      "Spammer",  "Coordinator"
+    ],
+    "enablePlugins": ["URTS", "WebAPI"]
   },
   "coordinator": {
-    "address": "CJ9KUYKWLDTFNJYEKPZJMVEDSLNYGONBZOKYOBQCOOQ9KGPGAFSAMPNTHHI9LQXKDBKPFAKDBMBNQZMYC"
-  },
-  "profiling": {
-    "bindAddress": "localhost:6060"
+    "address": "CIEIMOAUOHCAVWQSBHIHTWKJYRDSNCACOVSKMGPVH9JCWOJZRXXXSCYLJNYRDONPXYASAMN9SPOWYHQN9"
   }
 }

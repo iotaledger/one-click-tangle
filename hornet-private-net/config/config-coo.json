@@ -55,11 +55,16 @@
   "node": {
     "alias": "coo",
     "showAliasInGetNodeInfo": true,
-    "disablePlugins": ["Dashboard", "Autopeering"],
-    "enablePlugins": ["Coordinator"]
+    "disablePlugins": [
+      "Autopeering", "URTS", "WarpSync",
+      "Spammer",
+      "ZMQ", "MQTT", 
+      "Dashboard", "Prometheus", "Profiling"
+    ],
+    "enablePlugins": ["Coordinator", "WebAPI"]
   },
   "coordinator": {
-    "address": "CJ9KUYKWLDTFNJYEKPZJMVEDSLNYGONBZOKYOBQCOOQ9KGPGAFSAMPNTHHI9LQXKDBKPFAKDBMBNQZMYC",
+    "address": "CIEIMOAUOHCAVWQSBHIHTWKJYRDSNCACOVSKMGPVH9JCWOJZRXXXSCYLJNYRDONPXYASAMN9SPOWYHQN9",
     "securityLevel": 2,
     "merkleTreeDepth": 10,
     "mwm": 5,

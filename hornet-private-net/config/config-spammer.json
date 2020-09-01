@@ -55,11 +55,16 @@
   "node": {
     "alias": "spammer",
     "showAliasInGetNodeInfo": true,
-    "disablePlugins": ["Dashboard", "Autopeering"],
-    "enablePlugins": [ "Spammer" ]
+    "disablePlugins": [
+      "Autopeering", "WarpSync",
+      "Coordinator",
+      "Dashboard", "Profiling", "Prometheus",
+      "MQTT", "ZMQ"
+    ],
+    "enablePlugins": [ "Spammer", "URTS", "WebAPI" ]
   },
   "coordinator": {
-    "address": "CJ9KUYKWLDTFNJYEKPZJMVEDSLNYGONBZOKYOBQCOOQ9KGPGAFSAMPNTHHI9LQXKDBKPFAKDBMBNQZMYC"
+    "address": "CIEIMOAUOHCAVWQSBHIHTWKJYRDSNCACOVSKMGPVH9JCWOJZRXXXSCYLJNYRDONPXYASAMN9SPOWYHQN9"
   },
   "spammer": {
     "address": "HORNET99INTEGRATED99SPAMMER999999999999999999999999999999999999999999999999999999",
@@ -72,8 +77,5 @@
     "valueSpam": false,
     "workers": 0,
     "semiLazyTipsLimit": 30
-  },
-  "profiling": {
-    "bindAddress": "localhost:6060"
   }
 }
