@@ -4,7 +4,7 @@
   "peers": [
     {
       "identity": "node1:15600",
-      "alias": "Hornet Node",
+      "alias": "node1",
       "preferIPv6": false
     },
     {

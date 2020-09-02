@@ -96,8 +96,11 @@ generateMerkleTree () {
   sed 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-coo-tmp.json > config/config-coo.json
   rm config/config-coo-tmp.json
 
-  # Running NGINX Server that will allow us to check the logs
+  # Tree Depth has to be copied to the different nodes of the network
+  sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-node.json
+  sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-spammer.json
 
+  # Running NGINX Server that will allow us to check the logs
   docker-compose --log-level ERROR up -d nginx
 
   if [ $? -eq 0 ]; 
@@ -107,7 +110,7 @@ generateMerkleTree () {
       echo "Warning: NGINX Server could not be started. You can check logs at $MERKLE_TREE_LOG_FILE"
   fi
 
-  echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="30"></head><body><pre>' >> $MERKLE_TREE_LOG_FILE
+  echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="5"></head><body><pre>' >> $MERKLE_TREE_LOG_FILE
   docker-compose run --rm -e COO_SEED=$COO_SEED coo hornet tool merkle >> $MERKLE_TREE_LOG_FILE
 
   MERKLE_TREE_ADDR=$(cat "$MERKLE_TREE_LOG_FILE" | grep "Merkle tree root"  \

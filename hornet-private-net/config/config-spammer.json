@@ -64,9 +64,9 @@
     "enablePlugins": [ "Spammer", "URTS", "WebAPI" ]
   },
   "coordinator": {
-    "address": "Q9CXRTVWKDGRLQFJODNVALKMLTQGWWOKPWMQEJLDRBKXCV9BTWOAGBBOYYUZEBFDOQLHHOKGJFBAUQLOD",
+    "address": "CCBDHK9MVSDZOQ9JVXBKYYXPOWIQIN9KO9OFTZPCIZZED9KHKFSVDKKFKXBOMOCWKWWVNZZXRGF9LBUAD",
     "securityLevel": 2,
-    "merkleTreeDepth": 10,
+    "merkleTreeDepth": 15,
     "mwm": 9
   },
   "spammer": {
