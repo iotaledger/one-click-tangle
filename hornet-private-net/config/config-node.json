@@ -12,6 +12,11 @@
     },
     "excludeHealthCheckFromAuth": false,
     "permitRemoteAccess": [
+      "interruptAttachToTangle",
+      "addNeighbors",
+      "removeNeighbors",
+      "getNeighbors",
+      "attachToTangle",
       "getNodeInfo",
       "getBalances",
       "checkConsistency",
@@ -74,9 +79,9 @@
     "enablePlugins": ["URTS", "WebAPI"]
   },
   "coordinator": {
-    "address": "ZUXOBAZQHEWFVFFGETROYADDVPZORLAQNXYCTRNRNBZBBMKUYWTUYLSJPJSZRQYWZAMIXVUHXMKWOQVYD",
+    "address": "Q9CXRTVWKDGRLQFJODNVALKMLTQGWWOKPWMQEJLDRBKXCV9BTWOAGBBOYYUZEBFDOQLHHOKGJFBAUQLOD",
     "securityLevel": 2,
     "merkleTreeDepth": 10,
-    "mwm": 5
+    "mwm": 9
   }
 }
