@@ -91,11 +91,8 @@ generateMerkleTree () {
   
   echo "Generating Merkle Tree... of depth ${MERKLE_TREE_DEPTH}. This can take time ⏳ ..."
 
-    # Add the Merkle Tree Depth to the Configuration
-  cp config/config-coo.json config/config-coo-tmp.json
-  sed 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-coo-tmp.json > config/config-coo.json
-  rm config/config-coo-tmp.json
-
+  # TODO: Use a loop to avoid duplication Add the Merkle Tree Depth to the Configuration
+  sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-coo.json
   # Tree Depth has to be copied to the different nodes of the network
   sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-node.json
   sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-spammer.json
@@ -127,19 +124,14 @@ setupCoordinator () {
   generateMerkleTree
 
   # Copy the Merkle Tree Address to the different nodes configuration
-  cp config/config-coo.json config/config-coo-tmp.json
-  sed 's/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/g' config/config-coo-tmp.json > config/config-coo.json
-  rm config/config-coo-tmp.json
+  sed -i 's/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/g' config/config-coo.json
 
-  cp config/config-node.json config/config-node-tmp.json
-  sed 's/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/g' config/config-node-tmp.json > config/config-node.json
-  rm config/config-node-tmp.json
+  sed -i 's/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/g' config/config-node.json
 
-  cp config/config-spammer.json config/config-spammer-tmp.json
-  sed '0,/"address"/s/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/' config/config-spammer-tmp.json > config/config-spammer.json
-  rm config/config-spammer-tmp.json
+  sed -i '0,/"address"/s/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/' config/config-spammer.json
 
-  echo "Bootstrapping the Coordinator..."
+  # TODO: Spawn a child process so that manual intervention is avoided
+  echo "Bootstrapping the Coordinator... Press Ctrl+C when first milestone is issued"
   # Bootstrap the coordinator
   docker-compose run --rm -e COO_SEED=$COO_SEED coo hornet --cooBootstrap
 
@@ -151,6 +143,7 @@ stopContainers () {
 	docker-compose --log-level ERROR down -v --remove-orphans
 }
 
+# TODO: start, stop, remove, resume
 case "${command}" in
 	"help")
     help
