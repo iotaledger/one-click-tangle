@@ -38,6 +38,10 @@ clean () {
     rm $MERKLE_TREE_LOG_FILE
   fi
 
+  if [ -f ./logs/coo-bootstrap.log ]; then
+    rm ./logs/coo-bootstrap.log
+  fi
+
   if [ -f ./db/private-tangle/coordinator.tree ]; then
     rm ./db/private-tangle/coordinator.tree
   fi
@@ -54,7 +58,6 @@ clean () {
     rm -Rf ./db/private-tangle/node.db
   fi
 
-
   if [ -d ./db/private-tangle/spammer.db ]; then
     rm -Rf ./db/private-tangle/spammer.db
   fi
@@ -67,9 +70,6 @@ startTangle () {
   clean
 
   setupCoordinator
-
-  echo "Waiting coordinator bootstrap to stop gracefully..."
-  sleep 10
 
   # Run the coordinator
   docker-compose --log-level ERROR up -d coo
@@ -102,9 +102,9 @@ generateMerkleTree () {
 
   if [ $? -eq 0 ]; 
     then
-      echo "NGINX Server up and running. You can check logs at curl http://localhost:9000/merkle-tree-generation.log.html"
+      echo "You can check logs at curl http://localhost:9000/merkle-tree-generation.log.html"
     else 
-      echo "Warning: NGINX Server could not be started. You can check logs at $MERKLE_TREE_LOG_FILE"
+      echo "Warning: NGINX Logs Server could not be started. You can  manuallycheck logs at $MERKLE_TREE_LOG_FILE"
   fi
 
   echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="5"></head><body><pre>' >> $MERKLE_TREE_LOG_FILE
@@ -130,12 +130,22 @@ setupCoordinator () {
 
   sed -i '0,/"address"/s/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/' config/config-spammer.json
 
-  # TODO: Spawn a child process so that manual intervention is avoided
-  echo "Bootstrapping the Coordinator... Press Ctrl+C when first milestone is issued"
+  echo "Bootstrapping the Coordinator..."
   # Bootstrap the coordinator
-  docker-compose run --rm -e COO_SEED=$COO_SEED coo hornet --cooBootstrap
+  docker-compose run -d --rm -e COO_SEED=$COO_SEED coo hornet --cooBootstrap > coo.bootstrap.container
 
-  echo "Coordinator bootstrapped!"
+  # Waiting for coordinator bootstrap
+  sleep 6
+  docker logs $(cat ./coo.bootstrap.container) 2>&1 | grep "milestone issued (1)"
+  if [ $? -eq 0 ]; 
+    then
+      echo "Coordinator bootstrapped!"
+      docker kill -s SIGINT $(cat ./coo.bootstrap.container)
+      echo "Waiting coordinator bootstrap to stop gracefully..."
+      sleep 10
+      docker rm $(cat ./coo.bootstrap.container)
+      rm ./coo.bootstrap.container
+  fi
 }
 
 stopContainers () {
