@@ -71,6 +71,9 @@ startTangle () {
 
   setupCoordinator
 
+  # We get rid of nginx as we no longer need it
+  docker-compose rm -s -f nginx
+
   # Run the coordinator
   docker-compose --log-level ERROR up -d coo
 
@@ -115,8 +118,6 @@ generateMerkleTree () {
 
   echo $MERKLE_TREE_ADDR > merkle-tree.addr
 
-  docker-compose rm -s -f nginx
-
   echo "Done. Check merkle-tree.addr"
 }
 
@@ -135,6 +136,8 @@ setupCoordinator () {
   docker-compose run -d --rm -e COO_SEED=$COO_SEED coo hornet --cooBootstrap > coo.bootstrap.container
 
   # Waiting for coordinator bootstrap
+  # TODO: Guarantee that if bootstrap has not finished yet we sleep another time 
+  # for a few seconds more until bootstrap has been performed
   sleep 6
   docker logs $(cat ./coo.bootstrap.container) 2>&1 | grep "milestone issued (1)"
   if [ $? -eq 0 ]; 
