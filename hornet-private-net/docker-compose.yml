@@ -14,8 +14,8 @@ services:
       - 15600
     volumes:
       - ./config/config-coo.json:/app/config.json:ro
-      - ./config/profiles.json:/app/profiles.json
-      - ./config/peering-coo.json:/app/peering.json
+      - ./config/profiles.json:/app/profiles.json:ro
+      - ./config/peering-coo.json:/app/peering.json:ro
       - ./db/private-tangle:/app/db
       - ./snapshots:/app/snapshots
   
