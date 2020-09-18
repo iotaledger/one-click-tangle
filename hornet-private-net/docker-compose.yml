@@ -71,3 +71,12 @@ services:
         - 9000:80
       volumes: 
         - ./logs:/usr/share/nginx/html
+
+  address-generator:
+    image: node:12
+    container_name: address-generator
+    environment: 
+      NPM_CONFIG_LOGLEVEL: silent
+      NODE_PATH: /package/node_modules
+    volumes:
+      - ./utils:/usr/src/app

@@ -69,6 +69,9 @@ startTangle () {
   # And only cleaning when we want to really remove all previous state
   clean
 
+  # Initial address for the snapshot
+  generateInitialAddress
+
   setupCoordinator
 
   # We get rid of nginx as we no longer need it
@@ -149,6 +152,23 @@ setupCoordinator () {
       docker rm $(cat ./coo.bootstrap.container)
       rm ./coo.bootstrap.container
   fi
+}
+
+# Generates the initial address for the snapshot
+generateInitialAddress () {
+  echo "Generating an initial IOTA address holding all IOTAs..."
+
+  seed=$(cat /dev/urandom | LC_ALL=C tr -dc 'A-Z9' | fold -w 81 | head -n 1)
+  echo $seed > ./utils/node.seed 
+
+  # Now we run a tiny Node.js utility to get the first address to be on the snapshot
+  docker-compose run --rm -w /usr/src/app address-generator sh -c 'npm install --prefix=/package "@iota/core" > /dev/null && node address-generator.js $(cat node.seed) 2> /dev/null > address.txt'
+  echo "$(cat ./utils/address.txt);2779530283277761" > ./snapshots/private-tangle/snapshot.csv
+
+  rm ./utils/address.txt
+  mv ./utils/node.seed .
+
+  echo "Initial Address generated. You can find the seed at node.seed"
 }
 
 stopContainers () {
