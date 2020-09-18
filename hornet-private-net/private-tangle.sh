@@ -139,7 +139,7 @@ setupCoordinator () {
   docker-compose run -d --rm -e COO_SEED=$COO_SEED coo hornet --cooBootstrap > coo.bootstrap.container
 
   # Waiting for coordinator bootstrap
-  # TODO: Guarantee that if bootstrap has not finished yet we sleep another time 
+  # We guarantee that if bootstrap has not finished yet we sleep another time 
   # for a few seconds more until bootstrap has been performed
   boostrapped=1
   # Number of seconds waited for each tick
