@@ -35,31 +35,31 @@ clean () {
   stopContainers
   
   if [ -f $MERKLE_TREE_LOG_FILE ]; then
-    rm $MERKLE_TREE_LOG_FILE
+    sudo rm $MERKLE_TREE_LOG_FILE
   fi
 
   if [ -f ./logs/coo-bootstrap.log ]; then
-    rm ./logs/coo-bootstrap.log
+    sudo rm ./logs/coo-bootstrap.log
   fi
 
   if [ -f ./db/private-tangle/coordinator.tree ]; then
-    rm ./db/private-tangle/coordinator.tree
+    sudo rm ./db/private-tangle/coordinator.tree
   fi
 
   if [ -f ./db/private-tangle/coordinator.state ]; then
-    rm ./db/private-tangle/coordinator.state
+    sudo rm ./db/private-tangle/coordinator.state
   fi
 
   if [ -d ./db/private-tangle/coo.db ]; then
-    rm -Rf ./db/private-tangle/coo.db
+    sudo rm -Rf ./db/private-tangle/coo.db
   fi
 
   if [ -d ./db/private-tangle/node.db ]; then
-    rm -Rf ./db/private-tangle/node.db
+    sudo rm -Rf ./db/private-tangle/node.db
   fi
 
   if [ -d ./db/private-tangle/spammer.db ]; then
-    rm -Rf ./db/private-tangle/spammer.db
+    sudo rm -Rf ./db/private-tangle/spammer.db
   fi
 
 }
@@ -108,13 +108,19 @@ generateMerkleTree () {
 
   if [ $? -eq 0 ]; 
     then
-      echo "You can check logs at curl http://localhost:9000/merkle-tree-generation.log.html"
+      echo "You can check logs at curl http://$HOSTNAME:9000/merkle-tree-generation.log.html"
     else 
       echo "Warning: NGINX Logs Server could not be started. You can  manuallycheck logs at $MERKLE_TREE_LOG_FILE"
   fi
 
   echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="5"></head><body><pre>' >> $MERKLE_TREE_LOG_FILE
   docker-compose run --rm -e COO_SEED=$COO_SEED coo hornet tool merkle >> $MERKLE_TREE_LOG_FILE
+
+  if [ $? -ne 0 ]; 
+    then
+      echo "Error while generating Merkle Tree. Please check logs and permissions"
+      exit 127
+  fi
 
   MERKLE_TREE_ADDR=$(cat "$MERKLE_TREE_LOG_FILE" | grep "Merkle tree root"  \
   | cut  -d ":" -f 2 - | sed "s/ //g" | tr -d "\n" | tr -d "\r")
@@ -181,7 +187,7 @@ generateInitialAddress () {
   docker-compose run --rm -w /usr/src/app address-generator sh -c 'npm install --prefix=/package "@iota/core" > /dev/null && node address-generator.js $(cat node.seed) 2> /dev/null > address.txt'
   echo "$(cat ./utils/address.txt);2779530283277761" > ./snapshots/private-tangle/snapshot.csv
 
-  rm ./utils/address.txt
+  rm -f ./utils/address.txt
   mv ./utils/node.seed .
 
   echo "Initial Address generated. You can find the seed at node.seed"

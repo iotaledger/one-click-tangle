@@ -79,9 +79,9 @@
     "enablePlugins": ["URTS", "WebAPI"]
   },
   "coordinator": {
-    "address": "LZRSN9JGJGVIXCUPXIXXJXHIELYVFABOIEOFH9QRADHJFZVCBXVHBBYRCOTM9NNNZTHBHJIYGVGJDRGVC",
+    "address": "EDHTRJPEGPATCOEUCB9YJYQQBKJYJD9DUGQDAUZYRCBCKXCCVASWBQLHC9AVBUWTHEIUJ9MUGIPUQEFIC",
     "securityLevel": 2,
-    "merkleTreeDepth": 10,
+    "merkleTreeDepth": 22,
     "mwm": 9
   }
 }
