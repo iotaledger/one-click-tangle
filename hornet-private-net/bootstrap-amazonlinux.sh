@@ -18,7 +18,6 @@ dockerInstall() {
 
   sudo yum install docker -y
   # Add the ec2-user to the docker group so you can execute Docker commands without using sudo.
-  ## Exit the terminal and re-login to make the change effective
   sudo usermod -a -G docker ec2-user
 
   sudo systemctl enable docker
