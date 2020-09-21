@@ -64,9 +64,9 @@
     "enablePlugins": ["Coordinator", "WebAPI"]
   },
   "coordinator": {
-    "address": "EDHTRJPEGPATCOEUCB9YJYQQBKJYJD9DUGQDAUZYRCBCKXCCVASWBQLHC9AVBUWTHEIUJ9MUGIPUQEFIC",
+    "address": "NTDIATZPMBEMSMCYVZHEZRMHGZIPGYHENTOHAZOJOQNIHNEZMMDQ9EQ9OIMDDCUNIOQKZNTGCPHFCSHDC",
     "securityLevel": 2,
-    "merkleTreeDepth": 22,
+    "merkleTreeDepth": 10,
     "mwm": 9,
     "stateFilePath": "/app/db/coordinator.state",
     "merkleTreeFilePath": "/app/db/coordinator.tree",

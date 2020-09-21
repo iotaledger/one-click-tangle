@@ -3,6 +3,8 @@
 # Script to bootstrap a machone before running a Private Tangle
 # 
 
+export AMAZON_LINUX=true
+
 set -e
 
 gitInstall () {
@@ -31,7 +33,7 @@ dockerInstall() {
 
 scriptsInstall() {
   git clone https://github.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment
-  
+
   cd IOTA-Tangle-Node-Deployment/hornet-private-net
   # The script that will launch all the process
   chmod +x ./private-tangle.sh
@@ -47,7 +49,7 @@ volumeSetup() {
   mkdir ./snapshots
   mkdir ./snapshots/private-tangle
 
-  ## Change permissions so that the Tangle data can be written
+  ## Change permissions so that the Tangle data can be written (hornet user)
   sudo chown 39999:39999 db/private-tangle 
 }
 

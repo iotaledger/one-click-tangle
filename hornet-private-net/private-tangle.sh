@@ -33,6 +33,8 @@ MERKLE_TREE_LOG_FILE=./logs/merkle-tree-generation.log.html
 clean () {
   # TODO: Differentiate between start, restart and remove
   stopContainers
+
+  # We need sudo here as the files are going to be owned by the hornet user
   
   if [ -f $MERKLE_TREE_LOG_FILE ]; then
     sudo rm $MERKLE_TREE_LOG_FILE
@@ -108,7 +110,12 @@ generateMerkleTree () {
 
   if [ $? -eq 0 ]; 
     then
-      echo "You can check logs at curl http://$HOSTNAME:9000/merkle-tree-generation.log.html"
+      echo "You can check logs at curl http://localhost:9000/merkle-tree-generation.log.html"
+      if [ "$AMAZON_LINUX" = "true" ];
+        then
+          ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com) | sed s/\\./-/g)
+          echo "Your log files are also available at http://ec2-$ip_address.eu-west-1.compute.amazonaws.com"
+      fi
     else 
       echo "Warning: NGINX Logs Server could not be started. You can  manuallycheck logs at $MERKLE_TREE_LOG_FILE"
   fi
