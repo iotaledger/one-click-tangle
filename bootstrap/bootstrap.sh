@@ -6,7 +6,7 @@
 # And executes it
 # For the time being only the Linux AWS is supported
 
-wget https://raw.githubusercontent.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment/master/bootstrap/boostrap-amazonlinux.sh
+wget https://raw.githubusercontent.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment/master/bootstrap/bootstrap-amazonlinux.sh
 
 chmod +x ./bootstrap-amazonlinux.sh
 
