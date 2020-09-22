@@ -154,22 +154,22 @@ setupCoordinator () {
   # Waiting for coordinator bootstrap
   # We guarantee that if bootstrap has not finished yet we sleep another time 
   # for a few seconds more until bootstrap has been performed
-  boostrapped=1
+  bootstrapped=1
   # Number of seconds waited for each tick
   bootstrap_tick=6
   time_slept=0
   # We will not be waiting more than 1 minute
   threshold_time=60
 
-  while [ $boostrapped -eq 1 -a $time_slept -lt $threshold_time ]
+  while [ $bootstrapped -eq 1 -a $time_slept -lt $threshold_time ];
   do
     sleep $bootstrap_tick
     docker logs $(cat ./coo.bootstrap.container) 2>&1 | grep "milestone issued (1)"
-    boostrapped=$?
+    bootstrapped=$?
     time_slept=$((time_slept + bootstrap_tick))
   done
 
-  if [ $boostrapped -eq 0 ]; then
+  if [ $bootstrapped -eq 0 ]; then
     echo "Coordinator bootstrapped!"
     docker kill -s SIGINT $(cat ./coo.bootstrap.container)
     echo "Waiting coordinator bootstrap to stop gracefully..."
