@@ -13,12 +13,12 @@ gitInstall () {
   sudo yum install git -y
 }
 
-dockerInstall() {
+dockerInstall () {
   echo "Installing docker ..."
 
   sudo yum install docker -y
   # Add the ec2-user to the docker group so you can execute Docker commands without using sudo.
-  sudo usermod -a -G docker ec2-user
+  sudo gpasswd -a ec2-user docker
 
   sudo systemctl enable docker
  
@@ -30,7 +30,7 @@ dockerInstall() {
   sudo chmod +x /usr/local/bin/docker-compose
 }
 
-scriptsInstall() {
+scriptsInstall () {
   git clone https://github.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment
 
   cd IOTA-Tangle-Node-Deployment/hornet-private-net
@@ -38,28 +38,44 @@ scriptsInstall() {
   chmod +x ./private-tangle.sh
 }
 
-volumeSetup() {
+# Sets up the necessary directories if they do not exist yet
+volumeSetup () {
   ## Directory for the Tangle DB files
-  mkdir ./db
-  mkdir ./db/private-tangle
+  if ! [ -d ./db ]; then
+    mkdir ./db
+    mkdir ./db/private-tangle
+  fi
 
-  mkdir ./logs
+  if ! [ -d ./logs ]; then
+    mkdir ./logs
+  fi
 
-  mkdir ./snapshots
-  mkdir ./snapshots/private-tangle
+  if ! [ -d ./snapshots ]; then
+    mkdir ./snapshots
+    mkdir ./snapshots/private-tangle
+  fi
 
   ## Change permissions so that the Tangle data can be written (hornet user)
   sudo chown 39999:39999 db/private-tangle 
 }
 
-prepareEnv() {
+prepareEnv () {
   gitInstall
   dockerInstall
   scriptsInstall
+}
+
+bootstrap () {
+  prepareEnv
+
   volumeSetup
+
+  # echo "Please enter Merkle Tree Depth"
+
+  # Using this hack we allow to execute docker without logging out
+  sg docker -c 'sg ec2-user -c "./private-tangle.sh start 10"'
 }
 
 ## Script starts here
-prepareEnv
-# echo "Please enter Merkle Tree Depth"
-source ./private-tangle.sh start 20
+#####################
+bootstrap
