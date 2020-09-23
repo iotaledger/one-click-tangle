@@ -155,18 +155,21 @@ setupCoordinator () {
   # We guarantee that if bootstrap has not finished yet we sleep another time 
   # for a few seconds more until bootstrap has been performed
   bootstrapped=1
-  # Number of seconds waited for each tick
-  bootstrap_tick=6
+  # Number of seconds waited for each tick (proportional to the depth of the Merkle Tree)
+  bootstrap_tick=$((MERKLE_TREE_DEPTH + MERKLE_TREE_DEPTH * 20 / 100))
   time_slept=0
-  # We will not be waiting more than 1 minute
-  threshold_time=60
+  # We will not be waiting more than 3 times the tick
+  threshold_time=$((bootstrap_tick *  3))
 
-  while [ $bootstrapped -eq 1 -a $time_slept -lt $threshold_time ];
+  while [ $bootstrapped -eq 1 -a $time_slept -lt $threshold_time -a $bootstrap_tick -gt 0 ];
   do
+    echo "Waiting for $bootstrap_tick seconds ... ⏳"
     sleep $bootstrap_tick
     docker logs $(cat ./coo.bootstrap.container) 2>&1 | grep "milestone issued (1)"
     bootstrapped=$?
     time_slept=$((time_slept + bootstrap_tick))
+    # We wait less in further iterations
+    bootstrap_tick=$((bootstrap_tick - bootstrap_tick * 20 / 100))
   done
 
   if [ $bootstrapped -eq 0 ]; then
