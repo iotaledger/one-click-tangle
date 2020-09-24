@@ -1,5 +1,7 @@
 #!/bin/bash 
 
+export TANGLE_MERKLE_TREE_DEPTH=24 # Default Merkle Tree Depth 
+
 # General bootstrap script
 
 # Detects the platform downloads the latest bootstrap from Github

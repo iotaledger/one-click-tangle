@@ -80,5 +80,4 @@ bootstrap () {
 ## Script starts here. 
 ###################################################
 
-export TANGLE_MERKLE_TREE_DEPTH=22 # Default Merkle Tree Depth 
 bootstrap

@@ -64,7 +64,7 @@
     "enablePlugins": ["Coordinator", "WebAPI"]
   },
   "coordinator": {
-    "address": "HQONRW9LHFASRXEHHQPAZCRBIOWSYSAMKGUJ9ZFGNQOODVPDHETYDPNNRLRJASYYEMIUUSWAREZCRQISD",
+    "address": "XBCFEIJDGRIWWKEGEIXUEVJXPKJLBHFKNNJCOULXUJZROUKRLNVBV9JEGXXBDHUWT9SLFRTUBIPSZPLKB",
     "securityLevel": 2,
     "merkleTreeDepth": 10,
     "mwm": 9,
