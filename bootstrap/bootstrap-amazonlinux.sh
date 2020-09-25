@@ -73,7 +73,7 @@ bootstrap () {
   # echo "Please enter Merkle Tree Depth"
 
   # Using this hack we allow to execute docker without logging out
-  sg docker -c 'sg ec2-user -c "./private-tangle.sh start $TANGLE_MERKLE_TREE_DEPTH"'
+  sg docker -c 'sg ec2-user -c "./private-tangle.sh start $TANGLE_MERKLE_TREE_DEPTH $TANGLE_COO_BOOTSTRAP_WAIT"'
 }
 
 ###################################################

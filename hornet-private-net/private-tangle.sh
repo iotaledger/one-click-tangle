@@ -7,7 +7,7 @@
 set -e
 
 help () {
-  echo "usage: private_tangle [start|stop] <merkle_tree_depth>"
+  echo "usage: private_tangle [start|stop] [merkle_tree_depth] [boostrap_wait_time]"
 }
 
 if [ $#  -lt 1 ]; then
@@ -19,7 +19,7 @@ fi
 command="$1"
 
 if [ "$command" == "start" ]; then
-  if [ $# != 2 ]; then
+  if [ $# -lt 2 ]; then
     echo "Please provide the depth of the Merkle Tree"
     help
     exit 1
@@ -27,6 +27,16 @@ if [ "$command" == "start" ]; then
 fi
 
 MERKLE_TREE_DEPTH=$2
+
+#######
+# TODO: Enable Hornet to notify bootstrap without relying on waiting
+#######
+# Obtaining the bootstrap wait time
+# Six seconds wait time by default for bootstrapping coordinator
+COO_BOOTSTRAP_WAIT=$3
+if [ -z "$3" ]; then
+  COO_BOOTSTRAP_WAIT=6
+fi
 
 MERKLE_TREE_LOG_FILE=./logs/merkle-tree-generation.log.html
 
@@ -156,22 +166,12 @@ setupCoordinator () {
   # for a few seconds more until bootstrap has been performed
   bootstrapped=1
   # Number of seconds waited for each tick (proportional to the depth of the Merkle Tree)
-  bootstrap_tick=$((MERKLE_TREE_DEPTH + MERKLE_TREE_DEPTH * 20 / 100))
-  time_slept=0
-  # We will not be waiting more than 3 times the tick
-  threshold_time=$((bootstrap_tick *  3))
-
-  while [ $bootstrapped -eq 1 -a $time_slept -lt $threshold_time -a $bootstrap_tick -gt 0 ];
-  do
-    echo "Waiting for $bootstrap_tick seconds ... ⏳"
-    sleep $bootstrap_tick
-    docker logs $(cat ./coo.bootstrap.container) 2>&1 | grep "milestone issued (1)"
-    bootstrapped=$?
-    time_slept=$((time_slept + bootstrap_tick))
-    # We wait less in further iterations
-    bootstrap_tick=$((bootstrap_tick - bootstrap_tick * 20 / 100))
-  done
-
+  bootstrap_tick=$COO_BOOTSTRAP_WAIT
+  echo "Waiting for $bootstrap_tick seconds ... ⏳"
+  sleep $bootstrap_tick
+  docker logs $(cat ./coo.bootstrap.container) 2>&1 | grep "milestone issued (1)"
+  bootstrapped=$?
+    
   if [ $bootstrapped -eq 0 ]; then
     echo "Coordinator bootstrapped!"
     docker kill -s SIGINT $(cat ./coo.bootstrap.container)
