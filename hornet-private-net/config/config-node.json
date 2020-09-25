@@ -40,7 +40,7 @@
     }
   },
   "dashboard": {
-    "bindAddress": "localhost:8081",
+    "bindAddress": "0.0.0.0:8081",
     "theme": "default",
     "basicAuth": {
       "enabled": false,
