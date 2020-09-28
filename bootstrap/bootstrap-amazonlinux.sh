@@ -7,8 +7,10 @@ export AMAZON_LINUX=true
 
 # TODO: Remove this when a new version of bootstrap.sh is submitted to the Marketplace
 parameterSetup () {
-  export TANGLE_MERKLE_TREE_DEPTH=24 # Default Merkle Tree Depth 
-  export TANGLE_COO_BOOTSTRAP_WAIT=60 # We will wait 1 minute for coordinator bootstrap
+  if [ -z "$TANGLE_MERKLE_TREE_DEPTH" ]; then
+    export TANGLE_MERKLE_TREE_DEPTH=24 # Default Merkle Tree Depth 
+    export TANGLE_COO_BOOTSTRAP_WAIT=60 # We will wait 1 minute for coordinator bootstrap
+  fi
 }
 
 set -e

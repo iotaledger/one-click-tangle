@@ -17,4 +17,4 @@ chmod +x ./parameters.sh
 chmod +x ./bootstrap-amazonlinux.sh
 
 source ./parameters.sh
-source ./bootstrap-amazonlinux.sh
+nohup ./bootstrap-amazonlinux.sh &
