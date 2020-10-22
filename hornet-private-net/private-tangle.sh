@@ -123,8 +123,8 @@ generateMerkleTree () {
       echo "You can check logs at curl http://localhost:9000/merkle-tree-generation.log.html"
       if [ "$AMAZON_LINUX" = "true" ];
         then
-          ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com) | sed s/\\./-/g)
-          echo "Your log files are also available at http://ec2-$ip_address.`echo $HOSTNAME | awk '{split($0,a,"."); print a[2]"."a[3]}'`.amazonaws.com:9000/merkle-tree-generation.log.html"
+          ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))
+          echo "Your log files are also available at http://$ip_address:9000/merkle-tree-generation.log.html"
       fi
     else 
       echo "Warning: NGINX Logs Server could not be started. You can  manuallycheck logs at $MERKLE_TREE_LOG_FILE"
