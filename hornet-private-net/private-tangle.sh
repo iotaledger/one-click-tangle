@@ -40,6 +40,8 @@ fi
 
 MERKLE_TREE_LOG_FILE=./logs/merkle-tree-generation.log.html
 
+ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))
+
 clean () {
   # TODO: Differentiate between start, restart and remove
   stopContainers
@@ -86,8 +88,10 @@ startTangle () {
 
   setupCoordinator
 
-  # We get rid of nginx as we no longer need it
-  docker-compose rm -s -f nginx
+  # We could get rid of nginx as we no longer need it. We show a message to the user. 
+  # docker-compose rm -s -f nginx
+  completed_message='Your Merkle Tree has already been generated.  <a href="$ip_address:8081">Go to Hornet Node Dashboard</a>'
+  echo '<!DOCTYPE html><html><body><p style="color: red;">$completed_message</p></body></html>' > $MERKLE_TREE_LOG_FILE 
 
   # Run the coordinator
   docker-compose --log-level ERROR up -d coo
@@ -123,7 +127,6 @@ generateMerkleTree () {
       echo "You can check logs at curl http://localhost:9000/merkle-tree-generation.log.html"
       if [ "$AMAZON_LINUX" = "true" ];
         then
-          ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))
           echo "Your log files are also available at http://$ip_address:9000/merkle-tree-generation.log.html"
       fi
     else 
