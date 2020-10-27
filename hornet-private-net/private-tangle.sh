@@ -90,8 +90,10 @@ startTangle () {
 
   # We could get rid of nginx as we no longer need it. We show a message to the user. 
   # docker-compose rm -s -f nginx
-  completed_message='Your Merkle Tree has already been generated.  <a href="$ip_address:8081">Go to Hornet Node Dashboard</a>'
-  echo '<!DOCTYPE html><html><body><p style="color: red;">$completed_message</p></body></html>' > $MERKLE_TREE_LOG_FILE 
+  completed_message="Your Merkle Tree has already been generated.  <a href=\"$ip_address:8081\">Go to Hornet Node Dashboard</a>"
+  echo '<!DOCTYPE html><html><body><p style="color: red;">' > $MERKLE_TREE_LOG_FILE 
+  echo "$completed_message" >> $MERKLE_TREE_LOG_FILE 
+  echo '</p></body></html>' >> $MERKLE_TREE_LOG_FILE
 
   # Run the coordinator
   docker-compose --log-level ERROR up -d coo
