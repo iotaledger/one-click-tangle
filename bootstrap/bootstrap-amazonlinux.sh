@@ -41,27 +41,6 @@ scriptsInstall () {
   chmod +x ./private-tangle.sh
 }
 
-# Sets up the necessary directories if they do not exist yet
-volumeSetup () {
-  ## Directory for the Tangle DB files
-  if ! [ -d ./db ]; then
-    mkdir ./db
-    mkdir ./db/private-tangle
-  fi
-
-  if ! [ -d ./logs ]; then
-    mkdir ./logs
-  fi
-
-  if ! [ -d ./snapshots ]; then
-    mkdir ./snapshots
-    mkdir ./snapshots/private-tangle
-  fi
-
-  ## Change permissions so that the Tangle data can be written (hornet user)
-  sudo chown 39999:39999 db/private-tangle 
-}
-
 prepareEnv () {
   gitInstall
   dockerInstall
@@ -70,10 +49,6 @@ prepareEnv () {
 
 bootstrap () {
   prepareEnv
-
-  volumeSetup
-
-  # echo "Please enter Merkle Tree Depth"
 
   # Using this hack we allow to execute docker without logging out
   sg docker -c 'sg ec2-user -c "./private-tangle.sh start $TANGLE_MERKLE_TREE_DEPTH $TANGLE_COO_BOOTSTRAP_WAIT"'
