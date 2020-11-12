@@ -4,15 +4,15 @@
 
 set -e
 
+EXPLORER_SRC=./explorer-src
+
 help () {
   echo "usage: tangle-explorer.sh [start|stop] [json-file-with-network-details.json]"
 }
 
 clean () {
-  stopContainers
-
-  if [ -d ./tangle-explorer ]; then
-    rm -Rf ./tangle-explorer
+  if [ -d $EXPLORER_SRC ]; then
+    rm -Rf $EXPLORER_SRC
   fi
 }
 
@@ -30,7 +30,7 @@ fi
 command="$1"
 network_file="$2"
 
-DEFAULT_NETWORK_FILE="config/private-network-default.json"
+DEFAULT_NETWORK_FILE="config/private-network.json"
 
 if [ "$command" == "start" ]; then
   if [ $# -lt 2 ]; then
@@ -39,7 +39,7 @@ if [ "$command" == "start" ]; then
 fi
 
 # Obtaining the source of the Explorer
-if ! [ -f $network_file]; then
+if ! [ -f $network_file ]; then
   echo "The IOTA network definition file does not exist"
   exit 1
 fi
@@ -47,15 +47,19 @@ fi
 startExplorer () {
   clean
 
-  git clone https://github.com/iotaledger/explorer tangle-explorer
+  git clone https://github.com/iotaledger/explorer $EXPLORER_SRC
 
-  cd tangle-explorer
+  stopContainers
 
-  if ! [ -d ./network-data ]; then
-    mkdir ./network-data
+  if ! [ -d ./application-data ]; then
+    mkdir ./application-data
   fi
 
-  cp $network_file ./network-data/private-network.json
+  if ! [ -d ./application-data/network ]; then
+    mkdir ./application-data/network
+  fi
+
+  cp $network_file ./application-data/network/private-network.json
 
   # Compile the Web App code. This will leave the compiled JS in the dist folder
   docker-compose run --rm -w /usr/src/app webapp-compiler sh -c 'npm install --prefix=/package > /dev/null && npm run build 2> /dev/null'

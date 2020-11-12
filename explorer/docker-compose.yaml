@@ -8,32 +8,35 @@ services:
   explorer-api:
     hostname: explorer-api
     networks:
-      - private-tangle
+      - tangle
     build:
-       context: ./tangle-explorer/api
+       context: ./explorer-src/api
        dockerfile: Dockerfile
     image: iotaledger/explorer
     container_name: explorer-api
     expose:
       - 4000
     volumes:
-      - ./network-data:/app/.local-storage
+      - ./application-data:/app/.local-storage
 
   explorer-webapp:
     hostname: explorer-webapp
     networks:
-      - private-tangle
+      - tangle
     image: nginx
-    expose: 80
+    expose: 
+      - 80
     ports:
       - "8082:80"
     volumes:
-      - ./tangle-explorer/client/dist:/usr/share/nginx/html
+      - ./explorer-src/client/dist:/usr/share/nginx/html
 
   webapp-compiler:
+    networks:
+      - tangle
     image: node:12
     environment: 
       NPM_CONFIG_LOGLEVEL: silent
       NODE_PATH: /package/node_modules
     volumes:
-      - ./tangle-explorer/explorer/client:/usr/src/app
+      - ./explorer-src/client:/usr/src/app
