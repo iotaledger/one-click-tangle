@@ -1,0 +1,17 @@
+{
+  "network": "PrivateTangle",
+  "label": "Tangle",
+  "provider": "http://node1:14265",
+  "depth": 3,
+  "mwm": 9,
+  "protocolVersion": "og",
+  "feedEndpoint": "tcp://node1:5556",
+  "coordinatorAddress": "",
+  "coordinatorSecurityLevel": 2,
+  "primaryColor": "#131F37",
+  "secondaryColor": "#485776",
+  "isEnabled": true,
+  "showMarket": false,
+  "order": 0,
+  "description": "Private Tangle Network"
+}
