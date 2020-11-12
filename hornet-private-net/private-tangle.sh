@@ -78,7 +78,32 @@ clean () {
 
 }
 
+# Sets up the necessary directories if they do not exist yet
+volumeSetup () {
+  ## Directory for the Tangle DB files
+  if ! [ -d ./db ]; then
+    mkdir ./db
+    mkdir ./db/private-tangle
+  fi
+
+  if ! [ -d ./logs ]; then
+    mkdir ./logs
+  fi
+
+  if ! [ -d ./snapshots ]; then
+    mkdir ./snapshots
+    mkdir ./snapshots/private-tangle
+  fi
+
+  ## Change permissions so that the Tangle data can be written (hornet user)
+  ## TODO: Check why on MacOS this cause permission problems
+  sudo chown 39999:39999 db/private-tangle 
+}
+
 startTangle () {
+  # First of all volumes have to be set up
+  volumeSetup
+
   # TODO: In the feature differentitate between "start", "stop", "remove"
   # And only cleaning when we want to really remove all previous state
   clean
