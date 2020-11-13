@@ -71,8 +71,7 @@ prepareConfig () {
   # Configuration of the Web App
   cp config/webapp.config.local.json $EXPLORER_SRC/client/src/assets/config/config.local.json
 
-  cp Dockerfile $EXPLORER_SRC/client/Dockerfile
-
+  # TODO: Check why is it really needed
   rm $EXPLORER_SRC/client/package-lock.json
 }
 
