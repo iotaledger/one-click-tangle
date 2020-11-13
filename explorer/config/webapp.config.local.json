@@ -1,4 +1,4 @@
 {
-    "apiEndpoint": "http://explorer-api:4000",
+    "apiEndpoint": "http://localhost:4000",
     "googleAnalyticsId": "GOOGLE-ANALYTICS-ID"
 }
