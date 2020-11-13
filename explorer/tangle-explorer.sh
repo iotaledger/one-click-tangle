@@ -91,6 +91,10 @@ startExplorer () {
   docker-compose --log-level ERROR up -d  --build
 }
 
+stopExplorer () {
+  stopContainers
+}
+
 case "${command}" in
 	"help")
     help
