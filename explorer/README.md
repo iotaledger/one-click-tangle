@@ -1,4 +1,4 @@
-# Private Tangle Exploter Setup
+# Private Tangle Explorer Setup
 
 ## Usage
 
