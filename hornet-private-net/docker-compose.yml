@@ -33,6 +33,7 @@ services:
       - 15600
     ports:
       - "14265:14265"
+      - "15600:15600"
       - "8081:8081"
     volumes:
       - ./config/config-node.json:/app/config.json:ro
