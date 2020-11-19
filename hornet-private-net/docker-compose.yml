@@ -1,11 +1,15 @@
 version: "3"
 
+networks:
+  tangle:
+    name: private-tangle
+
 services:
   coo:
     hostname: coo
     # network_mode: host
     networks:
-      - default
+      - tangle
     image: gohornet/hornet
     container_name: coo
     environment:
@@ -23,7 +27,7 @@ services:
     hostname: node1
     # network_mode: host
     networks:
-      - default
+      - tangle
     image: gohornet/hornet
     container_name: node1
     environment:
@@ -46,7 +50,7 @@ services:
     hostname: spammer
     # network_mode: host
     networks:
-      - default
+      - tangle
     image: gohornet/hornet
     container_name: spammer
     environment:
@@ -64,7 +68,7 @@ services:
   nginx:
       # network_mode: host
       networks:
-        - default
+        - tangle
       image: nginx
       container_name: nginx
       expose: 
@@ -75,6 +79,8 @@ services:
         - ./logs:/usr/share/nginx/html
 
   address-generator:
+    networks:
+      - tangle
     image: node:12
     container_name: address-generator
     environment: 

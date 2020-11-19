@@ -7,7 +7,7 @@
 set -e
 
 help () {
-  echo "usage: private_tangle [start|stop] [merkle_tree_depth] [boostrap_wait_time]"
+  echo "usage: private-tangle.sh [start|stop] [merkle_tree_depth] [boostrap_wait_time]"
 }
 
 if [ $#  -lt 1 ]; then
