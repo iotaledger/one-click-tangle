@@ -2,7 +2,8 @@ version: "3"
 
 networks:
   tangle:
-    name: private-tangle
+    external:
+      name: private-tangle
 
 services:
   explorer-api:

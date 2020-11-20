@@ -76,6 +76,11 @@ prepareConfig () {
 }
 
 installExplorer () {
+  # We need to create network it will fail if it does exist
+  set +e
+  docker network create private-tangle 2> /dev/null
+  set -e
+
   clean
 
   git clone https://github.com/iotaledger/explorer $EXPLORER_SRC
