@@ -69,7 +69,7 @@ tangleExplorer () {
   sed -i 's/"coordinatorSecurityLevel": [:digit:]]\+/"coordinatorSecurityLevel": '$(cat ../hornet-private-net/config/config-node.json | grep \"securityLevel\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
 
   # Set in the Front-End App configuration the API endpoint
-  sed -i 's/"apiEndpoint": \("\).*\("\)/"apiEndpoint": \1'$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))':4000\2/g' ./config/webapp.config.local.json
+  sed -i 's/"apiEndpoint": \("\).*\("\)/"apiEndpoint": \1http:\/\/'$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))':4000\2/g' ./config/webapp.config.local.json
 
   # Run tangle explorer installation
   sg docker -c 'sg ec2-user -c "./tangle-explorer.sh install my-network.json"'
