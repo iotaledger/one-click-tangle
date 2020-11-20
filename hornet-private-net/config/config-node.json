@@ -73,10 +73,10 @@
     "disablePlugins": [
       "Autopeering", "WarpSync",
       "Profiling", "Prometheus", 
-      "MQTT", "ZMQ",
+      "MQTT", 
       "Spammer",  "Coordinator"
     ],
-    "enablePlugins": ["URTS", "WebAPI"]
+    "enablePlugins": ["URTS", "WebAPI", "ZMQ"]
   },
   "coordinator": {
     "address": "INHVXYBIEIJIWXZJBYJRWCCOWJU9WBJ9HZVYIDYKJP9QOBMPFPGJLBIXOFPQWLRQRHDX9SSPEHTRS9NP9",
