@@ -78,6 +78,9 @@
     ],
     "enablePlugins": ["URTS", "WebAPI", "ZMQ"]
   },
+  "zmq": {
+    "bindAddress": "0.0.0.0:5556"
+  },
   "coordinator": {
     "address": "INHVXYBIEIJIWXZJBYJRWCCOWJU9WBJ9HZVYIDYKJP9QOBMPFPGJLBIXOFPQWLRQRHDX9SSPEHTRS9NP9",
     "securityLevel": 2,
