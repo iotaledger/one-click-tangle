@@ -39,6 +39,7 @@ scriptsInstall () {
   cd IOTA-Tangle-Node-Deployment/hornet-private-net
   # The script that will launch all the process
   chmod +x ./private-tangle.sh
+  chmod +x ../explorer/tangle-explorer.sh
 }
 
 prepareEnv () {
@@ -54,8 +55,26 @@ bootstrap () {
   sg docker -c 'sg ec2-user -c "./private-tangle.sh start $TANGLE_MERKLE_TREE_DEPTH $TANGLE_COO_BOOTSTRAP_WAIT"'
 }
 
+tangleExplorer () {
+  cd ../explorer
+  cp ./config/private-network.json ./my-network.json
+
+  # Set the Coordinator address
+  sed -i 's/"coordinatorAddress": \("\).*\("\)/"coordinatorAddress": \1'$(cat ../hornet-private-net/merkle-tree.addr)'\2/g' ./my-network.json
+
+  # Set the coordinator.mwm
+  sed -i 's/"mwm": [[:digit:]]\+/"mwm": '$(cat ../hornet-private-net/config/config-node.json | grep \"mwm\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
+
+  # Set the coordinator.securityLevel
+  sed -i 's/"coordinatorSecurityLevel": [:digit:]]\+/"coordinatorSecurityLevel": '$(cat ../hornet-private-net/config/config-node.json | grep \"securityLevel\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
+
+  # Run tangle explorer installation
+  sg docker -c 'sg ec2-user -c "./tangle-explorer.sh install my-network.json"'
+}
+
 ###################################################
 ## Script starts here. 
 ###################################################
 
 bootstrap
+tangleExplorer
