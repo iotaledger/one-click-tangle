@@ -42,6 +42,12 @@ MERKLE_TREE_LOG_FILE=./logs/merkle-tree-generation.log.html
 
 ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))
 
+# Generates a new seed ensuring last trit is always 0
+generateSeed () {
+  local seed=$(cat /dev/urandom | LC_ALL=C tr -dc 'A-Z9' | fold -w 80 | head -n 1)$(cat /dev/urandom | LC_ALL=C tr -dc 'A-DW-Z9' | fold -w 1 | head -n 1)
+  echo "$seed"
+} 
+
 clean () {
   # TODO: Differentiate between start, restart and remove
   stopContainers
@@ -133,7 +139,8 @@ startTangle () {
 generateMerkleTree () {
   echo "Generating a new seed for the coordinator..."
 
-  export COO_SEED=$(cat /dev/urandom | LC_ALL=C tr -dc 'A-Z9' | fold -w 81 | head -n 1)
+  # We ensure last trit is 0
+  export COO_SEED=$(generateSeed)
   echo $COO_SEED > coordinator.seed 
 
   echo "Done. Check coordinator.seed"
@@ -220,7 +227,7 @@ setupCoordinator () {
 generateInitialAddress () {
   echo "Generating an initial IOTA address holding all IOTAs..."
 
-  seed=$(cat /dev/urandom | LC_ALL=C tr -dc 'A-Z9' | fold -w 81 | head -n 1)
+  local seed=$(generateSeed)
   echo $seed > ./utils/node.seed 
 
   # Now we run a tiny Node.js utility to get the first address to be on the snapshot
