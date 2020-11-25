@@ -34,9 +34,9 @@ dockerInstall () {
 }
 
 scriptsInstall () {
-  git clone https://github.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment
+  git clone https://github.com/iotaledger/tangle-deployment
 
-  cd IOTA-Tangle-Node-Deployment/hornet-private-net
+  cd tangle-deployment/hornet-private-net
   # The script that will launch all the process
   chmod +x ./private-tangle.sh
   chmod +x ../explorer/tangle-explorer.sh
