@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://discord.iota.org/" style="text-decoration:none;"><img src="https://img.shields.io/badge/Discord-9cf.svg?logo=discord" alt="Discord"></a>
     <a href="https://iota.stackexchange.com/" style="text-decoration:none;"><img src="https://img.shields.io/badge/StackExchange-9cf.svg?logo=stackexchange" alt="StackExchange"></a>
-    <a href="https://github.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment/blob/master/LICENSE" style="text-decoration:none;"><img src="https://img.shields.io/github/license/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment.svg" alt="MIT license"></a>
+    <a href="https://github.com/iotaledger/tangle-deployment/blob/master/LICENSE" style="text-decoration:none;"><img src="https://img.shields.io/github/license/iotaledger/tangle-deployment.svg" alt="MIT license"></a>
 </p>
       
 <p align="center">
@@ -27,7 +27,7 @@ The code is composed of:
 - [**`bootstrap`:**](bootstrap/README.md) Scripts that support full IOTA's Private Tangle Deployment on the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B08M4933Y3).
 
 This is beta software, so there may be issues.
-Please report any issues in our [issue tracker](https://github.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment/issues/new).
+Please report any issues in our [issue tracker](https://github.com/iotaledger/tangle-deployment/issues/new).
 
 ## Prerequisites
 
@@ -48,7 +48,7 @@ necessary.
 First you need to clone the Repository
 
 ```
-git clone https://github.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment
+git clone https://github.com/iotaledger/tangle-deployment
 ```
 
 Afterwards you can install a Private Tangle with Merkle Tree Depth of `16` by
@@ -67,7 +67,7 @@ Additional instructions can be found on [docs.iota.org](https://docs.iota.org).
 
 ## Supporting the project
 
-If this project has been useful to you and you feel like contributing, consider submitting a [bug report](https://github.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment/issues/new), [feature request](https://github.com/mcanterafonseca-iota/IOTA-Tangle-Node-Deployment/issues/new) or a [pull request](https://github.com/iotaledger/IOTA-Tangle-Node-Deployment/pulls/).
+If this project has been useful to you and you feel like contributing, consider submitting a [bug report](https://github.com/iotaledger/tangle-deployment/issues/new), [feature request](https://github.com/iotaledger/tangle-deployment/issues/new) or a [pull request](https://github.com/iotaledger/IOTA-Tangle-Node-Deployment/pulls/).
 
 See our [contributing guidelines](.github/CONTRIBUTING.md) for more information.
 
