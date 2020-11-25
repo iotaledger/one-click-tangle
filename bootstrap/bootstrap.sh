@@ -10,8 +10,8 @@ if [ -f ./bootstrap-amazonlinux.sh ]; then
   rm -f ./bootstrap-amazonlinux.sh
 fi
 
-wget https://raw.githubusercontent.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment/master/bootstrap/parameters.sh
-wget https://raw.githubusercontent.com/jmcanterafonseca-iota/IOTA-Tangle-Node-Deployment/master/bootstrap/bootstrap-amazonlinux.sh
+wget https://raw.githubusercontent.com/iotaledger/tangle-deployment/master/bootstrap/parameters.sh
+wget https://raw.githubusercontent.com/iotaledger/tangle-deployment/master/bootstrap/bootstrap-amazonlinux.sh
 
 chmod +x ./parameters.sh
 chmod +x ./bootstrap-amazonlinux.sh
