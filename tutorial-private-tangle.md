@@ -24,21 +24,23 @@ The Hornet Dashboard (available through HTTP port `8081`) also comes in handy as
 
 The Architecture described above can be easily transitioned to production-ready by incorporating a reverse proxy leveraging [NGINX](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#). As a result the amount of ports exposed to the outside world can be reduced or load balancing between the nodes of your Private Tangle can be achieved. IOTA Foundation intends to provide automatic, "one click" deployment of these kind of enhanced architectures in the next version of this software. 
 
-But now let's see how we can launch our Private Tangle via a "single click". We have two options. Through the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B08M4933Y3/) or through any [Docker-enabled machine](#deploying-a-private-tangle-on-a-public-cloud). 
+To support the deployment of a Private Tangle the IOTA Community has developed a set of shell scripts and configuration templates to make it easier to deploy a (Docker based) Private Tangle with the architecture described above. These scripts automate  the steps described [here](https://docs.iota.org/docs/hornet/1.1/tutorials/set-up-a-private-tangle-hornet#step-4-add-more-hornet-nodes-to-your-private-tangle). You can also customize the [default configuration files](./hornet-private-net/config), for instance if you want to enable extra [Hornet plugins](https://docs.iota.org/docs/hornet/1.1/overview). 
+
+But now let's see how we can launch our Private Tangle via a "single click". We have two options. Through the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B08M4933Y3/) or through any [Docker-enabled machine](#one-click-private-tangle-deployment-on-any-docker-enabled-machine). 
 
 ## "One Click" Private Tangle on a Public Cloud
 
-Go to the AWS Marketplace and install this [product](https://aws.amazon.com/marketplace/pp/B08M4933Y3/). That's it!. Behind the scenes our process will create a seed for the Coordinator, an initial IOTA Address holding all IOTAs, a seed for our Nodes, etc i.e. all the steps described [here](https://docs.iota.org/docs/hornet/1.1/tutorials/set-up-a-private-tangle-hornet),  but **fully automated** and in one click!.
+Go to the AWS Marketplace and install this [product](https://aws.amazon.com/marketplace/pp/B08M4933Y3/). That's it!. 
 
-The Private Tangle installed has a Merkle Tree of Depth `24`. See also a basic explanation of [Merkle Tree Generation](#merkle-tree-depth). 
+Behind the scenes our process will create a seed for the Coordinator, generate the Merkle Tree, configure the Coordinator Address for the initial node, generate an initial IOTA Address holding all IOTAs, a seed for our Nodes, etc i.e. all the steps described [here](https://docs.iota.org/docs/hornet/1.1/tutorials/set-up-a-private-tangle-hornet),  but **fully automated** and in "one click"!.
+
+The Private Tangle installed will have a Merkle Tree of Depth `24` and will take half a day to be generated. See also a basic explanation of [Merkle Tree Generation](#merkle-tree-depth). 
 
 ## "One Click" Private Tangle deployment on any Docker-enabled machine
 
-To support the deployment of a Private Tangle the IOTA Community has developed a set of shell scripts and configuration templates to make it easier to deploy a (Docker based) Private Tangle with the architecture described above. These scripts automate  the steps described [here](https://docs.iota.org/docs/hornet/1.1/tutorials/set-up-a-private-tangle-hornet#step-4-add-more-hornet-nodes-to-your-private-tangle). You can also customize the [default configuration files](./hornet-private-net/config), for instance if you want to enable extra [Hornet plugins](https://docs.iota.org/docs/hornet/1.1/overview). 
-
 ### Prerequisites
 
-To execute these scripts you need [Docker](https://www.docker.com) and Docker Compose. **Docker Compose** is a tool for defining and running multi-container Docker applications. A series [YAML files](./docker-compose.yaml) are used to configure the required services. This means all container services can be brought up in a single command. Docker Compose is installed by default as part of Docker for Windows and Docker for Mac, however Linux users will need to follow the instructions found [here](https://docs.docker.com/compose/install/)
+You need [Docker](https://www.docker.com) and Docker Compose. **Docker Compose** is a tool for defining and running multi-container Docker applications. A series [YAML files](./docker-compose.yaml) are used to configure the required services. This means all container services can be brought up in a single command. Docker Compose is installed by default as part of Docker for Windows and Docker for Mac, however Linux users will need to follow the instructions found [here](https://docs.docker.com/compose/install/)
 
 You can check your current **Docker** and **Docker Compose** versions using the following commands:
 
@@ -116,7 +118,7 @@ If you browse to `http://localhost:8081` you can play with the Hornet Dashboard.
 
 You can find the Tangle database files at `db/private-tangle`. 
 
-### Run your Tangle Explorer 
+### Tangle Explorer in "one click"
 
 Once we have our Private Tangle up and running we would like to deploy a Tangle Explorer. There is another script that allows us to do so, but, first of all, we need to set up a JSON configuration file for our Private Tangle network. Doing so it is easy as we already have a template file. The only thing we need to do is to copy to the template the different parameters of our network, including the Coordinator public address. 
 
