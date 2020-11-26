@@ -35,7 +35,7 @@ c1958a2918d4        gohornet/hornet              "/sbin/tini -- /app/…"   2 da
 8a3b1e8f3e9b        nginx                        "/docker-entrypoint.…"   3 days ago          Up 3 days           0.0.0.0:9000->80/tcp
 ```
 
-The three Hornet nodes, the Explorer (API and Web App) and NGINX (remember that you can stop it as no longer needed). 
+The three Hornet nodes, the Explorer (API and Web App) and NGINX (remember that you can stop it as it is no longer needed). 
 
 # Private Tangle Seeds and Addresses
 
