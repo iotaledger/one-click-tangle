@@ -20,7 +20,7 @@ On the AWS Marketplace you can find the Private Tangle product [here](https://aw
 
 # Sanity Checks
 
-After the process finishes you should see at least the following docker containers up and running:
+Once the process finishes you should see at least the following docker containers up and running:
 
 ```console
 docker ps -a
@@ -39,7 +39,7 @@ The three Hornet nodes, the Explorer (API and Web App) and NGINX (remember that 
 
 # Private Tangle Seeds and Addresses
 
-After the launching process finishes the following files should have been created for you:
+Once the process finishes the following files should have been created for you:
 
 * `merkle-tree.addr`. The public address of the Coordinator. 
 * `coordinator.seed`. The seed of the coordinator. Keep it safe! 
