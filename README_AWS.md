@@ -35,11 +35,19 @@ c1958a2918d4        gohornet/hornet              "/sbin/tini -- /app/…"   2 da
 8a3b1e8f3e9b        nginx                        "/docker-entrypoint.…"   3 days ago          Up 3 days           0.0.0.0:9000->80/tcp
 ```
 
+<<<<<<< HEAD
 The three Hornet nodes, the Explorer (API and Web App) and NGINX (remember that you can stop it as it is no longer needed). 
 
 # Private Tangle Seeds and Addresses
 
 Once the process finishes the following files should have been created for you:
+=======
+The three Hornet nodes, the Explorer (API and Web App) and NGINX (remember that you can stop it as no longer needed). 
+
+# Private Tangle Seeds and Addresses
+
+After the launching process finishes the following files should have been created for you:
+>>>>>>> 2502d60... Refinement of the Tutorial
 
 * `merkle-tree.addr`. The public address of the Coordinator. 
 * `coordinator.seed`. The seed of the coordinator. Keep it safe! 
