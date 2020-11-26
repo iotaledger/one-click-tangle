@@ -16,4 +16,32 @@ On the AWS Marketplace you can find the Private Tangle product [here](https://aw
 
 7. Please bear in mind, that it can take a little while for the nodes to be in synced state. 
 
-8. Please note that the Private Tangle related config files are located at `IOTA-Tangle-Node-Deployment/hornet-private-net/config/`
+8. Please note that the Private Tangle related config files are located at `IOTA-Tangle-Node-Deployment/hornet-private-net/config/`. The Tangle DB files are located at `db/private-tangle`. 
+
+# Sanity Checks
+
+After the process finishes you should see at least the following docker containers up and running:
+
+```console
+docker ps -a
+```
+
+```console
+dd4bcad67c5e        iotaledger/explorer-webapp   "docker-entrypoint.s…"   2 days ago          Up 2 days           0.0.0.0:8082->80/tcp                                                                   explorer-webapp
+7c22023f4316        iotaledger/explorer-api      "docker-entrypoint.s…"   2 days ago          Up 2 days           0.0.0.0:4000->4000/tcp                                                                 explorer-api
+c1958a2918d4        gohornet/hornet              "/sbin/tini -- /app/…"   2 days ago          Up 2 days           0.0.0.0:8081->8081/tcp, 0.0.0.0:14265->14265/tcp, 5556/tcp, 0.0.0.0:15600->15600/tcp   node1
+21f7b4a96ccf        gohornet/hornet              "/sbin/tini -- /app/…"   2 days ago          Up 2 days           14265/tcp, 15600/tcp                                                                   spammer
+66b218cb08e1        gohornet/hornet              "/sbin/tini -- /app/…"   2 days ago          Up 2 days           15600/tcp                                                                              coo
+8a3b1e8f3e9b        nginx                        "/docker-entrypoint.…"   3 days ago          Up 3 days           0.0.0.0:9000->80/tcp
+```
+
+The three Hornet nodes, the Explorer (API and Web App) and NGINX (remember that you can stop it as no longer needed). 
+
+# Private Tangle Seeds and Addresses
+
+After the launching process finishes the following files should have been created for you:
+
+* `merkle-tree.addr`. The public address of the Coordinator. 
+* `coordinator.seed`. The seed of the coordinator. Keep it safe! 
+* `node.seed`. The seed of the initial Hornet Bode. Keep it safe!
+* `snapshots/private-tangle/snapshot.csv` The initial Private Tangle snapshot. It contains just one IOTA address that is holding all IOTAs. 
