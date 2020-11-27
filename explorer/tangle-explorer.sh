@@ -30,7 +30,7 @@ fi
 # Obtaining the source of the Explorer
 if ! [ -d $network_file ]; then
   if ! [ -f $network_file ]; then
-    echo "The IOTA network definition file or config folder does not exist"
+    echo "The IOTA network definition file or private tangle installation folder does not exist"
     exit 1
   fi
 else 
