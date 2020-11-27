@@ -36,6 +36,10 @@ Behind the scenes our process will create a seed for the Coordinator, generate t
 
 The Private Tangle installed will have a Merkle Tree of Depth `24` and will take half a day to be generated. See also a basic explanation of [Merkle Tree Generation](#merkle-tree-depth). 
 
+The Parameters of this "one click" installation are as follows:
+
+
+
 ## "One Click" Private Tangle deployment on any Docker-enabled machine
 
 ### Prerequisites
