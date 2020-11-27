@@ -35,6 +35,7 @@ if ! [ -d $network_file ]; then
   fi
 else 
   is_config_folder=true
+  folder_config="$2/config"
   # The copy process will leave the network configuration under this file
   network_file="./my-network.json"
 fi
