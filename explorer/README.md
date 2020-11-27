@@ -12,11 +12,13 @@ chmod +x tangle-explorer.sh
 *Warning: It destroys previous data.* 
 
 ```
-./tangle-explorer.sh install <network-definition.json>
+./tangle-explorer.sh install [<network-definition.json> or <private-tangle-install-folder>]
 ```
 
 The `network-definition.json` parameter is optional. By default it will be taken the file present at
 `config/private-network.json`. The format of the file is described [here](https://github.com/iotaledger/explorer/blob/master/api/DEPLOYMENT.md). A template for the file is [here](./config/private-network.json). 
+
+Alternatively it can be provided the `private-tangle-install-folder` parameter to convey a folder of a Private Tangle installation such as the one [here](../hornet-private-net). 
 
 * Stop all the containers by running 
 

@@ -17,6 +17,7 @@ fi
 
 command="$1"
 network_file="$2"
+is_config_folder=false
 
 DEFAULT_NETWORK_FILE="config/private-network.json"
 
@@ -27,15 +28,21 @@ if [ "$command" == "install" ]; then
 fi
 
 # Obtaining the source of the Explorer
-if ! [ -f $network_file ]; then
-  echo "The IOTA network definition file does not exist"
-  exit 1
+if ! [ -d $network_file ]; then
+  if ! [ -f $network_file ]; then
+    echo "The IOTA network definition file or config folder does not exist"
+    exit 1
+  fi
+else 
+  is_config_folder=true
+  # The copy process will leave the network configuration under this file
+  network_file="./my-network.json"
 fi
 
 ###################
 
 help () {
-  echo "usage: tangle-explorer.sh [install|start|stop] [json-file-with-network-details.json]"
+  echo "usage: tangle-explorer.sh [install|start|stop] [json-file-with-network-details.json] or [private-tangle-install-folder]"
 }
 
 clean () {
@@ -53,8 +60,26 @@ stopContainers () {
 	docker-compose --log-level ERROR down -v --remove-orphans
 }
 
+# Builds the network configuration file 
+# in case only a folder with configuration files is given
+buildConfig() {
+  cp ./config/private-network.json ./my-network.json
 
-prepareConfig () {
+  # Set the Coordinator Address
+  sed -i 's/"coordinatorAddress": \("\).*\("\)/"coordinatorAddress": \1'$(cat $folder_config/../merkle-tree.addr)'\2/g' ./my-network.json
+
+  # Set the coordinator.mwm
+  sed -i 's/"mwm": [[:digit:]]\+/"mwm": '$(cat $folder_config/config-node.json | grep \"mwm\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
+
+  # Set the coordinator.securityLevel
+  sed -i 's/"coordinatorSecurityLevel": [:digit:]]\+/"coordinatorSecurityLevel": '$(cat $folder_config/config-node.json | grep \"securityLevel\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
+
+  # Set in the Front-End App configuration the API endpoint
+  sed -i 's/"apiEndpoint": \("\).*\("\)/"apiEndpoint": \1http:\/\/localhost:4000\2/g' ./config/webapp.config.local.json
+}
+
+# Copies the configuration
+copyConfig () {
   if ! [ -d $APP_DATA ]; then
     mkdir $APP_DATA
   fi
@@ -88,7 +113,12 @@ installExplorer () {
   # We stop container after having source code available otherwise docker-compose would fail
   stopContainers
 
-  prepareConfig
+  # If the input parameter is a folder with config then we need to build it
+  if [ "$is_config_folder" = true ]; then
+    buildConfig
+  fi
+
+  copyConfig
 }
 
 startExplorer () {
