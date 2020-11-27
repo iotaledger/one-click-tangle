@@ -73,7 +73,7 @@ buildConfig() {
   sed -i 's/"mwm": [[:digit:]]\+/"mwm": '$(cat $folder_config/config-node.json | grep \"mwm\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
 
   # Set the coordinator.securityLevel
-  sed -i 's/"coordinatorSecurityLevel": [:digit:]]\+/"coordinatorSecurityLevel": '$(cat $folder_config/config-node.json | grep \"securityLevel\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
+  sed -i 's/"coordinatorSecurityLevel": [[:digit:]]\+/"coordinatorSecurityLevel": '$(cat $folder_config/config-node.json | grep \"securityLevel\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
 
   # Set in the Front-End App configuration the API endpoint
   sed -i 's/"apiEndpoint": \("\).*\("\)/"apiEndpoint": \1http:\/\/localhost:4000\2/g' ./config/webapp.config.local.json
