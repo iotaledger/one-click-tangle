@@ -28,7 +28,7 @@ The Hornet Dashboard (available through HTTP port `8081`) also comes in handy as
 The summary of containers running and ports exposed is as follows: 
 
 | Component           | Container name    | Ports exposed                    |
-| ------------------- |:-----------------:| --------------------------------:|
+| ------------------- | ----------------- | :------------------------------- |
 | Hornet Initial Node | `node1`           | `14265`, `15600`, `8081`, `5556` |
 | Coordinator         | `coo`             | `15600`                          |
 | Spammer             | `spammer`         | `14265`, `15600`                 |
@@ -37,13 +37,13 @@ The summary of containers running and ports exposed is as follows:
 
 The summary of published services is as follows: 
 
-| Service          | Container name     | Port    |
-| ---------------- |:------------------:| -------:|
-| IOTA Protocol    | `node1`            | `14265` |
-| IOTA Peering     | `node1`            | `15600` |
-| Dashboard        | `node1`            | `8081`  |
-| Explorer API     | `explorer-api`     | `4000`  |
-| Explorer Web App | `explorer-webapp`  | `8082`  |
+| Service          | Container name    | Port    |
+| ---------------- | ----------------- | ------- |
+| IOTA Protocol    | `node1`           | `14265` |
+| IOTA Peering     | `node1`           | `15600` |
+| Dashboard        | `node1`           | `8081`  |
+| Explorer API     | `explorer-api`    | `4000`  |
+| Explorer Web App | `explorer-webapp` | `8082`  |
 
 
 The Architecture described above can be easily transitioned to production-ready by incorporating a reverse proxy leveraging [NGINX](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#). As a result the amount of ports exposed to the outside world can be reduced or load balancing between the nodes of your Private Tangle can be achieved. IOTA Foundation intends to provide automatic, "one click" deployment of these kind of enhanced architectures in the next version of this software. 
