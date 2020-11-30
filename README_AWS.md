@@ -18,6 +18,8 @@ On the AWS Marketplace you can find the Private Tangle product [here](https://aw
 
 8. Please note that the Private Tangle related config files are located at `IOTA-Tangle-Node-Deployment/hornet-private-net/config/`. The Tangle DB files are located at `db/private-tangle`. 
 
+More details on what happens under the hood can be found [here](./tutorial-private-tangle.md). 
+
 # Sanity Checks
 
 Once the process finishes you should see at least the following docker containers up and running:
