@@ -8,19 +8,43 @@ IOTA [mainnet](https://docs.iota.org/docs/getting-started/1.1/networks/mainnet) 
 
 The figure below depicts a minimal architecture of a Private Tangle Deployment using [Docker](https://docker.io). 
 
+![Private Tangle Architecture](one-click-private-tangle-architecture.png "Private Tangle Architecture")
+
 There are three main nodes identified: 
 
-* The **Coordinator**, as described [here](https://docs.iota.org/docs/getting-started/1.1/the-tangle/the-coordinator), docker container hostname `coo`. The Coordinator emits milestones periodically and has to be bootstrapped and set up appropriately, as explained [here](https://docs.iota.org/docs/hornet/1.1/tutorials/set-up-a-private-tangle-hornet). 
+* The **Coordinator**, as described [here](https://docs.iota.org/docs/getting-started/1.1/the-tangle/the-coordinator). It emits milestones periodically and has to be bootstrapped and set up appropriately, as explained [here](https://docs.iota.org/docs/hornet/1.1/tutorials/set-up-a-private-tangle-hornet). 
 
-* The **Spammer**, docker container hostname `spammer`. Node that sends periodically `0` value transactions to the Private Tangle, thus enabling a minimal transaction load to support transaction approval as per the IOTA protocol. 
+* The **Spammer**. Node that sends periodically `0` value transactions to the Private Tangle, thus enabling a minimal transaction load to support transaction approval as per the IOTA protocol. 
 
-* An initial **Regular Hornet Node**, docker container hostname `node1`. It is exposed to the outside through the IOTA protocol (port `14265`) to be the recipient of transactions or to peer with other Nodes (through port `15600`) that can later [join](https://docs.iota.org/docs/hornet/1.1/tutorials/set-up-a-private-tangle-hornet#step-4-add-more-hornet-nodes-to-your-private-tangle) the same Private Tangle. 
+* An initial **Regular Hornet Node**. It is exposed to the outside through the IOTA protocol (port `14265`) to be the recipient of transactions or to peer with other Nodes (through port `15600`) that can later [join](https://docs.iota.org/docs/hornet/1.1/tutorials/set-up-a-private-tangle-hornet#step-4-add-more-hornet-nodes-to-your-private-tangle) the same Private Tangle. 
 
 These three nodes are peered among them. As our architecture is based on Docker so that each node runs within a Docker Container and all containers are attached to the same network named `private-tangle`.  
 
-In addition, to make the Private Tangle more usable, it is very convenient to deploy a Tangle Explorer similar to the one at [https://explorer.iota.org](https://explorer.iota.org). As a result all the participants in the network will be able to browse and visualize transactions or IOTA Streams channels.  The Tangle Explorer deployment involves two different containers, one with the REST API listening at port `4000` and one with the Web Application listening at port `8082`. The Tangle Explorer also uses zeroMQ to watch what is happening on the Tangle. That is the rationale for having a connection between the Explorer's REST API Container and `node1` through port `5556`. 
+In addition, to make the Private Tangle more usable, it is very convenient to deploy a Tangle Explorer similar to the one at [https://explorer.iota.org](https://explorer.iota.org). As a result all the participants in the network will be able to browse and visualize transactions or IOTA Streams channels.  The Tangle Explorer deployment involves two different containers, one with the REST API listening at port `4000` and one with the Web Application listening at port `8082`. The Tangle Explorer also uses zeroMQ to watch what is happening on the Tangle. That is the rationale for having a connection between the Explorer's REST API Container and the Hornet Node through port `5556`. 
 
 The Hornet Dashboard (available through HTTP port `8081`) also comes in handy as a way to monitor and ensure that your Private Tangle Nodes are in sync and performing on a good fashion.
+
+
+The summary of containers running and ports exposed is as follows: 
+
+| Component           | Container name    | Ports exposed                    |
+| ------------------- |:-----------------:| --------------------------------:|
+| Hornet Initial Node | `node1`           | `14265`, `15600`, `8081`, `5556` |
+| Coordinator         | `coo`             | `15600`                          |
+| Spammer             | `spammer`         | `14265`, `15600`                 |
+| Explorer API        | `explorer-api`    | `4000`                           |
+| Explorer Web App    | `explorer-webapp` | `80`                             |
+
+The summary of published services is as follows: 
+
+| Service          | Container name     | Port    |
+| ---------------- |:------------------:| -------:|
+| IOTA Protocol    | `node1`            | `14265` |
+| IOTA Peering     | `node1`            | `15600` |
+| Dashboard        | `node1`            | `8081`  |
+| Explorer API     | `explorer-api`     | `4000`  |
+| Explorer Web App | `explorer-webapp`  | `8082`  |
+
 
 The Architecture described above can be easily transitioned to production-ready by incorporating a reverse proxy leveraging [NGINX](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#). As a result the amount of ports exposed to the outside world can be reduced or load balancing between the nodes of your Private Tangle can be achieved. IOTA Foundation intends to provide automatic, "one click" deployment of these kind of enhanced architectures in the next version of this software. 
 
@@ -38,7 +62,11 @@ The Private Tangle installed will have a Merkle Tree of Depth `24` and will take
 
 The Parameters of this "one click" installation are as follows:
 
-
+* Merkle Treep Depth: 
+* Coordinator Milestones Period:
+* MWM: 
+* Coordinator Security Level:
+* Spammer Settings, see [](). 
 
 ## "One Click" Private Tangle deployment on any Docker-enabled machine
 
@@ -130,37 +158,7 @@ Set up all the folders needed
 
 ```console
 cd ../explorer
-cp 
-```
-
-Set the Coordinator Address (manually or with sed as below)
-
-```
-sed -i 's/"coordinatorAddress": \("\).*\("\)/"coordinatorAddress": \1'$(cat ../hornet-private-net/merkle-tree.addr)'\2/g' ./my-network.json
-```
-
-Then we need to set the MWM (manually or with sed as below)
-
-```
-sed -i 's/"mwm": [[:digit:]]\+/"mwm": '$(cat ../hornet-private-net/config/config-node.json | grep \"mwm\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
-```
-
-Coordinator security level
-
-```console
-sed -i 's/"coordinatorSecurityLevel": [:digit:]]\+/"coordinatorSecurityLevel": '$(cat ../hornet-private-net/config/config-node.json | grep \"securityLevel\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
-```
-
-the API endpoint of the Explorer front-end
-
-```console
-sed -i 's/"apiEndpoint": \("\).*\("\)/"apiEndpoint": \1http:\/\/'localhost':4000\2/g' ./config/webapp.config.local.json
-```
-
-An finally install the Explorer:
-
-```console
-./tangle-explorer.sh start ./my-network.json
+tangle-explorer start ../hornet-private-net
 ```
 
 Afterwards you should find the following additional docker containers up and running:
