@@ -29,6 +29,8 @@ The code is composed of:
 This is beta software, so there may be issues.
 Please report any issues in our [issue tracker](https://github.com/iotaledger/tangle-deployment/issues/new).
 
+Related Community Projects: [Hornet Playbook](https://github.com/nuriel77/hornet-playbook)
+
 ## Prerequisites
 
 To execute these scripts you need [Docker](https://www.docker.com) and Docker Compose. **Docker Compose** is a tool for defining and running multi-container Docker applications. A series [YAML files](./docker-compose.yaml) are used to configure the required services. This means all container services can be brought up in a single command. Docker Compose is installed by default as part of Docker for Windows and Docker for Mac, however Linux users will need to follow the instructions found [here](https://docs.docker.com/compose/install/)
