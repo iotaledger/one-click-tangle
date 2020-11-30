@@ -1,12 +1,12 @@
-# "One Click" Private Tangle Deployment Tutorial
+# "One Click" Private Tangle Tutorial
 
 ## Introduction
 
 IOTA [mainnet](https://docs.iota.org/docs/getting-started/1.1/networks/mainnet) and [devnet](https://docs.iota.org/docs/getting-started/1.1/networks/devnet) are public IOTA Networks where you can develop permissionless applications based on the Tangle. However, there can be situations where you would like to run a [Private IOTA Network](https://docs.iota.org/docs/compass/1.0/overview) (Private Tangle) so that only a limited set of stakeholders or Nodes can participate. To support the IOTA Community working on these kind of scenarios, a set of Docker-based tools and pre-configured setups allow the deployment of a ([hornet-based](https://github.com/gohornet/hornet)) Private Tangle in **"one click"**. These tools are publicly available at the [tangle-deployment](https://github.com/iotaledger/tangle-deployment) repository. In addition, the IOTA Foundation has integrated them to be ready to be used on the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B08M4933Y3/) and, in the future, in other Cloud marketplaces.
 
-## Target Architecture of a Private Tangle
+## MVP Architecture of a Private Tangle
 
-The figure below depicts a minimal architecture of a Private Tangle Deployment using [Docker](https://docker.io). 
+The figure below depicts a minimal viable architecture of a Private Tangle Deployment using [Docker](https://docker.io). 
 
 ![Private Tangle Architecture](one-click-private-tangle-architecture.png "Private Tangle Architecture")
 
