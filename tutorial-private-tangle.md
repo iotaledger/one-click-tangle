@@ -156,7 +156,7 @@ Once we have our Private Tangle up and running, we can install and run a Tangle 
 
 ```console
 cd ../explorer
-tangle-explorer install ../hornet-private-net
+./tangle-explorer install ../hornet-private-net
 ```
 
 Automatically the Tangle Explorer will be configured with the parameters of our Private Tangle, and once the docker build process finishes you should find the following additional docker containers up and running:
