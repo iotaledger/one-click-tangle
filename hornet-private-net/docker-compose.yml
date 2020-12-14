@@ -11,6 +11,7 @@ services:
     networks:
       - tangle
     image: gohornet/hornet
+    restart: always
     container_name: coo
     environment:
       COO_SEED: 
@@ -29,6 +30,7 @@ services:
     networks:
       - tangle
     image: gohornet/hornet
+    restart: always
     container_name: node1
     environment:
       COO_SEED: 
@@ -53,6 +55,7 @@ services:
     networks:
       - tangle
     image: gohornet/hornet
+    restart: always
     container_name: spammer
     environment:
       COO_SEED: 
