@@ -28,7 +28,8 @@
       "broadcastTransactions",
       "findTransactions",
       "storeTransactions",
-      "getTrytes"
+      "getTrytes",
+      "createSnapshotFile"
     ],
     "whitelistedAddresses": [],
     "bindAddress": "0.0.0.0:14265",
