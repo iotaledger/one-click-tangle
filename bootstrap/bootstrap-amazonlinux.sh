@@ -34,9 +34,9 @@ dockerInstall () {
 }
 
 scriptsInstall () {
-  git clone https://github.com/iotaledger/tangle-deployment
+  git clone https://github.com/iotaledger/one-click-tangle
 
-  cd tangle-deployment/hornet-private-net
+  cd one-click-tangle/hornet-private-net
   # The script that will launch all the process
   chmod +x ./private-tangle.sh
   chmod +x ../explorer/tangle-explorer.sh
