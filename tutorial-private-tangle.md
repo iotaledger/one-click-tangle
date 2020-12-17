@@ -49,7 +49,7 @@ The deployment architecture described above can be easily transitioned to produc
 
 To support the deployment of a Private Tangle the IOTA Community has developed a set of shell scripts and configuration templates to make it easier to deploy a (Docker based) Private Tangle with the architecture described above. These scripts automate the steps described [here](https://docs.iota.org/docs/hornet/1.1/tutorials/set-up-a-private-tangle-hornet#step-4-add-more-hornet-nodes-to-your-private-tangle). You can also customize the [default configuration files](./hornet-private-net/config), for instance if you want to enable extra [Hornet plugins](https://docs.iota.org/docs/hornet/1.1/overview). 
 
-But now let's see how we can launch our Private Tangle via a "single click". We have two options. Through the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B08M4933Y3/) or through any [Docker-enabled machine](#one-click-private-one-click-tangle-on-any-docker-enabled-machine). 
+But now let's see how we can launch our Private Tangle via a "single click". We have two options. Through the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B08M4933Y3/) or through any [Docker-enabled machine](#one-click-private-tangle-deployment-on-any-docker-enabled-machine). 
 
 ## "One Click" Private Tangle on AWS
 
@@ -97,7 +97,7 @@ Then, ensure that the `private-tangle.sh` script has execution permissions:
 
 ```console
 cd one-click-tangle/hornet-private-net
-chmod +x ./private-tangle-sh
+chmod +x ./private-tangle.sh
 ```
 
 ### Merkle Tree Depth
