@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://discord.iota.org/" style="text-decoration:none;"><img src="https://img.shields.io/badge/Discord-9cf.svg?logo=discord" alt="Discord"></a>
     <a href="https://iota.stackexchange.com/" style="text-decoration:none;"><img src="https://img.shields.io/badge/StackExchange-9cf.svg?logo=stackexchange" alt="StackExchange"></a>
-    <a href="https://github.com/iotaledger/tangle-deployment/blob/master/LICENSE" style="text-decoration:none;"><img src="https://img.shields.io/github/license/iotaledger/tangle-deployment.svg" alt="MIT license"></a>
+    <a href="https://github.com/iotaledger/one-click-tangle/blob/master/LICENSE" style="text-decoration:none;"><img src="https://img.shields.io/github/license/iotaledger/one-click-tangle.svg" alt="MIT license"></a>
 </p>
       
 <p align="center">
@@ -27,7 +27,7 @@ The code is composed of:
 - [**`bootstrap`:**](bootstrap/README.md) Scripts that support full IOTA's Private Tangle Deployment on the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B08M4933Y3).
 
 This is beta software, so there may be issues.
-Please report any issues in our [issue tracker](https://github.com/iotaledger/tangle-deployment/issues/new).
+Please report any issues in our [issue tracker](https://github.com/iotaledger/one-click-tangle/issues/new).
 
 Related Community Projects: [Hornet Playbook](https://github.com/nuriel77/hornet-playbook)
 
