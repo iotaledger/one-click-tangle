@@ -65,7 +65,7 @@ The depth of the Merkle Tree determines how many milestones the Coordinator can 
 
 You may also want to [deploy a Tangle Explorer](./explorer). 
 
-Additional instructions can be found on [docs.iota.org](https://docs.iota.org) and on this [tutorial](./tutorial-private-tangle.md). 
+Additional instructions can be found on this [tutorial](https://docs.iota.org/docs/hornet/1.1/tutorials/one-click-private-tangle). 
 
 ## Supporting the project
 
