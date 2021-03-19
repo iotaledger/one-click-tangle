@@ -37,7 +37,7 @@
   "snapshots": {
     "loadType": "global",
     "local": {
-      "path": "/app/snapshots/private-tangle/export.bin"
+      "path": "/app/snapshots/private-tangle/export-coo.bin"
     },
     "global": {
         "path": "/app/snapshots/private-tangle/snapshot.csv",
