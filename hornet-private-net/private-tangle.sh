@@ -104,7 +104,6 @@ volumeSetup () {
   ## Change permissions so that the Tangle data can be written (hornet user)
   ## TODO: Check why on MacOS this cause permission problems
   sudo chown 39999:39999 db/private-tangle 
-  sudo chown 39999:39999 snapshots/private-tangle 
 
 }
 
@@ -118,6 +117,9 @@ startTangle () {
 
   # Initial address for the snapshot
   generateInitialAddress
+
+  # Change permissions for the snapshots 
+  sudo chown 39999:39999 snapshots/private-tangle
 
   setupCoordinator
 
