@@ -10,7 +10,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet
+    image: gohornet/hornet:legacy-v0.5.8
     restart: always
     container_name: coo
     environment:
@@ -29,7 +29,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet
+    image: gohornet/hornet:legacy-v0.5.8
     restart: always
     container_name: node1
     environment:
@@ -54,7 +54,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet
+    image: gohornet/hornet:legacy-v0.5.8
     restart: always
     container_name: spammer
     environment:
