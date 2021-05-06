@@ -22,7 +22,8 @@ This repository is where the IOTA Foundation hosts the open-source code for depl
 
 The code is composed of:
 
-- [**`private-tangle`:**](private-tangle/README.md) Script to deploy a new Private Tangle composed of Coordinator, Spammer and one regular Hornet Node. 
+- [**`hornet`:**](hornet-mainnet/README.md) Script to deploy a new Hornet Node. 
+- [**`private-tangle`:**](hornet-private-net/README.md) Script to deploy a new Private Tangle composed of Coordinator, Spammer and one regular Hornet Node. 
 - [**`explorer`:**](explorer/README.md) Script to deploy a new [Tangle Explorer](https://github.com/iotaledger/explorer).
 - [**`bootstrap`:**](bootstrap/README.md) Scripts that support full IOTA's Private Tangle Deployment on the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B08M4933Y3).
 
@@ -46,6 +47,24 @@ Please ensure that you are using Docker version `18.03` or higher and Docker Com
 necessary.
 
 ## Getting started
+
+### Getting started - Hornet
+
+First you need to clone the Repository
+
+```
+git clone https://github.com/iotaledger/one-click-tangle
+```
+
+Afterwards you can install a Hornet Node by
+
+```
+cd hornet-mainnet
+chmod +x hornet.sh
+./hornet.sh start <peering address>
+```
+
+### Getting started - Private Tangle
 
 First you need to clone the Repository
 
@@ -76,4 +95,3 @@ See our [contributing guidelines](.github/CONTRIBUTING.md) for more information.
 ## Joining the discussion
 
 If you want to get involved in the community, need help with getting set up, have any issues or just want to discuss IOTA, Distributed Registry Technology (DRT), and IoT with other people, feel free to join our [Discord](https://discord.iota.org/).
-

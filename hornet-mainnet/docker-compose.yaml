@@ -1,0 +1,29 @@
+version: "3"
+
+networks:
+    tangle:
+      name: tangle
+
+services:
+    hornet:
+        hostname: hornet
+        networks:
+            - tangle
+        image: hornet:dev2
+        restart: always
+        container_name: hornet
+        expose:
+        - 14265
+        - 15600
+        - 5556
+        ports:
+        - "14265:14265"
+        - "15600:15600"
+        - "8081:8081"
+        volumes:
+        - ./config/config.json:/app/config.json:ro
+        - ./config/profiles.json:/app/profiles.json
+        - ./config/peering.json:/app/peering.json
+        - ./db/mainnet:/app/mainnetdb
+        - ./snapshots/mainnet:/app/snapshots/mainnet
+        - ./p2pstore:/app/p2pstore

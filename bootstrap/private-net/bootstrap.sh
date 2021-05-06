@@ -10,8 +10,8 @@ if [ -f ./bootstrap-amazonlinux.sh ]; then
   rm -f ./bootstrap-amazonlinux.sh
 fi
 
-wget https://raw.githubusercontent.com/iotaledger/one-click-tangle/master/bootstrap/parameters.sh
-wget https://raw.githubusercontent.com/iotaledger/one-click-tangle/master/bootstrap/bootstrap-amazonlinux.sh
+wget https://raw.githubusercontent.com/iotaledger/one-click-tangle/chrysalis/bootstrap/private-net/parameters.sh
+wget https://raw.githubusercontent.com/iotaledger/one-click-tangle/chrysalis/bootstrap/private-net/bootstrap-amazonlinux.sh
 
 chmod +x ./parameters.sh
 chmod +x ./bootstrap-amazonlinux.sh

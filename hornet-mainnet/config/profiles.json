@@ -1,0 +1,136 @@
+{
+  "custom": {
+    "caches": {
+      "addresses": {
+        "cacheTime": "100ms",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": false,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "children": {
+        "cacheTime": "1.5s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": false,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "indexations": {
+        "cacheTime": "100ms",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": false,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "milestones": {
+        "cacheTime": "500ms",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": false,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "messages": {
+        "cacheTime": "1.5s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": false,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "unreferencedMessages": {
+        "cacheTime": "100ms",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": false,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "incomingMessagesFilter": {
+        "cacheTime": "2s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": false,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      }
+    }
+  },
+  "debug": {
+    "caches": {
+      "addresses": {
+        "cacheTime": "1.5s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": true,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "children": {
+        "cacheTime": "1.5s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": true,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "indexations": {
+        "cacheTime": "1.5s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": true,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "milestones": {
+        "cacheTime": "1.5s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": true,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "messages": {
+        "cacheTime": "1.5s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": true,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "unreferencedMessages": {
+        "cacheTime": "1.5s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": true,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      },
+      "incomingMessagesFilter": {
+        "cacheTime": "1.5s",
+        "releaseExecutorWorkerCount": 10,
+        "leakDetection": {
+          "enabled": true,
+          "maxConsumersPerObject": 50,
+          "maxConsumerHoldTime": "30s"
+        }
+      }
+    }
+  }
+}
