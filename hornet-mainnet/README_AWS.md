@@ -16,6 +16,8 @@ If you want to install a different Hornet Docker image / version than `gohornet/
 
 # Dashboard
 
+You can get access to the Hornet dashboard by opening on your Web Browser the following page: `http://<your_ec2_machine_address>:8081`. 
+
 The username and password of the dashboard application is `admin`. You can set a new password by executing
 
 ```console
