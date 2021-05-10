@@ -1,6 +1,6 @@
 # Instructions to Set up a Chrysalis Hornet Node on AWS
 
-On the AWS Marketplace you can find the Hornet product [here](https://aws.amazon.com/marketplace/pp/B08M4933Y3). 
+On the AWS Marketplace you can find the Hornet product [here](https://aws.amazon.com/marketplace/TBD). 
 
 1. In the "Security Group Settings" before you launch the instance please click "Create New Based On Seller Settings" or make sure that ports, `8081` (Hornet's dashboard), `14265` (IOTA API), `15600` (IOTA Gossip Protocol) are exposed to the Internet. 
 
