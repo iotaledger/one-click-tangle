@@ -4,10 +4,11 @@
 
 scriptsInstall () {
   git clone https://github.com/iotaledger/one-click-tangle
+  cd one-click-tangle
   git fetch origin
   git checkout -b chrysalis origin/chrysalis
 
-  cd one-click-tangle/hornet-mainnet
+  cd hornet-mainnet
   # The script that will launch all the process
   chmod +x ./hornet.sh
 }
