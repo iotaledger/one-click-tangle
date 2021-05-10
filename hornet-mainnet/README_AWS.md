@@ -12,7 +12,7 @@ If you want to install a different Hornet Docker image / version than `gohornet/
 
 3. The bootstrap and installation process will be initiated. 
 
-4. Please note that the Hornet related config files are located at `IOTA-Tangle-Node-Deployment/hornet-mainnet/config/`. The Tangle DB files are located at `db/mainnet`. 
+4. Please note that the Hornet related config files are located at `one-click-tangle/hornet-mainnet/config/`. The Tangle DB files are located at `db/mainnet`. 
 
 # Dashboard
 
