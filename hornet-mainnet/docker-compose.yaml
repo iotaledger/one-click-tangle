@@ -7,6 +7,7 @@ networks:
 services:
     hornet:
         hostname: hornet
+        working_dir: /app
         networks:
             - tangle
         image: gohornet/hornet:latest
