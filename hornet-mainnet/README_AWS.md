@@ -23,7 +23,12 @@ The username and password of the dashboard application is `admin`. You can set a
 ```console
 docker-compose run --rm hornet tool pwdhash 
 ```
-and then edit the `config/config.json` file, changing the password hash and salt by the new values (under the  `dashboard` section). 
+and then edit the `config/config.json` file, changing the password hash and salt by the new values (under the  `dashboard` section). Afterwards you will need to restart Hornet by running: 
+
+```console
+./hornet.sh stop
+./hornet.sh start
+```
 
 # Peers 
 
@@ -44,3 +49,22 @@ CONTAINER ID   IMAGE                   COMMAND                  CREATED         
 eec6d1dd21c5   gohornet/hornet:latest             "/app/hornet"            10 minutes ago   Up 10 minutes   0.0.0.0:8081->8081/tcp, 0.0.0.0:14265->14265/tcp, 5556/tcp, 0.0.0.0:15600->15600/tcp, 14626/udp   hornet
 ```
 
+# Node Operations
+
+You can update Hornet to the latest version by running:
+
+```console
+./hornet.sh update
+```
+
+You can stop Hornet by running:
+
+```console
+./hornet.sh stop
+```
+
+You can reinstall Hornet (you will lose all data and configurations) by running:
+
+```console
+./hornet.sh install
+```
