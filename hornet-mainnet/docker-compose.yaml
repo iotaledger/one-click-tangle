@@ -9,7 +9,7 @@ services:
         hostname: hornet
         networks:
             - tangle
-        image: hornet:dev2
+        image: gohornet/hornet:latest
         restart: always
         container_name: hornet
         expose:
