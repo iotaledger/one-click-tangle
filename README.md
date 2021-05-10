@@ -61,7 +61,7 @@ Afterwards you can install a Hornet Node by
 ```
 cd hornet-mainnet
 chmod +x hornet.sh
-./hornet.sh start <peering address>
+./hornet.sh install
 ```
 
 ### Getting started - Private Tangle
