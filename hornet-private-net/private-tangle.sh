@@ -82,6 +82,9 @@ clean () {
     sudo rm -Rf ./db/private-tangle/spammer.db
   fi
 
+  if [ -d ./p2pstore ]; then
+    sudo rm -Rf ./p2pstore
+  fi
 }
 
 # Sets up the necessary directories if they do not exist yet
@@ -101,10 +104,18 @@ volumeSetup () {
     mkdir ./snapshots/private-tangle
   fi
 
+  if ! [ -d ./p2pstore ]; then
+    mkdir ./p2pstore
+  fi
+
   ## Change permissions so that the Tangle data can be written (hornet user)
   ## TODO: Check why on MacOS this cause permission problems
-  sudo chown 39999:39999 db/private-tangle 
-
+  if ! [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Setting permissions for Hornet..."
+    sudo chown -R 65532:65532 db 
+    sudo chown -R 65532:65532 snapshots 
+    sudo chown -R 65532:65532 p2pstore
+  fi 
 }
 
 startTangle () {
@@ -115,11 +126,8 @@ startTangle () {
   # And only cleaning when we want to really remove all previous state
   clean
 
-  # Initial address for the snapshot
-  generateInitialAddress
-
-  # Change permissions for the snapshots 
-  sudo chown 39999:39999 snapshots/private-tangle
+  # Initial snapshot
+  generateSnapshot
 
   setupCoordinator
 
@@ -227,21 +235,24 @@ setupCoordinator () {
   fi  
 }
 
-# Generates the initial address for the snapshot
-generateInitialAddress () {
-  echo "Generating an initial IOTA address holding all IOTAs..."
+# Generates the initial snapshot
+generateSnapshot () {
+  echo "Generating an initial snapshot..."
+  cd snapshots/private-tangle
 
-  local seed=$(generateSeed)
-  echo $seed > ./utils/node.seed 
+    # First a key pair is generated
+  docker-compose run --rm node hornet tool ed25519key > key-pair.txt
 
-  # Now we run a tiny Node.js utility to get the first address to be on the snapshot
-  docker-compose run --rm -w /usr/src/app address-generator sh -c 'npm install --prefix=/package "@iota/core" > /dev/null && node address-generator.js $(cat node.seed) 2> /dev/null > address.txt'
-  echo "$(cat ./utils/address.txt);2779530283277761" > ./snapshots/private-tangle/snapshot.csv
+  # Extract the public key
+  public_key=$(cat key-pair.txt | tail -1 | cut -d ":" -f 2 | sed "s/ //g")
 
-  rm -f ./utils/address.txt
-  mv ./utils/node.seed .
+  # Generate the address
+  docker-compose run --rm node hornet tool ed25519addr $public_key | cut -d ":" -f 2 > address.txt
 
-  echo "Initial Address generated. You can find the seed at node.seed"
+  # Generate the snapshot
+  docker-compose run --rm -v "$PWD:/output_dir" node hornet tool "private-tangle" "$(cat address)" 2779530283277761 /output_dir/full_snapshot.bin
+
+  echo "Initial Address generated. You can find the keys at key-pair.txt"
 }
 
 stopContainers () {
