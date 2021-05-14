@@ -100,13 +100,26 @@
         "disablePlugins": [
             "WarpSync",
             "Coordinator",
-            "Dashboard", "Profiling", "Prometheus",
-            "MQTT", "ZMQ"
-          ],
-          "enablePlugins": [ "Spammer", "URTS", "WebAPI" ]
+            "Dashboard",
+            "Profiling",
+            "Prometheus",
+            "MQTT",
+            "ZMQ"
+        ],
+        "enablePlugins": [
+            "Spammer",
+            "URTS",
+            "WebAPI"
+        ]
     },
     "spammer": {
-
+        "message": "one-click-tangle.",
+        "index": "HORNET Spammer",
+        "indexSemiLazy": "HORNET Spammer Semi-Lazy",
+        "cpuMaxUsage": 0.8,
+        "mpsRateLimit": 5.0,
+        "workers": 0,
+        "autostart": true
     },
     "p2p": {
         "bindMultiAddresses": [

@@ -98,15 +98,37 @@
         "alias": "coo",
         "profile": "auto",
         "disablePlugins": [
-            "URTS", "WarpSync",
+            "URTS",
+            "WarpSync",
             "Spammer",
-            "ZMQ", "MQTT", 
-            "Dashboard", "Prometheus", "Profiling"
-          ],
-          "enablePlugins": ["Coordinator", "WebAPI"]
+            "ZMQ",
+            "MQTT",
+            "Dashboard",
+            "Prometheus",
+            "Profiling"
+        ],
+        "enablePlugins": [
+            "Coordinator",
+            "WebAPI"
+        ]
     },
     "coordinator": {
-
+        "stateFilePath": "coordinator.state",
+        "interval": "10s",
+        "checkpoints": {
+            "maxTrackedMessages": 10000
+        },
+        "tipsel": {
+            "minHeaviestBranchUnreferencedMessagesThreshold": 20,
+            "maxHeaviestBranchTipsPerCheckpoint": 10,
+            "randomTipsPerCheckpoint": 2,
+            "heaviestBranchSelectionTimeout": "100ms"
+        },
+        "quorum": {
+            "enabled": false,
+            "groups": {},
+            "timeout": "2s"
+        }
     },
     "p2p": {
         "bindMultiAddresses": [
