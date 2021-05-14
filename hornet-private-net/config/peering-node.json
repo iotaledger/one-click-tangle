@@ -1,16 +1,12 @@
 {
-  "acceptAnyConnection": false,
-  "maxPeers": 5,
   "peers": [
     {
-      "identity": "coo:15600",
       "alias": "coo",
-      "preferIPv6": false
+      "multiAddress": "/ip4/coo/tcp/15600/p2p/"
     },
     {
-      "identity": "spammer:15600",
       "alias": "spammer",
-      "preferIPv6": false
+      "multiAddress": "/ip4/spammer/tcp/15600/p2p/"
     }
   ]
 }

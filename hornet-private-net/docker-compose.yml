@@ -10,7 +10,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet
+    image: hornet:dev2
     restart: always
     container_name: coo
     environment:
@@ -22,6 +22,7 @@ services:
       - ./config/profiles.json:/app/profiles.json:ro
       - ./config/peering-coo.json:/app/peering.json:ro
       - ./db/private-tangle:/app/db
+      - ./p2pstore:/app/p2pstore
       - ./snapshots:/app/snapshots
   
   node:
@@ -29,7 +30,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet
+    image: hornet:dev2
     restart: always
     container_name: node1
     environment:
@@ -47,6 +48,7 @@ services:
       - ./config/profiles.json:/app/profiles.json
       - ./config/peering-node.json:/app/peering.json
       - ./db/private-tangle:/app/db
+      - ./p2pstore:/app/p2pstore
       - ./snapshots:/app/snapshots
   
   spammer:
@@ -54,7 +56,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet
+    image: hornet:dev2
     restart: always
     container_name: spammer
     environment:
@@ -67,6 +69,7 @@ services:
       - ./config/profiles.json:/app/profiles.json
       - ./config/peering-spammer.json:/app/peering.json
       - ./db/private-tangle:/app/db
+      - ./p2pstore:/app/p2pstore
       - ./snapshots:/app/snapshots
 
   nginx:
@@ -81,14 +84,3 @@ services:
         - 9000:80
       volumes: 
         - ./logs:/usr/share/nginx/html
-
-  address-generator:
-    networks:
-      - tangle
-    image: node:12
-    container_name: address-generator
-    environment: 
-      NPM_CONFIG_LOGLEVEL: silent
-      NODE_PATH: /package/node_modules
-    volumes:
-      - ./utils:/usr/src/app
