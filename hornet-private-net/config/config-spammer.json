@@ -130,7 +130,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "",
+        "identityPrivateKey": "fbdb3afd399c6a91c1bc59a1ef974b6e59e83bc710bba8519898c3af2da58142a7e3a0635a8121416d2db1fb3a905c7a9a58d1fd4f3f5b64b8dc5f5dfe6e3551",
         "peerStore": {
             "path": "./p2pstore/spammer"
         },

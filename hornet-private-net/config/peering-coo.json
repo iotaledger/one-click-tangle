@@ -1,12 +1,12 @@
-{
-  "peers": [
-    {
-      "alias": "node1",
-      "multiAddress": "/ip4/node/tcp/15600/p2p/"
-    },
-    {
-      "alias": "spammer",
-      "multiAddress": "/ip4/spammer/tcp/15600/p2p/"
-    }
-  ]
-}
+  {
+    "peers": [
+      {
+        "alias": "node",
+        "multiAddress": "/ip4/node/tcp/15600/p2p/12D3KooWKKK2FGWnAD32HkQfv2Bib93roKfVtzN327dfpXNesnLe"
+      },
+      {
+        "alias": "spammer",
+        "multiAddress": "/ip4/spammer/tcp/15600/p2p/12D3KooWM7jZvHeGFdXU4V5ow1CgzjJKeNK1QLsViyXTXMKsipDv"
+      }
+    ]
+  } 

@@ -120,10 +120,10 @@ startTangle () {
   generateSnapshot
 
   # P2P identities are generated
-  # setupIdentities
+  setupIdentities
 
   # Peering of the nodes is configured
-  # setupPeering
+  setupPeering
 
   # setupCoordinator
 

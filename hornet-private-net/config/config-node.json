@@ -118,7 +118,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "",
+        "identityPrivateKey": "295905e7ffb2f3a78cfb96d1eaf6da6aff8c2cb7feaa8534deb1674fdd3577418d2377d0be9a734bcefe9dd22d75ef2f3f9ece0e1a5fb150540e5e3de7817007",
         "peerStore": {
             "path": "./p2pstore/node"
         },
