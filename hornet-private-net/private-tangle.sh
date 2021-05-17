@@ -26,8 +26,6 @@ if [ "$command" == "start" ]; then
   fi
 fi
 
-MERKLE_TREE_DEPTH=$2
-
 #######
 # TODO: Enable Hornet to notify bootstrap without relying on waiting
 #######
@@ -48,19 +46,6 @@ clean () {
   stopContainers
 
   # We need sudo here as the files are going to be owned by the hornet user
-  
-  if [ -f $MERKLE_TREE_LOG_FILE ]; then
-    sudo rm $MERKLE_TREE_LOG_FILE
-  fi
-
-  if [ -f ./logs/coo-bootstrap.log ]; then
-    sudo rm ./logs/coo-bootstrap.log
-  fi
-
-  if [ -f ./db/private-tangle/coordinator.tree ]; then
-    sudo rm ./db/private-tangle/coordinator.tree
-  fi
-
   if [ -f ./db/private-tangle/coordinator.state ]; then
     sudo rm ./db/private-tangle/coordinator.state
   fi
@@ -80,6 +65,10 @@ clean () {
   if [ -d ./p2pstore ]; then
     sudo rm -Rf ./p2pstore
   fi
+
+  if [ -d ./snapshots/private-tangle ]; then
+    sudo rm -Rf ./snapshots/private-tangle/*
+  fi
 }
 
 # Sets up the necessary directories if they do not exist yet
@@ -87,6 +76,9 @@ volumeSetup () {
   ## Directory for the Tangle DB files
   if ! [ -d ./db ]; then
     mkdir ./db
+  fi
+
+  if ! [ -d ./db/private-tangle ]; then
     mkdir ./db/private-tangle
   fi
 
@@ -96,6 +88,9 @@ volumeSetup () {
 
   if ! [ -d ./snapshots ]; then
     mkdir ./snapshots
+  fi
+
+  if ! [ -d ./snapshots/private-tangle ]; then
     mkdir ./snapshots/private-tangle
   fi
 
@@ -125,10 +120,10 @@ startTangle () {
   generateSnapshot
 
   # P2P identities are generated
-  setupIdentities
+  # setupIdentities
 
   # Peering of the nodes is configured
-  setupPeering
+  # setupPeering
 
   # setupCoordinator
 
@@ -142,6 +137,31 @@ startTangle () {
   # docker-compose --log-level ERROR up -d node
 }
 
+### 
+### Generates the initial snapshot
+### 
+generateSnapshot () {
+  echo "Generating an initial snapshot..."
+    # First a key pair is generated
+  docker-compose run --rm node hornet tool ed25519key > key-pair.txt
+
+  # Extract the public key
+  public_key=$(cat key-pair.txt | tail -1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r") 
+  echo "$public_key"
+
+  # Generate the address
+  docker-compose run --rm node hornet tool ed25519addr "$public_key" | cut -d ":" -f 2\
+   | sed "s/ \+//g" | tr -d "\n" | tr -d "\r" > address.txt
+
+  # Generate the snapshot
+  cd snapshots/private-tangle
+  docker-compose run --rm -v "$PWD:/output_dir" node hornet tool snapgen "private-tangle"\
+   "$(cat ../../address.txt)" 2779530283277761 /output_dir/full_snapshot.bin
+
+  echo "Initial Ed25519 Address generated. You can find the keys at key-pair.txt and the address at address.txt"
+
+  cd .. && cd ..
+}
 
 setupCoordinator () {
   generateMerkleTree
@@ -256,28 +276,6 @@ setupPeering () {
   setupPeerIdentity "coo" "$coo_peerID" "spammer" "$spammer_peerID" config/peering-node.json
 }
 
-
-### 
-### Generates the initial snapshot
-### 
-generateSnapshot () {
-  echo "Generating an initial snapshot..."
-  cd snapshots/private-tangle
-
-    # First a key pair is generated
-  docker-compose run --rm node hornet tool ed25519key > key-pair.txt
-
-  # Extract the public key
-  public_key=$(cat key-pair.txt | tail -1 | cut -d ":" -f 2 | sed "s/ //g")
-
-  # Generate the address
-  docker-compose run --rm node hornet tool ed25519addr $public_key | cut -d ":" -f 2 > address.txt
-
-  # Generate the snapshot
-  docker-compose run --rm -v "$PWD:/output_dir" node hornet tool "private-tangle" "$(cat address)" 2779530283277761 /output_dir/full_snapshot.bin
-
-  echo "Initial Address generated. You can find the keys at key-pair.txt"
-}
 
 stopContainers () {
   echo "Stopping containers..."
