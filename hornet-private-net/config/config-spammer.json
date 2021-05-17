@@ -50,7 +50,7 @@
         "deltaSizeThresholdPercentage": 50.0
     },
     "protocol": {
-        "networkID": "chrysalis-private-tangle",
+        "networkID": "private-tangle",
         "bech32HRP": "iota-pt",
         "minPoWScore": 2000,
         "milestonePublicKeyCount": 2,

@@ -129,6 +129,9 @@ startTangle () {
   # Initial snapshot
   generateSnapshot
 
+  # P2P identities are generated
+  generateP2pIdentities
+
   setupCoordinator
 
   # We could get rid of nginx as we no longer need it. We show a message to the user. 
@@ -233,6 +236,26 @@ setupCoordinator () {
     clean
     exit 127
   fi  
+}
+
+generateP2PIdentity () {
+  return $(docker-compose run --rm node hornet tool p2pidentity) 
+}
+
+setupIdentityPrivateKey () {
+
+}
+
+setupPeers () {
+  
+}
+
+# Generates the P2P identities of the Nodes and configures them
+generateP2PIdentities () {
+  generateP2PIdentity > node1.identity.txt
+  generateP2PIdentity > coo.identity.txt
+  generateP2PIdentity > spammer.identity.txt
+  
 }
 
 # Generates the initial snapshot
