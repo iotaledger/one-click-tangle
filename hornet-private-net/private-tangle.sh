@@ -2,7 +2,7 @@
 
 # Script to run a new Private Tangle
 # private_tangle.sh start .- Starts a new Tangle
-# private_tangle.sh stop .- Stops the Tangle
+# private_tangle.sh stop  .- Stops the Tangle
 
 set -e
 
@@ -42,11 +42,6 @@ MERKLE_TREE_LOG_FILE=./logs/merkle-tree-generation.log.html
 
 ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))
 
-# Generates a new seed ensuring last trit is always 0
-generateSeed () {
-  local seed=$(cat /dev/urandom | LC_ALL=C tr -dc 'A-Z9' | fold -w 80 | head -n 1)$(cat /dev/urandom | LC_ALL=C tr -dc 'A-DW-Z9' | fold -w 1 | head -n 1)
-  echo "$seed"
-} 
 
 clean () {
   # TODO: Differentiate between start, restart and remove
@@ -130,74 +125,23 @@ startTangle () {
   generateSnapshot
 
   # P2P identities are generated
-  generateP2pIdentities
+  setupIdentities
 
-  setupCoordinator
+  # Peering of the nodes is configured
+  setupPeering
 
-  # We could get rid of nginx as we no longer need it. We show a message to the user. 
-  # docker-compose rm -s -f nginx
-  completed_message="Your Merkle Tree has already been generated.  <a href=\"http://$ip_address:8081\">Go to Hornet Node Dashboard</a>"
-  echo '<!DOCTYPE html><html><body><p style="color: red;">' > $MERKLE_TREE_LOG_FILE 
-  echo "$completed_message" >> $MERKLE_TREE_LOG_FILE 
-  echo '</p></body></html>' >> $MERKLE_TREE_LOG_FILE
+  # setupCoordinator
 
   # Run the coordinator
-  docker-compose --log-level ERROR up -d coo
+  # docker-compose --log-level ERROR up -d coo
 
   # Run the spammer
-  docker-compose --log-level ERROR up -d spammer
+  # docker-compose --log-level ERROR up -d spammer
 
   # Run a regular node 
-  docker-compose --log-level ERROR up -d node
+  # docker-compose --log-level ERROR up -d node
 }
 
-generateMerkleTree () {
-  echo "Generating a new seed for the coordinator..."
-
-  # We ensure last trit is 0
-  export COO_SEED=$(generateSeed)
-  echo $COO_SEED > coordinator.seed 
-
-  echo "Done. Check coordinator.seed"
-  
-  echo "Generating Merkle Tree... of depth ${MERKLE_TREE_DEPTH}. This can take time ⏳ ..."
-
-  # TODO: Use a loop to avoid duplication Add the Merkle Tree Depth to the Configuration
-  sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-coo.json
-  # Tree Depth has to be copied to the different nodes of the network
-  sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-node.json
-  sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-spammer.json
-
-  # Running NGINX Server that will allow us to check the logs
-  docker-compose --log-level ERROR up -d nginx
-
-  if [ $? -eq 0 ]; 
-    then
-      echo "You can check logs at curl http://localhost:9000/merkle-tree-generation.log.html"
-      if [ "$AMAZON_LINUX" = "true" ];
-        then
-          echo "Your log files are also available at http://$ip_address:9000/merkle-tree-generation.log.html"
-      fi
-    else 
-      echo "Warning: NGINX Logs Server could not be started. You can  manuallycheck logs at $MERKLE_TREE_LOG_FILE"
-  fi
-
-  echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="5"></head><body><pre>' >> $MERKLE_TREE_LOG_FILE
-  docker-compose run --rm -e COO_SEED=$COO_SEED coo hornet tool merkle >> $MERKLE_TREE_LOG_FILE
-
-  if [ $? -ne 0 ]; 
-    then
-      echo "Error while generating Merkle Tree. Please check logs and permissions"
-      exit 127
-  fi
-
-  MERKLE_TREE_ADDR=$(cat "$MERKLE_TREE_LOG_FILE" | grep "Merkle tree root"  \
-  | cut  -d ":" -f 2 - | sed "s/ //g" | tr -d "\n" | tr -d "\r")
-
-  echo $MERKLE_TREE_ADDR > merkle-tree.addr
-
-  echo "Done. Check merkle-tree.addr"
-}
 
 setupCoordinator () {
   generateMerkleTree
@@ -239,26 +183,83 @@ setupCoordinator () {
 }
 
 generateP2PIdentity () {
-  return $(docker-compose run --rm node hornet tool p2pidentity) 
+  docker-compose run --rm node hornet tool p2pidentity > $1
+}
+
+# Generates the P2P identities of the Nodes
+generateP2PIdentities () {
+  generateP2PIdentity node1.identity.txt
+  generateP2PIdentity coo.identity.txt
+  generateP2PIdentity spammer.identity.txt
 }
 
 setupIdentityPrivateKey () {
+  local private_key=$(cat $1 | head -n 1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+  # and then set it on the config.json file
+  sed -i 's/"identityPrivateKey": ".*"/"identityPrivateKey": "'$private_key'"/g' $2
+}
+
+###
+### Sets up the identities of the different nodes
+###
+setupIdentities () {
+  generateP2PIdentities
+
+  setupIdentityPrivateKey node1.identity.txt config/config-node.json
+  setupIdentityPrivateKey coo.identity.txt config/config-coo.json
+  setupIdentityPrivateKey spammer.identity.txt config/config-spammer.json
+}
+
+# Sets up the identity of the peers
+setupPeerIdentity () {
+  local peerName1="$1"
+  local peerID1="$2"
+
+  local peerName2="$3"
+  local peerID2="$4"
+
+  local peer_conf_file="$5"
+
+  cat <<EOF > "$peer_conf_file"
+  {
+    "peers": [
+      {
+        "alias": "$peerName1",
+        "multiAddress": "/ip4/$peerName1/tcp/15600/p2p/$peerID1"
+      },
+      {
+        "alias": "$peerName2",
+        "multiAddress": "/ip4/$peerName2/tcp/15600/p2p/$peerID2"
+      }
+    ]
+  } 
+EOF
 
 }
 
-setupPeers () {
-  
+# Extracts the peerID from the identity file
+getPeerID () {
+  local identity_file="$1"
+  echo $(cat $identity_file | tail -1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
 }
 
-# Generates the P2P identities of the Nodes and configures them
-generateP2PIdentities () {
-  generateP2PIdentity > node1.identity.txt
-  generateP2PIdentity > coo.identity.txt
-  generateP2PIdentity > spammer.identity.txt
-  
+### 
+### Sets the peering configuration
+### 
+setupPeering () {
+  local node1_peerID=$(getPeerID node1.identity.txt)
+  local coo_peerID=$(getPeerID coo.identity.txt)
+  local spammer_peerID=$(getPeerID spammer.identity.txt)
+
+  setupPeerIdentity "node" "$node1_peerID" "spammer" "$spammer_peerID" config/peering-coo.json
+  setupPeerIdentity "node" "$node1_peerID" "coo" "$coo_peerID" config/peering-spammer.json
+  setupPeerIdentity "coo" "$coo_peerID" "spammer" "$spammer_peerID" config/peering-node.json
 }
 
-# Generates the initial snapshot
+
+### 
+### Generates the initial snapshot
+### 
 generateSnapshot () {
   echo "Generating an initial snapshot..."
   cd snapshots/private-tangle
