@@ -43,11 +43,13 @@ fi
 #####
 
 clean () {
-    if [ -d ./db/mainnet/hornet.db ]; then
-        sudo rm -Rf ./db/mainnet/hornet.db
+    if [ -d ./db/mainnet ]; then
+        echo "Cleaning up previous DB files"
+        sudo rm -Rf ./db/mainnet
     fi
 
     if [ -d ./p2pstore ]; then
+        echo "Cleaning up previous P2P files"
         sudo rm -Rf ./p2pstore
     fi
 }
@@ -80,6 +82,14 @@ volumeSetup () {
 }
 
 peerSetup () {
+    # We obtain a new P2P identity for the Node
+    docker-compose run --rm hornet tool p2pidentity > p2pidentity.txt
+    # Now we extract the private key 
+    private_key=$(cat p2pidentity.txt | head -n 1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+    # and then set it on the config.json file
+    sed -i 's/"identityPrivateKey": ".*"/"identityPrivateKey": "'$private_key'"/g' config/config.json
+
+    # And now we configure our Node's peers
     if [ -n "$peer" ]; then
         echo "Peering with: $peer"
         # This is the case where no previous peer definition was there

@@ -1,6 +1,7 @@
 *.seed
 *.root
 *.addr
+*.txt
 logs
 
 db
