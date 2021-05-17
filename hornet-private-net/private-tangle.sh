@@ -7,7 +7,7 @@
 set -e
 
 help () {
-  echo "usage: private-tangle.sh [start|stop] [merkle_tree_depth] [boostrap_wait_time]"
+  echo "usage: private-tangle.sh [start|stop|update|install]"
 }
 
 if [ $#  -lt 1 ]; then
@@ -17,14 +17,6 @@ if [ $#  -lt 1 ]; then
 fi
 
 command="$1"
-
-if [ "$command" == "start" ]; then
-  if [ $# -lt 2 ]; then
-    echo "Please provide the depth of the Merkle Tree"
-    help
-    exit 1
-  fi
-fi
 
 #######
 # TODO: Enable Hornet to notify bootstrap without relying on waiting
@@ -125,16 +117,16 @@ startTangle () {
   # Peering of the nodes is configured
   setupPeering
 
-  # setupCoordinator
+  setupCoordinator
 
   # Run the coordinator
-  # docker-compose --log-level ERROR up -d coo
+  docker-compose --log-level ERROR up -d coo
 
   # Run the spammer
-  # docker-compose --log-level ERROR up -d spammer
+  docker-compose --log-level ERROR up -d spammer
 
   # Run a regular node 
-  # docker-compose --log-level ERROR up -d node
+  docker-compose --log-level ERROR up -d node
 }
 
 ### 
@@ -146,7 +138,7 @@ generateSnapshot () {
   docker-compose run --rm node hornet tool ed25519key > key-pair.txt
 
   # Extract the public key
-  public_key=$(cat key-pair.txt | tail -1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r") 
+  public_key="$(getPublicKey key-pair.txt)"
   echo "$public_key"
 
   # Generate the address
@@ -163,43 +155,31 @@ generateSnapshot () {
   cd .. && cd ..
 }
 
+# Extracts the public key from a key pair
+getPublicKey () {
+  echo $(cat "$1" | tail -1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+}
+
+# Extracts the private key from a key pair
+getPrivateKey () {
+  echo $(cat "$1" | head -n 1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+}
+
+###
+### Sets the Coordinator up by creating a key pair
 setupCoordinator () {
-  generateMerkleTree
+  docker-compose run --rm node hornet tool ed25519key > coo-key-pair.txt
+  export COO_PRV_KEYS="$(getPrivateKey coo-key-pair.txt)"
+  coo_public_key="$(getPublicKey coo-key-pair.txt)"
 
-  # Copy the Merkle Tree Address to the different nodes configuration
-  sed -i 's/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/g' config/config-coo.json
+  setCooPublicKey "$coo_public_key" config/config-coo.json
+  setCooPublicKey "$coo_public_key" config/config-node.json
+  setCooPublicKey "$coo_public_key" config/config-spammer.json
+}
 
-  sed -i 's/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/g' config/config-node.json
-
-  sed -i '0,/"address"/s/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/' config/config-spammer.json
-
-  echo "Bootstrapping the Coordinator..."
-  # Bootstrap the coordinator
-  docker-compose run -d --rm -e COO_SEED=$COO_SEED coo hornet --cooBootstrap > coo.bootstrap.container
-
-  # Waiting for coordinator bootstrap
-  # We guarantee that if bootstrap has not finished yet we sleep another time 
-  # for a few seconds more until bootstrap has been performed
-  bootstrapped=1
-  # Number of seconds waited for each tick (proportional to the depth of the Merkle Tree)
-  bootstrap_tick=$COO_BOOTSTRAP_WAIT
-  echo "Waiting for $bootstrap_tick seconds ... ⏳"
-  sleep $bootstrap_tick
-  docker logs $(cat ./coo.bootstrap.container) 2>&1 | grep "milestone issued (1)"
-  bootstrapped=$?
-    
-  if [ $bootstrapped -eq 0 ]; then
-    echo "Coordinator bootstrapped!"
-    docker kill -s SIGINT $(cat ./coo.bootstrap.container)
-    echo "Waiting coordinator bootstrap to stop gracefully..."
-    sleep 10
-    docker rm $(cat ./coo.bootstrap.container)
-    rm ./coo.bootstrap.container
-  else
-    echo "Error. Coordinator has not been boostrapped."
-    clean
-    exit 127
-  fi  
+setCooPublicKey () {
+  local public_key="$1"
+  sed -i 's/"key": ".*"/"key": "'$public_key'"/g' "$2"
 }
 
 generateP2PIdentity () {
