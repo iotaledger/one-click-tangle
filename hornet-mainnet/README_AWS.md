@@ -14,7 +14,7 @@ If you want to install a different Hornet Docker image / version than `gohornet/
 
 4. Please note that the Hornet related config files are located at `one-click-tangle/hornet-mainnet/config/`. The Tangle DB files are located at `db/mainnet`. 
 
-# Dashboard
+## Dashboard
 
 You can get access to the Hornet dashboard by opening on your Web Browser the following page: `http://<your_ec2_machine_address>:8081`. 
 
@@ -30,13 +30,15 @@ and then edit the `config/config.json` file, changing the password hash and salt
 ./hornet.sh start
 ```
 
-# Peers 
+## Peering
+
+The identity of your node is automatically generated and configured. You can find your Node keys in the `p2pidentity.txt` file. 
 
 You can add new peers when installing or later, by login into the dashboard, and then through the "Peers" menu. 
 
 NB: Another option is to add a peer through the `config/peering.json` file as described [here](https://hornet.docs.iota.org/post_installation/peering.html). In that case you will need to first stop Hornet, then edit the file and finally start Hornet again. 
 
-# Sanity Checks
+## Sanity Checks
 
 Once the process finishes you should see at least the following docker containers up and running:
 
@@ -49,7 +51,7 @@ CONTAINER ID   IMAGE                   COMMAND                  CREATED         
 eec6d1dd21c5   gohornet/hornet:latest             "/app/hornet"            10 minutes ago   Up 10 minutes   0.0.0.0:8081->8081/tcp, 0.0.0.0:14265->14265/tcp, 5556/tcp, 0.0.0.0:15600->15600/tcp, 14626/udp   hornet
 ```
 
-# Node Operations
+## Node Operations
 
 You can update Hornet to the latest version by running:
 
