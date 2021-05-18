@@ -37,6 +37,14 @@
             "maxResults": 1000
         }
     },
+    "dashboard": {
+        "auth": {
+            "sessionTimeout": "72h",
+            "username": "admin",
+            "passwordHash": "a4d321654d646f4035bb1aafa98f9f032587a277e76a997a9422a830b471eb90",
+            "passwordSalt": "c953f8eaf20f19531bc3403fee0ebb9b747ed2aeacf612b453307b0f68592e00"
+        }
+    },
     "db": {
         "engine": "rocksdb",
         "path": "/app/db/coo.db",
@@ -56,7 +64,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "8801f5db5d6dff962e3085bbec978e6ed5db0faef4a961a9d9d5390745c8ce60",
+                "key": "4091cf2db23901c049d49c4333d16624c83477460788d6578af6bd1663eb24bc",
                 "start": 0,
                 "end": 0
             }
@@ -96,9 +104,9 @@
             "URTS",
             "WarpSync",
             "Spammer",
+            "Autopeering",
             "ZMQ",
             "MQTT",
-            "Dashboard",
             "Prometheus",
             "Profiling"
         ],
@@ -134,7 +142,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "37057aa8d533d807ef06c98e2de81c7d31e3beb6683420dd16c4048e81b9120de2fbc82cf984cddf24cbeab2fd10143a461a9e226c33c52a0cf4c1e9b76c362c",
+        "identityPrivateKey": "73386a41872df8d006e7a3a9929b4000f676ff021517c15ecb3f80083f1a3b8f4c02f3a9d8e6184eb972109201022f08add1d3f6d30be3b6985572b08aceb99b",
         "peerStore": {
             "path": "./p2pstore/coo"
         },

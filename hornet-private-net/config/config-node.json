@@ -65,7 +65,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "8801f5db5d6dff962e3085bbec978e6ed5db0faef4a961a9d9d5390745c8ce60",
+                "key": "4091cf2db23901c049d49c4333d16624c83477460788d6578af6bd1663eb24bc",
                 "start": 0,
                 "end": 0
             }
@@ -105,7 +105,8 @@
             "WarpSync",
             "Profiling", "Prometheus", 
             "MQTT", 
-            "Spammer",  "Coordinator"
+            "Spammer",  "Coordinator",
+            "Autopeering"
           ],
           "enablePlugins": ["URTS", "RestAPI", "ZMQ"]
     },
@@ -118,7 +119,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "71a368b364bc0ead07467f864adb329e3d00c586a7215562354ab961ec1d579224cc7c79a5be40046beab2fd5d84282e500327f0e24149ecdc28b59c2baaba3d",
+        "identityPrivateKey": "5353e673b13923f149dc7d247f800c8f915e8093928bccdcbde2ba4ca97d3c742273da09121f11f957b16838bef119774e0a110a404b019d79c040652a7787e8",
         "peerStore": {
             "path": "./p2pstore/node"
         },
