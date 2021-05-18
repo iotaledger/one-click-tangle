@@ -64,15 +64,15 @@ volumeSetup () {
     mkdir ./db/private-tangle
   fi
 
-  if ! [ -d ./db/private-tangle/coo ]; then
+  if ! [ -d ./db/private-tangle/coo.db ]; then
     mkdir ./db/private-tangle/coo.db
   fi
 
-  if ! [ -d ./db/private-tangle/spammer ]; then
+  if ! [ -d ./db/private-tangle/spammer.db ]; then
     mkdir ./db/private-tangle/spammer.db
   fi
 
-  if ! [ -d ./db/private-tangle/node1 ]; then
+  if ! [ -d ./db/private-tangle/node1.db ]; then
     mkdir ./db/private-tangle/node1.db
   fi
 
@@ -142,9 +142,8 @@ generateSnapshot () {
     # First a key pair is generated
   docker-compose run --rm node hornet tool ed25519key > key-pair.txt
 
-  # Extract the public key
-  public_key="$(getPublicKey key-pair.txt)"
-  echo "$public_key"
+  # Extract the public key use to generate the address
+  local public_key="$(getPublicKey key-pair.txt)"
 
   # Generate the address
   docker-compose run --rm node hornet tool ed25519addr "$public_key" | cut -d ":" -f 2\
@@ -173,9 +172,11 @@ getPrivateKey () {
 ###
 ### Sets the Coordinator up by creating a key pair
 setupCoordinator () {
-  docker-compose run --rm node hornet tool ed25519key > coo-key-pair.txt
-  export COO_PRV_KEYS="$(getPrivateKey coo-key-pair.txt)"
-  coo_public_key="$(getPublicKey coo-key-pair.txt)"
+  local coo_key_pair_file=coo-milestones-key-pair.txt
+
+  docker-compose run --rm node hornet tool ed25519key > "$coo_key_pair_file"
+  export COO_PRV_KEYS="$(getPrivateKey $coo_key_pair_file)"
+  local coo_public_key="$(getPublicKey $coo_key_pair_file)"
 
   setCooPublicKey "$coo_public_key" config/config-coo.json
   setCooPublicKey "$coo_public_key" config/config-node.json
@@ -230,11 +231,11 @@ setupPeerIdentity () {
     "peers": [
       {
         "alias": "$peerName1",
-        "multiAddress": "/ip4/$peerName1/tcp/15600/p2p/$peerID1"
+        "multiAddress": "/dns/$peerName1/tcp/15600/p2p/$peerID1"
       },
       {
         "alias": "$peerName2",
-        "multiAddress": "/ip4/$peerName2/tcp/15600/p2p/$peerID2"
+        "multiAddress": "/dns/$peerName2/tcp/15600/p2p/$peerID2"
       }
     ]
   } 

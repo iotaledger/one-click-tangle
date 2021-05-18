@@ -65,7 +65,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "e8dcf512055002d1e1d74c94659e1396efe3631e874a5c18edcf9696c9459a3e",
+                "key": "8801f5db5d6dff962e3085bbec978e6ed5db0faef4a961a9d9d5390745c8ce60",
                 "start": 0,
                 "end": 0
             }
@@ -107,7 +107,7 @@
             "MQTT", 
             "Spammer",  "Coordinator"
           ],
-          "enablePlugins": ["URTS", "WebAPI", "ZMQ"]
+          "enablePlugins": ["URTS", "RestAPI", "ZMQ"]
     },
     "p2p": {
         "bindMultiAddresses": [
@@ -118,7 +118,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "d3fe09f3e8cf6db8ac6556911aeae66af1884bd7f3b4fb22b59a7dd2e6c31571eb33ca287203df9ed88aa2856e20353cbaf8f58aaffdf31c730fb889c93c6922",
+        "identityPrivateKey": "71a368b364bc0ead07467f864adb329e3d00c586a7215562354ab961ec1d579224cc7c79a5be40046beab2fd5d84282e500327f0e24149ecdc28b59c2baaba3d",
         "peerStore": {
             "path": "./p2pstore/node"
         },

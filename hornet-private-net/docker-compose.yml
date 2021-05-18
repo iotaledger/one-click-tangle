@@ -11,17 +11,15 @@ services:
     networks:
       - tangle
     image: hornet:dev2
-    restart: always
+    restart: unless-stopped
     container_name: coo
-    environment:
-      COO_SEED: 
     expose:
       - 15600
     volumes:
       - ./config/config-coo.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json:ro
       - ./config/peering-coo.json:/app/peering.json:ro
-      - ./db/private-tangle:/app/db
+      - ./db/private-tangle/coo.db:/app/db
       - ./p2pstore:/app/p2pstore
       - ./snapshots:/app/snapshots
   
@@ -31,10 +29,8 @@ services:
     networks:
       - tangle
     image: hornet:dev2
-    restart: always
+    restart: unless-stopped
     container_name: node1
-    environment:
-      COO_SEED: 
     expose:
       - 14265
       - 15600
@@ -47,7 +43,7 @@ services:
       - ./config/config-node.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
       - ./config/peering-node.json:/app/peering.json
-      - ./db/private-tangle:/app/db
+      - ./db/private-tangle/node1.db:/app/db
       - ./p2pstore:/app/p2pstore
       - ./snapshots:/app/snapshots
   
@@ -57,10 +53,8 @@ services:
     networks:
       - tangle
     image: hornet:dev2
-    restart: always
+    restart: unless-stopped
     container_name: spammer
-    environment:
-      COO_SEED: 
     expose:
       - 14265
       - 15600
@@ -68,6 +62,6 @@ services:
       - ./config/config-spammer.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
       - ./config/peering-spammer.json:/app/peering.json
-      - ./db/private-tangle:/app/db
+      - ./db/private-tangle/spammer.db:/app/db
       - ./p2pstore:/app/p2pstore
       - ./snapshots:/app/snapshots

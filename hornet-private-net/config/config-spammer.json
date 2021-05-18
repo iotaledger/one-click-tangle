@@ -56,12 +56,12 @@
         "milestonePublicKeyCount": 2,
         "publicKeyRanges": [
             {
-                "key": "e8dcf512055002d1e1d74c94659e1396efe3631e874a5c18edcf9696c9459a3e",
+                "key": "8801f5db5d6dff962e3085bbec978e6ed5db0faef4a961a9d9d5390745c8ce60",
                 "start": 0,
                 "end": 777600
             },
             {
-                "key": "e8dcf512055002d1e1d74c94659e1396efe3631e874a5c18edcf9696c9459a3e",
+                "key": "8801f5db5d6dff962e3085bbec978e6ed5db0faef4a961a9d9d5390745c8ce60",
                 "start": 0,
                 "end": 1555200
             }
@@ -109,7 +109,7 @@
         "enablePlugins": [
             "Spammer",
             "URTS",
-            "WebAPI"
+            "RestAPI"
         ]
     },
     "spammer": {
@@ -130,7 +130,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "3d24645e284c17a0af8ab787bd5005abec31864963bb6fc39905e480c2c4fcc765cec1e12987bd552a38376a3f0e15d4f3f7db947e58ae4709b0cbe986d865a3",
+        "identityPrivateKey": "2746393796a6228b706464613467640645d0f4d3eb73000606476f0bf8ab71b2ad5f7a5d250634dacbcbeceeffaa6f1733b02c99ed495143d5652a8289cc9f06",
         "peerStore": {
             "path": "./p2pstore/spammer"
         },

@@ -56,7 +56,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "e8dcf512055002d1e1d74c94659e1396efe3631e874a5c18edcf9696c9459a3e",
+                "key": "8801f5db5d6dff962e3085bbec978e6ed5db0faef4a961a9d9d5390745c8ce60",
                 "start": 0,
                 "end": 0
             }
@@ -104,7 +104,7 @@
         ],
         "enablePlugins": [
             "Coordinator",
-            "WebAPI"
+            "RestAPI"
         ]
     },
     "coordinator": {
@@ -134,7 +134,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "bb06972ccbd6a54f058f1fc89675b68ab5495e3281bd08b3bcdd8ee45ced9f9ff2bb79c62c1f64562c5701000a2aaec4962341ef0ee4f7f2de06d94253f4de64",
+        "identityPrivateKey": "37057aa8d533d807ef06c98e2de81c7d31e3beb6683420dd16c4048e81b9120de2fbc82cf984cddf24cbeab2fd10143a461a9e226c33c52a0cf4c1e9b76c362c",
         "peerStore": {
             "path": "./p2pstore/coo"
         },
