@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # Script to run a new Private Tangle
-# private_tangle.sh start .- Starts a new Tangle
-# private_tangle.sh stop  .- Stops the Tangle
+# private_tangle.sh install .- Installs a new Private Tangle
+# private_tangle.sh start   .- Starts a new Private Tangle
+# private_tangle.sh update  .- Updates the Private Tangle
+# private_tangle.sh stop    .- Stops the Tangle
 
 set -e
 
@@ -18,18 +20,6 @@ fi
 
 command="$1"
 
-#######
-# TODO: Enable Hornet to notify bootstrap without relying on waiting
-#######
-# Obtaining the bootstrap wait time
-# Six seconds wait time by default for bootstrapping coordinator
-COO_BOOTSTRAP_WAIT=$3
-if [ -z "$3" ]; then
-  COO_BOOTSTRAP_WAIT=6
-fi
-
-MERKLE_TREE_LOG_FILE=./logs/merkle-tree-generation.log.html
-
 ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))
 
 
@@ -43,15 +33,15 @@ clean () {
   fi
 
   if [ -d ./db/private-tangle/coo.db ]; then
-    sudo rm -Rf ./db/private-tangle/coo.db
+    sudo rm -Rf ./db/private-tangle/coo.db/*
   fi
 
   if [ -d ./db/private-tangle/node.db ]; then
-    sudo rm -Rf ./db/private-tangle/node.db
+    sudo rm -Rf ./db/private-tangle/node.db/*
   fi
 
   if [ -d ./db/private-tangle/spammer.db ]; then
-    sudo rm -Rf ./db/private-tangle/spammer.db
+    sudo rm -Rf ./db/private-tangle/spammer.db/*
   fi
 
   if [ -d ./p2pstore ]; then
@@ -65,7 +55,7 @@ clean () {
 
 # Sets up the necessary directories if they do not exist yet
 volumeSetup () {
-  ## Directory for the Tangle DB files
+  ## Directories for the Tangle DB files
   if ! [ -d ./db ]; then
     mkdir ./db
   fi
@@ -74,10 +64,24 @@ volumeSetup () {
     mkdir ./db/private-tangle
   fi
 
+  if ! [ -d ./db/private-tangle/coo ]; then
+    mkdir ./db/private-tangle/coo.db
+  fi
+
+  if ! [ -d ./db/private-tangle/spammer ]; then
+    mkdir ./db/private-tangle/spammer.db
+  fi
+
+  if ! [ -d ./db/private-tangle/node1 ]; then
+    mkdir ./db/private-tangle/node1.db
+  fi
+
+  # Logs
   if ! [ -d ./logs ]; then
     mkdir ./logs
   fi
 
+  # Snapshots
   if ! [ -d ./snapshots ]; then
     mkdir ./snapshots
   fi
@@ -86,6 +90,7 @@ volumeSetup () {
     mkdir ./snapshots/private-tangle
   fi
 
+  # P2P
   if ! [ -d ./p2pstore ]; then
     mkdir ./p2pstore
   fi
@@ -100,7 +105,7 @@ volumeSetup () {
   fi 
 }
 
-startTangle () {
+installTangle () {
   # First of all volumes have to be set up
   volumeSetup
 
@@ -251,8 +256,8 @@ setupPeering () {
   local coo_peerID=$(getPeerID coo.identity.txt)
   local spammer_peerID=$(getPeerID spammer.identity.txt)
 
-  setupPeerIdentity "node" "$node1_peerID" "spammer" "$spammer_peerID" config/peering-coo.json
-  setupPeerIdentity "node" "$node1_peerID" "coo" "$coo_peerID" config/peering-spammer.json
+  setupPeerIdentity "node1" "$node1_peerID" "spammer" "$spammer_peerID" config/peering-coo.json
+  setupPeerIdentity "node1" "$node1_peerID" "coo" "$coo_peerID" config/peering-spammer.json
   setupPeerIdentity "coo" "$coo_peerID" "spammer" "$spammer_peerID" config/peering-node.json
 }
 
@@ -267,8 +272,8 @@ case "${command}" in
 	"help")
     help
     ;;
-	"start")
-    startTangle
+	"install")
+    installTangle
     ;;
   "stop")
 		stopContainers
