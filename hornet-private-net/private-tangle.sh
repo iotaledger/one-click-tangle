@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Script to run a new Private Tangle
-# private_tangle.sh install .- Installs a new Private Tangle
-# private_tangle.sh start   .- Starts a new Private Tangle
-# private_tangle.sh update  .- Updates the Private Tangle
-# private_tangle.sh stop    .- Stops the Tangle
+# private-tangle.sh install .- Installs a new Private Tangle
+# private-tangle.sh start   .- Starts a new Private Tangle
+# private-tangle.sh update  .- Updates the Private Tangle
+# private-tangle.sh stop    .- Stops the Tangle
 
 set -e
 
@@ -180,6 +180,7 @@ setupCoordinator () {
   export COO_PRV_KEYS="$(getPrivateKey $coo_key_pair_file)"
 
   local coo_public_key="$(getPublicKey $coo_key_pair_file)"
+  echo "$coo_public_key" > coo-milestones-public-key.txt
 
   setCooPublicKey "$coo_public_key" config/config-coo.json
   setCooPublicKey "$coo_public_key" config/config-node.json
@@ -281,7 +282,7 @@ EOF
 # Extracts the peerID from the identity file
 getPeerID () {
   local identity_file="$1"
-  echo $(cat $identity_file | tail -1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+  echo $(cat $identity_file | sed '3q;d' | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
 }
 
 ### 

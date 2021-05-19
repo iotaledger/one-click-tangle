@@ -1,6 +1,10 @@
 #!/bin/bash
 
 # Script to deploy a Tangle Explorer component
+# tangle-explorer.sh install .- Installs a new Tangle Exlorer
+# tangle-explorer.sh start   .- Starts a new Tangle Exlorer
+# tangle-explorer.sh update  .- Updates the Tangle Exlorer
+# tangle-explorer.sh stop    .- Stops the Tangle Exlorer
 
 set -e
 
@@ -64,16 +68,13 @@ stopContainers () {
 # Builds the network configuration file 
 # in case only a folder with configuration files is given
 buildConfig() {
+  echo "Config"
+  
+  echo $(cat $folder_config/../coo-milestones-public-key.txt)
   cp ./config/private-network.json ./my-network.json
 
   # Set the Coordinator Address
-  sed -i 's/"coordinatorAddress": \("\).*\("\)/"coordinatorAddress": \1'$(cat $folder_config/../merkle-tree.addr)'\2/g' ./my-network.json
-
-  # Set the coordinator.mwm
-  sed -i 's/"mwm": [[:digit:]]\+/"mwm": '$(cat $folder_config/config-node.json | grep \"mwm\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
-
-  # Set the coordinator.securityLevel
-  sed -i 's/"coordinatorSecurityLevel": [[:digit:]]\+/"coordinatorSecurityLevel": '$(cat $folder_config/config-node.json | grep \"securityLevel\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
+  sed -i 's/"coordinatorAddress": \("\).*\("\)/"coordinatorAddress": \1'$(cat $folder_config/../coo-milestones-public-key.txt)'\2/g' ./my-network.json
 
   # Set in the Front-End App configuration the API endpoint
   sed -i 's/"apiEndpoint": \("\).*\("\)/"apiEndpoint": \1http:\/\/localhost:4000\2/g' ./config/webapp.config.local.json
