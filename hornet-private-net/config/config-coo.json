@@ -47,7 +47,7 @@
     },
     "db": {
         "engine": "rocksdb",
-        "path": "/app/db/coo.db",
+        "path": "/app/db",
         "autoRevalidation": false
     },
     "snapshots": {
@@ -64,7 +64,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "4091cf2db23901c049d49c4333d16624c83477460788d6578af6bd1663eb24bc",
+                "key": "57775ba19bf1e84951867afb3cdb9900b6e9a773cd4bbb7341d66af5cd6a14c7",
                 "start": 0,
                 "end": 0
             }
@@ -101,7 +101,6 @@
         "alias": "coo",
         "profile": "auto",
         "disablePlugins": [
-            "URTS",
             "WarpSync",
             "Spammer",
             "Autopeering",
@@ -112,11 +111,12 @@
         ],
         "enablePlugins": [
             "Coordinator",
-            "RestAPI"
+            "RestAPI",
+            "URTS"
         ]
     },
     "coordinator": {
-        "stateFilePath": "coordinator.state",
+        "stateFilePath": "app/coo-state/coordinator.state",
         "interval": "10s",
         "checkpoints": {
             "maxTrackedMessages": 10000
@@ -142,7 +142,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "73386a41872df8d006e7a3a9929b4000f676ff021517c15ecb3f80083f1a3b8f4c02f3a9d8e6184eb972109201022f08add1d3f6d30be3b6985572b08aceb99b",
+        "identityPrivateKey": "7c1674707377961a3f8dd866a52ec5782467e8369f436765f0cd636fbe4093b48cd5638c92609d1d6194011f70eb1f20b501d715db7db59e4fee743334eeb19b",
         "peerStore": {
             "path": "./p2pstore/coo"
         },

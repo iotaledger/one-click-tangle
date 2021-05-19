@@ -47,7 +47,7 @@
     },
     "db": {
         "engine": "rocksdb",
-        "path": "/app/db/spammer.db",
+        "path": "/app/db",
         "autoRevalidation": false
     },
     "snapshots": {
@@ -64,7 +64,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "4091cf2db23901c049d49c4333d16624c83477460788d6578af6bd1663eb24bc",
+                "key": "57775ba19bf1e84951867afb3cdb9900b6e9a773cd4bbb7341d66af5cd6a14c7",
                 "start": 0,
                 "end": 0
             }
@@ -133,7 +133,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "5143cb2b5e3ba20997f9d6372eacb76a0d6d8ec0eb4b6144a9011663bca921516d98c70396ebfb22fdd49a25cbc3a41c25451b807a62b8306f519a895c24f2a3",
+        "identityPrivateKey": "ec53e19057f2e9e64c1827e59b535632c0ed6f814ff2dbab3e913f5a34c15ca1e32f99c19d3cad15eb329de0d17a3b8f5ec5e138ccaa7a47606dd81c9f00d98d",
         "peerStore": {
             "path": "./p2pstore/spammer"
         },

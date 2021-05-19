@@ -13,6 +13,8 @@ services:
     image: hornet:dev2
     restart: unless-stopped
     container_name: coo
+    environment:
+      - COO_PRV_KEYS
     expose:
       - 15600
     volumes:
@@ -21,6 +23,7 @@ services:
       - ./config/peering-coo.json:/app/peering.json:ro
       - ./db/private-tangle/coo.db:/app/db
       - ./p2pstore:/app/p2pstore
+      - ./db/private-tangle:/app/coo-state
       - ./snapshots:/app/snapshots
   
   node:

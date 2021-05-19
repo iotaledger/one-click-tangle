@@ -36,8 +36,8 @@ clean () {
     sudo rm -Rf ./db/private-tangle/coo.db/*
   fi
 
-  if [ -d ./db/private-tangle/node.db ]; then
-    sudo rm -Rf ./db/private-tangle/node.db/*
+  if [ -d ./db/private-tangle/node1.db ]; then
+    sudo rm -Rf ./db/private-tangle/node1.db/*
   fi
 
   if [ -d ./db/private-tangle/spammer.db ]; then
@@ -175,7 +175,9 @@ setupCoordinator () {
   local coo_key_pair_file=coo-milestones-key-pair.txt
 
   docker-compose run --rm node hornet tool ed25519key > "$coo_key_pair_file"
+  # Private Key is exported as it is needed to run the Coordinator
   export COO_PRV_KEYS="$(getPrivateKey $coo_key_pair_file)"
+
   local coo_public_key="$(getPublicKey $coo_key_pair_file)"
 
   setCooPublicKey "$coo_public_key" config/config-coo.json

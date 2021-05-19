@@ -48,7 +48,7 @@
     },
     "db": {
         "engine": "rocksdb",
-        "path": "/app/db/node.db",
+        "path": "/app/db",
         "autoRevalidation": false
     },
     "snapshots": {
@@ -65,7 +65,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "4091cf2db23901c049d49c4333d16624c83477460788d6578af6bd1663eb24bc",
+                "key": "57775ba19bf1e84951867afb3cdb9900b6e9a773cd4bbb7341d66af5cd6a14c7",
                 "start": 0,
                 "end": 0
             }
@@ -119,7 +119,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "5353e673b13923f149dc7d247f800c8f915e8093928bccdcbde2ba4ca97d3c742273da09121f11f957b16838bef119774e0a110a404b019d79c040652a7787e8",
+        "identityPrivateKey": "184afa14640f0787628650ce7044fb33b78bd12e34dbc87b776cca3dea2354395d6321e9ed31a01f504d35688a8fb366eca6fe6f6e355193f5e8871a00695721",
         "peerStore": {
             "path": "./p2pstore/node"
         },
