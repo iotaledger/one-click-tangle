@@ -21,7 +21,7 @@ fi
 command="$1"
 
 ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))
-
+COO_BOOTSTRAP_WAIT=10
 
 clean () {
   # TODO: Differentiate between start, restart and remove
@@ -171,6 +171,7 @@ getPrivateKey () {
 
 ###
 ### Sets the Coordinator up by creating a key pair
+###
 setupCoordinator () {
   local coo_key_pair_file=coo-milestones-key-pair.txt
 
@@ -183,6 +184,38 @@ setupCoordinator () {
   setCooPublicKey "$coo_public_key" config/config-coo.json
   setCooPublicKey "$coo_public_key" config/config-node.json
   setCooPublicKey "$coo_public_key" config/config-spammer.json
+
+  bootstrapCoordinator
+}
+
+# Bootstraps the coordinator
+bootstrapCoordinator () {
+  echo "Bootstrapping the Coordinator..."
+  # Bootstrap the coordinator
+  docker-compose run -d --rm -e COO_PRV_KEYS=$COO_PRV_KEYS coo hornet --cooBootstrap --cooStartIndex 0 > coo.bootstrap.container
+
+  # Waiting for coordinator bootstrap
+  # We guarantee that if bootstrap has not finished yet we sleep another time 
+  # for a few seconds more until bootstrap has been performed
+  bootstrapped=1
+  bootstrap_tick=$COO_BOOTSTRAP_WAIT
+  echo "Waiting for $bootstrap_tick seconds ... ⏳"
+  sleep $bootstrap_tick
+  docker logs $(cat ./coo.bootstrap.container) 2>&1 | grep "milestone issued (1)"
+  bootstrapped=$?
+    
+  if [ $bootstrapped -eq 0 ]; then
+    echo "Coordinator bootstrapped!"
+    docker kill -s SIGINT $(cat ./coo.bootstrap.container)
+    echo "Waiting coordinator bootstrap to stop gracefully..."
+    sleep 10
+    docker rm $(cat ./coo.bootstrap.container)
+    rm ./coo.bootstrap.container
+  else
+    echo "Error. Coordinator has not been boostrapped."
+    clean
+    exit 127
+  fi  
 }
 
 setCooPublicKey () {
