@@ -106,6 +106,8 @@ imageSetup () {
         echo "Using image: $image"
         sed -i 's/image: .\+/image: '$image'/g' docker-compose.yaml
     fi
+    # We ensure we have the image before
+    docker-compose pull hornet
 }
 
 startHornet () {
@@ -116,6 +118,7 @@ installHornet () {
     clean
 
     imageSetup
+
     volumeSetup
 
     peerSetup
@@ -128,8 +131,6 @@ updateHornet () {
     fi
 
     imageSetup
-
-    docker-compose pull hornet
 }
 
 stopHornet () {

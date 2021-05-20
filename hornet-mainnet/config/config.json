@@ -147,7 +147,7 @@
       "lowWatermark": 5
     },
     "gossipUnknownPeersLimit": 4,
-    "identityPrivateKey": "daf9fab00d3f6f28c05aa65196b3f4e396aedd691698d4ac4d3592d5107132cb1b4c74c883e234a880255b97eb8b1c0771804161bb62f35695618fcc924d055f",
+    "identityPrivateKey": "ca8a2c7239ae5ce37fd456938c5f1443b25e63b389ebbd9645e3178d29392f7589551e1b72bf14e58d1fcdbcf44abeefd39836ac3f47ed5982afeeea155c81e5",
     "peerStore": {
       "path": "./p2pstore"
     },
