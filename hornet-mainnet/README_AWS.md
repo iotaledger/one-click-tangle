@@ -32,9 +32,9 @@ and then edit the `config/config.json` file, changing the password hash and salt
 
 ## Peering
 
-The identity of your node is automatically generated and configured. You can find your Node keys in the `p2pidentity.txt` file. 
+The identity of your node is automatically generated and configured. You can find your Node P2P keys and identity in the `p2pidentity.txt` file. 
 
-You can add new peers when installing or later, by login into the dashboard, and then through the "Peers" menu. 
+You can add new peers when installing (`-p` option), or later, by login into the dashboard, and then through the "Peers" menu. 
 
 NB: Another option is to add a peer through the `config/peering.json` file as described [here](https://hornet.docs.iota.org/post_installation/peering.html). In that case you will need to first stop Hornet, then edit the file and finally start Hornet again. 
 
@@ -65,7 +65,7 @@ You can stop Hornet by running:
 ./hornet.sh stop
 ```
 
-You can reinstall Hornet (you will lose all data and configurations) by running:
+You can reinstall Hornet (**you will lose all data and configurations**) by running:
 
 ```console
 ./hornet.sh install
