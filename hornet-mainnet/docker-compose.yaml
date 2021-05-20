@@ -10,13 +10,13 @@ services:
         working_dir: /app
         networks:
             - tangle
-        image: gohornet/hornet:latest
-        restart: always
+        image: gohornet/hornet:1.0.2-rc1
+        restart: unless-stopped
         container_name: hornet
         expose:
         - 14265
         - 15600
-        - 5556
+        - 8081
         ports:
         - "14265:14265"
         - "15600:15600"
