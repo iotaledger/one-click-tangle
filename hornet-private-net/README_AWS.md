@@ -2,7 +2,7 @@
 
 On the AWS Marketplace you can find the Private Tangle product [here](https://aws.amazon.com/marketplace/pp/TBD). 
 
-1. In the "Security Group Settings" before you launch the instance please click "Create New Based On Seller Settings" or make sure that ports `8081` (Hornet's dashboard), `14265` (IOTA protocol), `8082` (Tangle Explorer Frontend) and `4000` (Tangle Explorer API) are exposed to the Internet. 
+1. In the "Security Group Settings" before you launch the instance please click "Create New Based On Seller Settings" or make sure that ports `8081` (Hornet's dashboard), `14265` (IOTA protocol), `8082` (Tangle Explorer Frontend) and `4000` (Tangle Explorer API) are exposed to the Internet. Additionally, if you want to peer your regular Hornet Node with nodes in other external machines you will need to expose port `15600` (peering port). 
 
 2. Run this script: `/bin/install-private-tangle.sh`
 
