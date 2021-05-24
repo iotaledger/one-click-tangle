@@ -18,7 +18,13 @@
 
 ## About
 
-This repository is where the IOTA Foundation hosts the open-source code for deploying IOTA Nodes and Networks "in one click".
+This repository is where the IOTA Foundation hosts the open-source code for deploying legacy IOTA Nodes and Networks "in one click".
+
+*Warning: The code in this branch is deprecated* 
+
+** As of May 2021 IOTA Foundation only gives support to `one-click-tangle` for Chrysalis **
+
+For `one-click-tangle`Chrysalis go to the `chrysalis` [branch](https://github.com/iotaledger/one-click-tangle/tree/chrysalis)
 
 The code is composed of:
 
