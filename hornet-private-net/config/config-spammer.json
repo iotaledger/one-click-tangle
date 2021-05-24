@@ -64,7 +64,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "f986c683ec92299fde368f93220af1caab2d2317a8dbdd3f9af5113e149be6a8",
+                "key": "5d41327da6f479a9559797db95ff239332c234fea01c2be103967b346c1024e5",
                 "start": 0,
                 "end": 0
             }
@@ -133,7 +133,7 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "b3f190c10177d75df4882d18b88c572d3b42baa8ada6fef94ba839066e16633ad1872175ba4ee21c20dcaca44cdd60e5a03d12193188e8c3d79b404160133b82",
+        "identityPrivateKey": "f0cc1cf0e350724e70ba8b95b4d92efb8a318fee4acde606955f89fa1af84e64e24ba6c21a518ce03cfbe3fcc2c10db91983691ec7baef901261d376950e1720",
         "peerStore": {
             "path": "./p2pstore/spammer"
         },
