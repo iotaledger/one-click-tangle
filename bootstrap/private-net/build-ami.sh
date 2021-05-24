@@ -9,5 +9,5 @@ chmod +x ami-install.sh
 
 source ./ami-install.sh
 
-wget https://raw.githubusercontent.com/iotaledger/one-click-tangle/chrysalis/bootstrap/private-net/install-private-tangle.sh -O /bin/install-private-tangle.sh
-chmod +x /bin/install-private-tangle.sh
+sudo wget https://raw.githubusercontent.com/iotaledger/one-click-tangle/chrysalis/bootstrap/private-net/install-private-tangle.sh -O /bin/install-private-tangle.sh
+sudo chmod +x /bin/install-private-tangle.sh
