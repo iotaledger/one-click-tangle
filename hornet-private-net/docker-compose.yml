@@ -2,7 +2,8 @@ version: "3"
 
 networks:
   tangle:
-    name: private-tangle
+    external:
+      name: private-tangle
 
 services:
   coo:
@@ -10,55 +11,58 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet
-    restart: always
+    image: gohornet/hornet:1.0.2-rc1
+    restart: unless-stopped
     container_name: coo
     environment:
-      COO_SEED: 
+      - COO_PRV_KEYS
     expose:
       - 15600
     volumes:
       - ./config/config-coo.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json:ro
       - ./config/peering-coo.json:/app/peering.json:ro
-      - ./db/private-tangle:/app/db
+      - ./db/private-tangle/coo.db:/app/db
+      - ./p2pstore:/app/p2pstore
+      - ./db/private-tangle:/app/coo-state
       - ./snapshots:/app/snapshots
+    cap_drop:
+      - ALL
   
   node:
     hostname: node1
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet
-    restart: always
+    image: gohornet/hornet:1.0.2-rc1
+    restart: unless-stopped
     container_name: node1
-    environment:
-      COO_SEED: 
     expose:
       - 14265
-      - 15600
-      - 5556
+      - 8081
+      - 1883
     ports:
-      - "14265:14265"
-      - "15600:15600"
-      - "8081:8081"
+      - "0.0.0.0:14265:14265"
+      - "0.0.0.0:1883:1883"
+      - "0.0.0.0:8081:8081"
     volumes:
       - ./config/config-node.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
       - ./config/peering-node.json:/app/peering.json
-      - ./db/private-tangle:/app/db
+      - ./db/private-tangle/node1.db:/app/db
+      - ./p2pstore:/app/p2pstore
       - ./snapshots:/app/snapshots
+    cap_drop:
+        - ALL
   
   spammer:
     hostname: spammer
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet
-    restart: always
+    image: gohornet/hornet:1.0.2-rc1
+    restart: unless-stopped
     container_name: spammer
-    environment:
-      COO_SEED: 
     expose:
       - 14265
       - 15600
@@ -66,29 +70,8 @@ services:
       - ./config/config-spammer.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
       - ./config/peering-spammer.json:/app/peering.json
-      - ./db/private-tangle:/app/db
+      - ./db/private-tangle/spammer.db:/app/db
+      - ./p2pstore:/app/p2pstore
       - ./snapshots:/app/snapshots
-
-  nginx:
-      # network_mode: host
-      networks:
-        - tangle
-      image: nginx
-      container_name: nginx
-      expose: 
-        - 80
-      ports:
-        - 9000:80
-      volumes: 
-        - ./logs:/usr/share/nginx/html
-
-  address-generator:
-    networks:
-      - tangle
-    image: node:12
-    container_name: address-generator
-    environment: 
-      NPM_CONFIG_LOGLEVEL: silent
-      NODE_PATH: /package/node_modules
-    volumes:
-      - ./utils:/usr/src/app
+    cap_drop:
+        - ALL

@@ -1,79 +1,165 @@
 {
-  "db": {
-    "path": "/app/db/coo.db"
-  },
-  "useProfile": "auto",
-  "httpAPI": {
-    "basicAuth": {
-      "enabled": false,
-      "username": "",
-      "passwordHash": "",
-      "passwordSalt": ""
+    "restAPI": {
+        "jwtAuth": {
+            "enabled": false,
+            "salt": "HORNET"
+        },
+        "excludeHealthCheckFromAuth": false,
+        "permittedRoutes": [
+            "/health",
+            "/mqtt",
+            "/api/v1/info",
+            "/api/v1/tips",
+            "/api/v1/messages/:messageID",
+            "/api/v1/messages/:messageID/metadata",
+            "/api/v1/messages/:messageID/raw",
+            "/api/v1/messages/:messageID/children",
+            "/api/v1/messages",
+            "/api/v1/transactions/:transactionID/included-message",
+            "/api/v1/milestones/:milestoneIndex",
+            "/api/v1/milestones/:milestoneIndex/utxo-changes",
+            "/api/v1/outputs/:outputID",
+            "/api/v1/addresses/:address",
+            "/api/v1/addresses/:address/outputs",
+            "/api/v1/addresses/ed25519/:address",
+            "/api/v1/addresses/ed25519/:address/outputs",
+            "/api/v1/treasury"
+        ],
+        "whitelistedAddresses": [
+            "127.0.0.1",
+            "::1"
+        ],
+        "bindAddress": "0.0.0.0:14265",
+        "powEnabled": true,
+        "powWorkerCount": 1,
+        "limits": {
+            "bodyLength": "1M",
+            "maxResults": 1000
+        }
     },
-    "excludeHealthCheckFromAuth": false,
-    "permitRemoteAccess": [
-      "getNodeInfo",
-      "getBalances",
-      "checkConsistency",
-      "getTipInfo",
-      "getTransactionsToApprove",
-      "getInclusionStates",
-      "getNodeAPIConfiguration",
-      "wereAddressesSpentFrom",
-      "broadcastTransactions",
-      "findTransactions",
-      "storeTransactions",
-      "getTrytes"
-    ],
-    "whitelistedAddresses": [],
-    "bindAddress": "0.0.0.0:14265",
-    "limits": {
-      "bodyLengthBytes": 1000000,
-      "findTransactions": 1000,
-      "getTrytes": 1000,
-      "requestsList": 1000
-    }
-  },
-  "snapshots": {
-    "loadType": "global",
-    "local": {
-      "path": "/app/snapshots/private-tangle/export-coo.bin"
+    "dashboard": {
+        "auth": {
+            "sessionTimeout": "72h",
+            "username": "admin",
+            "passwordHash": "a4d321654d646f4035bb1aafa98f9f032587a277e76a997a9422a830b471eb90",
+            "passwordSalt": "c953f8eaf20f19531bc3403fee0ebb9b747ed2aeacf612b453307b0f68592e00"
+        }
     },
-    "global": {
-        "path": "/app/snapshots/private-tangle/snapshot.csv",
-        "spentAddressesPaths": [],
-        "index": 0
+    "db": {
+        "engine": "rocksdb",
+        "path": "/app/db",
+        "autoRevalidation": false
+    },
+    "snapshots": {
+        "depth": 50,
+        "interval": 200,
+        "fullPath": "snapshots/private-tangle/full_snapshot.bin",
+        "deltaPath": "snapshots/private-tangle/delta_snapshot_coo.bin",
+        "deltaSizeThresholdPercentage": 50.0
+    },
+    "protocol": {
+        "networkID": "private-tangle",
+        "bech32HRP": "atoipt",
+        "minPoWScore": 2000,
+        "milestonePublicKeyCount": 1,
+        "publicKeyRanges": [
+            {
+                "key": "f986c683ec92299fde368f93220af1caab2d2317a8dbdd3f9af5113e149be6a8",
+                "start": 0,
+                "end": 0
+            }
+        ]
+    },
+    "pow": {
+        "refreshTipsInterval": "5s"
+    },
+    "requests": {
+        "discardOlderThan": "15s",
+        "pendingReEnqueueInterval": "5s"
+    },
+    "tangle": {
+        "milestoneTimeout": "30s"
+    },
+    "tipsel": {
+        "maxDeltaMsgYoungestConeRootIndexToCMI": 8,
+        "maxDeltaMsgOldestConeRootIndexToCMI": 13,
+        "belowMaxDepth": 15,
+        "nonLazy": {
+            "retentionRulesTipsLimit": 100,
+            "maxReferencedTipAge": "3s",
+            "maxChildren": 30,
+            "spammerTipsThreshold": 0
+        },
+        "semiLazy": {
+            "retentionRulesTipsLimit": 20,
+            "maxReferencedTipAge": "3s",
+            "maxChildren": 2,
+            "spammerTipsThreshold": 30
+        }
+    },
+    "node": {
+        "alias": "coo",
+        "profile": "auto",
+        "disablePlugins": [
+            "WarpSync",
+            "Spammer",
+            "Autopeering",
+            "ZMQ",
+            "MQTT",
+            "Prometheus",
+            "Profiling"
+        ],
+        "enablePlugins": [
+            "Coordinator",
+            "RestAPI",
+            "URTS"
+        ]
+    },
+    "coordinator": {
+        "stateFilePath": "./coo-state/coordinator.state",
+        "interval": "10s",
+        "checkpoints": {
+            "maxTrackedMessages": 10000
+        },
+        "tipsel": {
+            "minHeaviestBranchUnreferencedMessagesThreshold": 20,
+            "maxHeaviestBranchTipsPerCheckpoint": 10,
+            "randomTipsPerCheckpoint": 2,
+            "heaviestBranchSelectionTimeout": "100ms"
+        },
+        "quorum": {
+            "enabled": false,
+            "groups": {},
+            "timeout": "2s"
+        }
+    },
+    "p2p": {
+        "bindMultiAddresses": [
+            "/ip4/0.0.0.0/tcp/15600"
+        ],
+        "connectionManager": {
+            "highWatermark": 10,
+            "lowWatermark": 5
+        },
+        "gossipUnknownPeersLimit": 4,
+        "identityPrivateKey": "d0efec416d5830ca25b85e0bbaca8db53104d3068a42947f3d0b98c93a0f8be9c92412058d4ec6aee6cf76e4c3f8c3d02fc8f2c3aefca46668be384eeafc8fc4",
+        "peerStore": {
+            "path": "./p2pstore/coo"
+        },
+        "reconnectInterval": "30s"
+    },
+    "p2pdisc": {
+        "advertiseInterval": "30s",
+        "maxDiscoveredPeerConns": 4,
+        "rendezvousPoint": "between-two-vertices",
+        "routingTableRefreshPeriod": "60s"
+    },
+    "logger": {
+        "level": "info",
+        "disableCaller": true,
+        "encoding": "console",
+        "outputPaths": [
+            "stdout"
+        ]
     }
-  },
-  "spentAddresses": {
-    "enabled": true
-  },
-  "network": {
-    "preferIPv6": false,
-    "gossip": {
-      "bindAddress": "0.0.0.0:15600",
-      "reconnectAttemptIntervalSeconds": 60
-    }
-  },
-  "node": {
-    "alias": "coo",
-    "showAliasInGetNodeInfo": true,
-    "disablePlugins": [
-      "Autopeering", "URTS", "WarpSync",
-      "Spammer",
-      "ZMQ", "MQTT", 
-      "Dashboard", "Prometheus", "Profiling"
-    ],
-    "enablePlugins": ["Coordinator", "WebAPI"]
-  },
-  "coordinator": {
-    "address": "INHVXYBIEIJIWXZJBYJRWCCOWJU9WBJ9HZVYIDYKJP9QOBMPFPGJLBIXOFPQWLRQRHDX9SSPEHTRS9NP9",
-    "securityLevel": 2,
-    "merkleTreeDepth": 10,
-    "mwm": 9,
-    "stateFilePath": "/app/db/coordinator.state",
-    "merkleTreeFilePath": "/app/db/coordinator.tree",
-    "intervalSeconds": 60,
-    "checkpointTransactions": 5
-  }
 }

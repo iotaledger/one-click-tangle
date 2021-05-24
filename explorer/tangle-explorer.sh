@@ -1,19 +1,27 @@
 #!/bin/bash
 
 # Script to deploy a Tangle Explorer component
+# tangle-explorer.sh install .- Installs a new Tangle Exlorer
+# tangle-explorer.sh start   .- Starts a new Tangle Exlorer
+# tangle-explorer.sh update  .- Updates the Tangle Exlorer
+# tangle-explorer.sh stop    .- Stops the Tangle Exlorer
 
 set -e
 
-### Initialization code
-
-EXPLORER_SRC=./explorer-src
-APP_DATA=./application-data
+help () {
+  echo "usage: tangle-explorer.sh [install|start|stop|update] [json-file-with-network-details.json] or [private-tangle-install-folder]"
+}
 
 if [ $#  -lt 1 ]; then
   echo "Illegal number of parameters"
   help
   exit 1
 fi
+
+### Initialization code
+
+EXPLORER_SRC=./explorer-src
+APP_DATA=./application-data
 
 command="$1"
 network_file="$2"
@@ -42,10 +50,6 @@ fi
 
 ###################
 
-help () {
-  echo "usage: tangle-explorer.sh [install|start|stop] [json-file-with-network-details.json] or [private-tangle-install-folder]"
-}
-
 clean () {
   if [ -d $EXPLORER_SRC ]; then
     rm -Rf $EXPLORER_SRC
@@ -64,16 +68,13 @@ stopContainers () {
 # Builds the network configuration file 
 # in case only a folder with configuration files is given
 buildConfig() {
+  echo "Config"
+  
+  echo $(cat $folder_config/../coo-milestones-public-key.txt)
   cp ./config/private-network.json ./my-network.json
 
   # Set the Coordinator Address
-  sed -i 's/"coordinatorAddress": \("\).*\("\)/"coordinatorAddress": \1'$(cat $folder_config/../merkle-tree.addr)'\2/g' ./my-network.json
-
-  # Set the coordinator.mwm
-  sed -i 's/"mwm": [[:digit:]]\+/"mwm": '$(cat $folder_config/config-node.json | grep \"mwm\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
-
-  # Set the coordinator.securityLevel
-  sed -i 's/"coordinatorSecurityLevel": [[:digit:]]\+/"coordinatorSecurityLevel": '$(cat $folder_config/config-node.json | grep \"securityLevel\" | cut -d : -f 2 | tr -d "[ ,]")'/g' ./my-network.json
+  sed -i 's/"coordinatorAddress": \("\).*\("\)/"coordinatorAddress": \1'$(cat $folder_config/../coo-milestones-public-key.txt)'\2/g' ./my-network.json
 
   # Set in the Front-End App configuration the API endpoint
   sed -i 's/"apiEndpoint": \("\).*\("\)/"apiEndpoint": \1http:\/\/localhost:4000\2/g' ./config/webapp.config.local.json
@@ -123,12 +124,31 @@ installExplorer () {
 }
 
 startExplorer () {
+  if ! [ -d "$EXPLORER_SRC" ]; then
+    echo "Install the Tangle explorer first with './tangle-explorer.sh install'"
+    exit 129
+  fi
+
   # Running the Explorer API
   docker-compose --log-level ERROR up -d  --build
 }
 
 stopExplorer () {
   stopContainers
+}
+
+updateExplorer () {
+  if ! [ -d "$EXPLORER_SRC" ]; then
+    echo "Install the Tangle explorer first with './tangle-explorer.sh install'"
+    exit 129
+  fi
+
+  stopExplorer
+
+  cd $EXPLORER_SRC
+  git pull
+
+  startExplorer
 }
 
 case "${command}" in
@@ -144,6 +164,9 @@ case "${command}" in
 		;;
   "stop")
 		stopExplorer
+		;;
+  "update")
+		updateExplorer
 		;;
   *)
 		echo "Command not Found."

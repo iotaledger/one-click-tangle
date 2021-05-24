@@ -1,13 +1,15 @@
 #!/bin/bash
 
 # Script to run a new Private Tangle
-# private_tangle.sh start .- Starts a new Tangle
-# private_tangle.sh stop .- Stops the Tangle
+# private-tangle.sh install .- Installs a new Private Tangle
+# private-tangle.sh start   .- Starts a new Private Tangle
+# private-tangle.sh update  .- Updates the Private Tangle
+# private-tangle.sh stop    .- Stops the Tangle
 
 set -e
 
 help () {
-  echo "usage: private-tangle.sh [start|stop] [merkle_tree_depth] [boostrap_wait_time]"
+  echo "usage: private-tangle.sh [start|stop|update|install] <coo_bootstrap_wait_time?>"
 }
 
 if [ $#  -lt 1 ]; then
@@ -18,96 +20,96 @@ fi
 
 command="$1"
 
-if [ "$command" == "start" ]; then
-  if [ $# -lt 2 ]; then
-    echo "Please provide the depth of the Merkle Tree"
-    help
-    exit 1
-  fi
-fi
-
-MERKLE_TREE_DEPTH=$2
-
-#######
-# TODO: Enable Hornet to notify bootstrap without relying on waiting
-#######
-# Obtaining the bootstrap wait time
-# Six seconds wait time by default for bootstrapping coordinator
-COO_BOOTSTRAP_WAIT=$3
-if [ -z "$3" ]; then
-  COO_BOOTSTRAP_WAIT=6
-fi
-
-MERKLE_TREE_LOG_FILE=./logs/merkle-tree-generation.log.html
-
 ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))
+COO_BOOTSTRAP_WAIT=10
 
-# Generates a new seed ensuring last trit is always 0
-generateSeed () {
-  local seed=$(cat /dev/urandom | LC_ALL=C tr -dc 'A-Z9' | fold -w 80 | head -n 1)$(cat /dev/urandom | LC_ALL=C tr -dc 'A-DW-Z9' | fold -w 1 | head -n 1)
-  echo "$seed"
-} 
+if [ -n "$2" ]; then
+  COO_BOOTSTRAP_WAIT="$2"
+fi
 
 clean () {
   # TODO: Differentiate between start, restart and remove
   stopContainers
 
   # We need sudo here as the files are going to be owned by the hornet user
-  
-  if [ -f $MERKLE_TREE_LOG_FILE ]; then
-    sudo rm $MERKLE_TREE_LOG_FILE
-  fi
-
-  if [ -f ./logs/coo-bootstrap.log ]; then
-    sudo rm ./logs/coo-bootstrap.log
-  fi
-
-  if [ -f ./db/private-tangle/coordinator.tree ]; then
-    sudo rm ./db/private-tangle/coordinator.tree
-  fi
-
   if [ -f ./db/private-tangle/coordinator.state ]; then
     sudo rm ./db/private-tangle/coordinator.state
   fi
 
   if [ -d ./db/private-tangle/coo.db ]; then
-    sudo rm -Rf ./db/private-tangle/coo.db
+    sudo rm -Rf ./db/private-tangle/coo.db/*
   fi
 
-  if [ -d ./db/private-tangle/node.db ]; then
-    sudo rm -Rf ./db/private-tangle/node.db
+  if [ -d ./db/private-tangle/node1.db ]; then
+    sudo rm -Rf ./db/private-tangle/node1.db/*
   fi
 
   if [ -d ./db/private-tangle/spammer.db ]; then
-    sudo rm -Rf ./db/private-tangle/spammer.db
+    sudo rm -Rf ./db/private-tangle/spammer.db/*
   fi
 
+  if [ -d ./p2pstore ]; then
+    sudo rm -Rf ./p2pstore
+  fi
+
+  if [ -d ./snapshots/private-tangle ]; then
+    sudo rm -Rf ./snapshots/private-tangle/*
+  fi
 }
 
 # Sets up the necessary directories if they do not exist yet
 volumeSetup () {
-  ## Directory for the Tangle DB files
+  ## Directories for the Tangle DB files
   if ! [ -d ./db ]; then
     mkdir ./db
+  fi
+
+  if ! [ -d ./db/private-tangle ]; then
     mkdir ./db/private-tangle
   fi
 
+  if ! [ -d ./db/private-tangle/coo.db ]; then
+    mkdir ./db/private-tangle/coo.db
+  fi
+
+  if ! [ -d ./db/private-tangle/spammer.db ]; then
+    mkdir ./db/private-tangle/spammer.db
+  fi
+
+  if ! [ -d ./db/private-tangle/node1.db ]; then
+    mkdir ./db/private-tangle/node1.db
+  fi
+
+  # Logs
   if ! [ -d ./logs ]; then
     mkdir ./logs
   fi
 
+  # Snapshots
   if ! [ -d ./snapshots ]; then
     mkdir ./snapshots
+  fi
+
+  if ! [ -d ./snapshots/private-tangle ]; then
     mkdir ./snapshots/private-tangle
+  fi
+
+  # P2P
+  if ! [ -d ./p2pstore ]; then
+    mkdir ./p2pstore
   fi
 
   ## Change permissions so that the Tangle data can be written (hornet user)
   ## TODO: Check why on MacOS this cause permission problems
-  sudo chown 39999:39999 db/private-tangle 
-
+  if ! [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Setting permissions for Hornet..."
+    sudo chown -R 65532:65532 db 
+    sudo chown -R 65532:65532 snapshots 
+    sudo chown -R 65532:65532 p2pstore
+  fi 
 }
 
-startTangle () {
+installTangle () {
   # First of all volumes have to be set up
   volumeSetup
 
@@ -115,21 +117,30 @@ startTangle () {
   # And only cleaning when we want to really remove all previous state
   clean
 
-  # Initial address for the snapshot
-  generateInitialAddress
+  # The network is created to support the containers
+  docker network prune -f
+  docker network create "private-tangle"
 
-  # Change permissions for the snapshots 
-  sudo chown 39999:39999 snapshots/private-tangle
+  # When we install we ensure container images are updated
+  updateContainers
 
+  # Initial snapshot
+  generateSnapshot
+
+  # P2P identities are generated
+  setupIdentities
+
+  # Peering of the nodes is configured
+  setupPeering
+
+  # Coordinator set up
   setupCoordinator
 
-  # We could get rid of nginx as we no longer need it. We show a message to the user. 
-  # docker-compose rm -s -f nginx
-  completed_message="Your Merkle Tree has already been generated.  <a href=\"http://$ip_address:8081\">Go to Hornet Node Dashboard</a>"
-  echo '<!DOCTYPE html><html><body><p style="color: red;">' > $MERKLE_TREE_LOG_FILE 
-  echo "$completed_message" >> $MERKLE_TREE_LOG_FILE 
-  echo '</p></body></html>' >> $MERKLE_TREE_LOG_FILE
+  # And finally containers are started
+  startContainers
+}
 
+startContainers () {
   # Run the coordinator
   docker-compose --log-level ERROR up -d coo
 
@@ -140,73 +151,88 @@ startTangle () {
   docker-compose --log-level ERROR up -d node
 }
 
-generateMerkleTree () {
-  echo "Generating a new seed for the coordinator..."
-
-  # We ensure last trit is 0
-  export COO_SEED=$(generateSeed)
-  echo $COO_SEED > coordinator.seed 
-
-  echo "Done. Check coordinator.seed"
-  
-  echo "Generating Merkle Tree... of depth ${MERKLE_TREE_DEPTH}. This can take time ⏳ ..."
-
-  # TODO: Use a loop to avoid duplication Add the Merkle Tree Depth to the Configuration
-  sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-coo.json
-  # Tree Depth has to be copied to the different nodes of the network
-  sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-node.json
-  sed -i 's/"merkleTreeDepth": [[:digit:]]\+/"merkleTreeDepth": '$MERKLE_TREE_DEPTH'/g' config/config-spammer.json
-
-  # Running NGINX Server that will allow us to check the logs
-  docker-compose --log-level ERROR up -d nginx
-
-  if [ $? -eq 0 ]; 
-    then
-      echo "You can check logs at curl http://localhost:9000/merkle-tree-generation.log.html"
-      if [ "$AMAZON_LINUX" = "true" ];
-        then
-          echo "Your log files are also available at http://$ip_address:9000/merkle-tree-generation.log.html"
-      fi
-    else 
-      echo "Warning: NGINX Logs Server could not be started. You can  manuallycheck logs at $MERKLE_TREE_LOG_FILE"
-  fi
-
-  echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="5"></head><body><pre>' >> $MERKLE_TREE_LOG_FILE
-  docker-compose run --rm -e COO_SEED=$COO_SEED coo hornet tool merkle >> $MERKLE_TREE_LOG_FILE
-
-  if [ $? -ne 0 ]; 
-    then
-      echo "Error while generating Merkle Tree. Please check logs and permissions"
-      exit 127
-  fi
-
-  MERKLE_TREE_ADDR=$(cat "$MERKLE_TREE_LOG_FILE" | grep "Merkle tree root"  \
-  | cut  -d ":" -f 2 - | sed "s/ //g" | tr -d "\n" | tr -d "\r")
-
-  echo $MERKLE_TREE_ADDR > merkle-tree.addr
-
-  echo "Done. Check merkle-tree.addr"
+updateContainers () {
+  docker-compose pull
 }
 
+updateTangle () {
+  if ! [ -f ./snapshots/private-tangle/full_snapshot.bin ]; then
+    echo "Install your Private Tangle first with './private-tangle.sh install'"
+    exit 129
+  fi
+
+  stopContainers
+
+  updateContainers
+
+  startTangle
+}
+
+### 
+### Generates the initial snapshot
+### 
+generateSnapshot () {
+  echo "Generating an initial snapshot..."
+    # First a key pair is generated
+  docker-compose run --rm node hornet tool ed25519key > key-pair.txt
+
+  # Extract the public key use to generate the address
+  local public_key="$(getPublicKey key-pair.txt)"
+
+  # Generate the address
+  docker-compose run --rm node hornet tool ed25519addr "$public_key" | cut -d ":" -f 2\
+   | sed "s/ \+//g" | tr -d "\n" | tr -d "\r" > address.txt
+
+  # Generate the snapshot
+  cd snapshots/private-tangle
+  docker-compose run --rm -v "$PWD:/output_dir" node hornet tool snapgen "private-tangle"\
+   "$(cat ../../address.txt)" 2779530283277761 /output_dir/full_snapshot.bin
+
+  echo "Initial Ed25519 Address generated. You can find the keys at key-pair.txt and the address at address.txt"
+
+  cd .. && cd ..
+}
+
+# Extracts the public key from a key pair
+getPublicKey () {
+  echo $(cat "$1" | tail -1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+}
+
+# Extracts the private key from a key pair
+getPrivateKey () {
+  echo $(cat "$1" | head -n 1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+}
+
+###
+### Sets the Coordinator up by creating a key pair
+###
 setupCoordinator () {
-  generateMerkleTree
+  local coo_key_pair_file=coo-milestones-key-pair.txt
 
-  # Copy the Merkle Tree Address to the different nodes configuration
-  sed -i 's/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/g' config/config-coo.json
+  docker-compose run --rm node hornet tool ed25519key > "$coo_key_pair_file"
+  # Private Key is exported as it is needed to run the Coordinator
+  export COO_PRV_KEYS="$(getPrivateKey $coo_key_pair_file)"
 
-  sed -i 's/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/g' config/config-node.json
+  local coo_public_key="$(getPublicKey $coo_key_pair_file)"
+  echo "$coo_public_key" > coo-milestones-public-key.txt
 
-  sed -i '0,/"address"/s/"address": \("\).*\("\)/"address": \1'$MERKLE_TREE_ADDR'\2/' config/config-spammer.json
+  setCooPublicKey "$coo_public_key" config/config-coo.json
+  setCooPublicKey "$coo_public_key" config/config-node.json
+  setCooPublicKey "$coo_public_key" config/config-spammer.json
 
+  bootstrapCoordinator
+}
+
+# Bootstraps the coordinator
+bootstrapCoordinator () {
   echo "Bootstrapping the Coordinator..."
   # Bootstrap the coordinator
-  docker-compose run -d --rm -e COO_SEED=$COO_SEED coo hornet --cooBootstrap > coo.bootstrap.container
+  docker-compose run -d --rm -e COO_PRV_KEYS=$COO_PRV_KEYS coo hornet --cooBootstrap --cooStartIndex 0 > coo.bootstrap.container
 
   # Waiting for coordinator bootstrap
   # We guarantee that if bootstrap has not finished yet we sleep another time 
   # for a few seconds more until bootstrap has been performed
   bootstrapped=1
-  # Number of seconds waited for each tick (proportional to the depth of the Merkle Tree)
   bootstrap_tick=$COO_BOOTSTRAP_WAIT
   echo "Waiting for $bootstrap_tick seconds ... ⏳"
   sleep $bootstrap_tick
@@ -227,35 +253,113 @@ setupCoordinator () {
   fi  
 }
 
-# Generates the initial address for the snapshot
-generateInitialAddress () {
-  echo "Generating an initial IOTA address holding all IOTAs..."
-
-  local seed=$(generateSeed)
-  echo $seed > ./utils/node.seed 
-
-  # Now we run a tiny Node.js utility to get the first address to be on the snapshot
-  docker-compose run --rm -w /usr/src/app address-generator sh -c 'npm install --prefix=/package "@iota/core" > /dev/null && node address-generator.js $(cat node.seed) 2> /dev/null > address.txt'
-  echo "$(cat ./utils/address.txt);2779530283277761" > ./snapshots/private-tangle/snapshot.csv
-
-  rm -f ./utils/address.txt
-  mv ./utils/node.seed .
-
-  echo "Initial Address generated. You can find the seed at node.seed"
+setCooPublicKey () {
+  local public_key="$1"
+  sed -i 's/"key": ".*"/"key": "'$public_key'"/g' "$2"
 }
+
+generateP2PIdentity () {
+  docker-compose run --rm node hornet tool p2pidentity > $1
+}
+
+# Generates the P2P identities of the Nodes
+generateP2PIdentities () {
+  generateP2PIdentity node1.identity.txt
+  generateP2PIdentity coo.identity.txt
+  generateP2PIdentity spammer.identity.txt
+}
+
+setupIdentityPrivateKey () {
+  local private_key=$(cat $1 | head -n 1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+  # and then set it on the config.json file
+  sed -i 's/"identityPrivateKey": ".*"/"identityPrivateKey": "'$private_key'"/g' $2
+}
+
+###
+### Sets up the identities of the different nodes
+###
+setupIdentities () {
+  generateP2PIdentities
+
+  setupIdentityPrivateKey node1.identity.txt config/config-node.json
+  setupIdentityPrivateKey coo.identity.txt config/config-coo.json
+  setupIdentityPrivateKey spammer.identity.txt config/config-spammer.json
+}
+
+# Sets up the identity of the peers
+setupPeerIdentity () {
+  local peerName1="$1"
+  local peerID1="$2"
+
+  local peerName2="$3"
+  local peerID2="$4"
+
+  local peer_conf_file="$5"
+
+  cat <<EOF > "$peer_conf_file"
+  {
+    "peers": [
+      {
+        "alias": "$peerName1",
+        "multiAddress": "/dns/$peerName1/tcp/15600/p2p/$peerID1"
+      },
+      {
+        "alias": "$peerName2",
+        "multiAddress": "/dns/$peerName2/tcp/15600/p2p/$peerID2"
+      }
+    ]
+  } 
+EOF
+
+}
+
+# Extracts the peerID from the identity file
+getPeerID () {
+  local identity_file="$1"
+  echo $(cat $identity_file | sed '3q;d' | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+}
+
+### 
+### Sets the peering configuration
+### 
+setupPeering () {
+  local node1_peerID=$(getPeerID node1.identity.txt)
+  local coo_peerID=$(getPeerID coo.identity.txt)
+  local spammer_peerID=$(getPeerID spammer.identity.txt)
+
+  setupPeerIdentity "node1" "$node1_peerID" "spammer" "$spammer_peerID" config/peering-coo.json
+  setupPeerIdentity "node1" "$node1_peerID" "coo" "$coo_peerID" config/peering-spammer.json
+  setupPeerIdentity "coo" "$coo_peerID" "spammer" "$spammer_peerID" config/peering-node.json
+}
+
 
 stopContainers () {
   echo "Stopping containers..."
 	docker-compose --log-level ERROR down -v --remove-orphans
 }
 
-# TODO: start, stop, remove, resume
+startTangle () {
+  if ! [ -f ./snapshots/private-tangle/full_snapshot.bin ]; then
+    echo "Install your Private Tangle first with './private-tangle.sh install'"
+    exit 128 
+  fi
+
+  export COO_PRV_KEYS="$(getPrivateKey coo-milestones-key-pair.txt)"
+  startContainers
+}
+
 case "${command}" in
 	"help")
     help
     ;;
-	"start")
+	"install")
+    installTangle
+    ;;
+  "start")
     startTangle
+    ;;
+  "update")
+    updateTangle
     ;;
   "stop")
 		stopContainers

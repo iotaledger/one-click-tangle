@@ -3,6 +3,7 @@
 ## Usage
 
 * Make the the bash script executable by running
+
 ```
 chmod +x hornet.sh
 ```
@@ -15,7 +16,7 @@ chmod +x hornet.sh
 
 The `peer_multiAddress` parameter must conform to the format specified [here](https://hornet.docs.iota.org/post_installation/peering.html)
 
-Optionally a Docker image name can be passed, even though, by default, the image name present in the `docker-compose.yaml` file will be used, normally `gohornet/hornet:latest`. 
+Optionally a Docker image name can be passed, even though, by default, the image name present in the `docker-compose.yaml` file will be used, usually `gohornet/hornet:latest`. 
 
 * Stop Hornet by running
 ```

@@ -1,16 +1,12 @@
-{
-  "acceptAnyConnection": false,
-  "maxPeers": 5,
-  "peers": [
-    {
-      "identity": "node1:15600",
-      "alias": "node1",
-      "preferIPv6": false
-    },
-    {
-      "identity": "coo:15600",
-      "alias": "coo",
-      "preferIPv6": false
-    }
-  ]
-}
+  {
+    "peers": [
+      {
+        "alias": "node1",
+        "multiAddress": "/dns/node1/tcp/15600/p2p/12D3KooWP5ib5wMgn2Z4bUaJu1FcoV4JgCJdzqPDRb3uDEmUcW9p"
+      },
+      {
+        "alias": "coo",
+        "multiAddress": "/dns/coo/tcp/15600/p2p/12D3KooWPMY1w7YHkgegawVQLBArvmbyaTok9Se8qivSMJb3ouxo"
+      }
+    ]
+  } 

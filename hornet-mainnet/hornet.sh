@@ -106,11 +106,16 @@ imageSetup () {
         echo "Using image: $image"
         sed -i 's/image: .\+/image: '$image'/g' docker-compose.yaml
     fi
+
     # We ensure we have the image before
     docker-compose pull hornet
 }
 
 startHornet () {
+    if ! [ -f ./snapshots/mainnet/full_snapshot.bin ]; then
+        echo "Install Hornet first with './hornet.sh install'"
+        exit 129
+    fi
     docker-compose --log-level ERROR up -d
 }
 
@@ -126,11 +131,15 @@ installHornet () {
 
 updateHornet () {
     if ! [ -f ./p2pstore/key.pub ]; then
-      echo "Previous version of Hornet not running. Use 'install' instead"
-      exit 127
+      echo "Previous version of Hornet not running. Use './hornet.sh install' instead"
+      exit 128
     fi
 
+    stopHornet
+    
     imageSetup
+
+    startHornet
 }
 
 stopHornet () {
@@ -138,7 +147,9 @@ stopHornet () {
     docker-compose --log-level ERROR down -v --remove-orphans
 }
 
+######################
 ## Script starts here
+######################
 case "${command}" in
   "help")
     help
@@ -146,12 +157,10 @@ case "${command}" in
   "install")
     stopHornet
     installHornet
-    startHornet
+    docker-compose --log-level ERROR up -d
     ;;
   "update")
-    stopHornet
     updateHornet
-    startHornet
     ;;
   "start")
     startHornet
