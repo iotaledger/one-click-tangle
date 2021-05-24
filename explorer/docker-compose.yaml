@@ -14,12 +14,12 @@ services:
        context: ./explorer-src/api
        dockerfile: Dockerfile
     image: iotaledger/explorer-api
-    restart: always
+    restart: unless-stopped
     container_name: explorer-api
     expose:
       - 4000
     ports:
-      - "4000:4000"
+      - "0.0.0.0:4000:4000"
     volumes:
       - ./application-data:/app/data/.local-storage
 
@@ -31,11 +31,11 @@ services:
       context: ./explorer-src/client
       dockerfile: Dockerfile
     image: iotaledger/explorer-webapp
-    restart: always
+    restart: unless-stopped
     container_name: explorer-webapp
     depends_on:
       - explorer-api
     expose: 
       - 80
     ports:
-      - "8082:80"
+      - "0.0.0.0:8082:80"

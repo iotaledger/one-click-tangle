@@ -60,7 +60,7 @@
     },
     "protocol": {
         "networkID": "private-tangle",
-        "bech32HRP": "iota-pt",
+        "bech32HRP": "atoipt",
         "minPoWScore": 2000,
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
