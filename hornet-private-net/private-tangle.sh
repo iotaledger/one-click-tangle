@@ -80,11 +80,6 @@ volumeSetup () {
     mkdir ./db/private-tangle/node1.db
   fi
 
-  # Logs
-  if ! [ -d ./logs ]; then
-    mkdir ./logs
-  fi
-
   # Snapshots
   if ! [ -d ./snapshots ]; then
     mkdir ./snapshots
@@ -119,7 +114,10 @@ installTangle () {
 
   # The network is created to support the containers
   docker network prune -f
+  # Ensure the script does not stop if it has not been pruned
+  set +e
   docker network create "private-tangle"
+  set -e
 
   # When we install we ensure container images are updated
   updateContainers
@@ -226,6 +224,11 @@ setupCoordinator () {
 # Bootstraps the coordinator
 bootstrapCoordinator () {
   echo "Bootstrapping the Coordinator..."
+  # Need to do it again otherwise the coo will not bootstrap
+  if ! [[ "$OSTYPE" == "darwin"* ]]; then
+    sudo chown -R 65532:65532 p2pstore
+  fi
+
   # Bootstrap the coordinator
   docker-compose run -d --rm -e COO_PRV_KEYS=$COO_PRV_KEYS coo hornet --cooBootstrap --cooStartIndex 0 > coo.bootstrap.container
 
