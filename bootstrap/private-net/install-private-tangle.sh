@@ -6,6 +6,17 @@
 # And executes it
 # For the time being only the Linux AWS is supported
 
+scriptsInstall () {
+  git clone https://github.com/iotaledger/one-click-tangle
+  cd one-click-tangle
+  git fetch origin
+  git checkout -b chrysalis origin/chrysalis
+
+  cd hornet-private-net
+  # The script that will launch all the process
+  chmod +x ./private-tangle.sh
+}
+
 tangleExplorer () {
   cd ../explorer
   cp ./config/private-network.json ./my-network.json
@@ -24,8 +35,12 @@ tangleExplorer () {
 ## Script starts here. 
 ###################################################
 
-wget https://raw.githubusercontent.com/iotaledger/one-click-tangle/chrysalis/bootstrap/private-net/parameters.sh
-chmod +x ./parameters.sh
+# First we install all the scripts needed
+scriptsInstall
+
+# Load the parameters 
+chmod +x ../bootstrap/private-net/parameters.sh
+source ../bootstrap/private-net/parameters.sh
 
 # First the private Tangle is installed
 ./private-tangle.sh install $TANGLE_COO_BOOTSTRAP_WAIT

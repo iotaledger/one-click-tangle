@@ -18,14 +18,14 @@
 
 ## About
 
-This repository is where the IOTA Foundation hosts the open-source code for deploying IOTA Nodes and Networks "in one click".
+This repository is where the IOTA Foundation hosts the open-source code for deploying Chrysalis IOTA Nodes and Networks "in one click".
 
 The code is composed of:
 
-- [**`hornet`:**](hornet-mainnet/README.md) Script to deploy a new Hornet Node. 
+- [**`hornet`:**](hornet-mainnet/README.md) Script to deploy a new Hornet Node connected to the mainnet. 
 - [**`private-tangle`:**](hornet-private-net/README.md) Script to deploy a new Private Tangle composed of Coordinator, Spammer and one regular Hornet Node. 
 - [**`explorer`:**](explorer/README.md) Script to deploy a new [Tangle Explorer](https://github.com/iotaledger/explorer).
-- [**`bootstrap`:**](bootstrap/README.md) Scripts that support full IOTA's Private Tangle Deployment on the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/B08M4933Y3).
+- [**`bootstrap`:**](bootstrap/README.md) Scripts that support Deployment on the AWS Marketplace for [Hornet](https://aws.amazon.com/marketplace/pp/B095HWF6JZ) and the [Private Tangle](https://aws.amazon.com/marketplace/pp/TBD).
 
 This is beta software, so there may be issues.
 Please report any issues in our [issue tracker](https://github.com/iotaledger/one-click-tangle/issues/new).
@@ -54,6 +54,7 @@ First you need to clone the Repository
 
 ```
 git clone https://github.com/iotaledger/one-click-tangle
+git checkout -b chrysalis origin/chrysalis
 ```
 
 Afterwards you can install a Hornet Node by
@@ -70,17 +71,14 @@ First you need to clone the Repository
 
 ```
 git clone https://github.com/iotaledger/one-click-tangle
+git checkout -b chrysalis origin/chrysalis
 ```
-
-Afterwards you can install a Private Tangle with Merkle Tree Depth of `16` by
 
 ```
 cd hornet-private-net
 chmod +x private-tangle.sh
-./private-tangle.sh start 16
+./private-tangle.sh install
 ```
-
-The depth of the Merkle Tree determines how many milestones the Coordinator can issue. For instance, with a Merkle Tree of depth `16` and a Coordinator issuing a confirmation milestone every `10` seconds you could run a Tangle for just `7` days. The deeper the Merkle Tree the longer it will take to create it and bootstrap the Private Tangle. 
 
 You may also want to [deploy a Tangle Explorer](./explorer). 
 

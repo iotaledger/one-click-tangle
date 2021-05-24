@@ -329,6 +329,7 @@ case "${command}" in
     installTangle
     ;;
   "start")
+    export COO_PRV_KEYS="$(getPrivateKey coo-milestones-key-pair.txt)"
     startContainers
     ;;
   "update")

@@ -132,6 +132,11 @@ stopExplorer () {
   stopContainers
 }
 
+updateExplorer () {
+  cd $EXPLORER_SRC
+  git pull
+}
+
 case "${command}" in
 	"help")
     help
@@ -145,6 +150,11 @@ case "${command}" in
 		;;
   "stop")
 		stopExplorer
+		;;
+  "update")
+		stopExplorer
+    updateExplorer
+    startExplorer
 		;;
   *)
 		echo "Command not Found."

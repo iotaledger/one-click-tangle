@@ -26,8 +26,14 @@ Alternatively it can be provided the `private-tangle-install-folder` parameter t
 ./tangle-explorer.sh stop
 ```
 
-* Start all the containers (restoring any previous state)
+* Start all the containers (keeping the already configured networks)
 
 ```
 ./tangle-explorer.sh start
+```
+
+* Updates the Explorer to the latest version (keeping the already configured networks)
+
+```
+./tangle-explorer.sh update
 ```

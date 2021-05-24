@@ -14,4 +14,4 @@ scriptsInstall () {
 }
 
 scriptsInstall
-./hornet.sh install
+./hornet.sh install "$@"
