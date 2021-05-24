@@ -117,6 +117,10 @@ installTangle () {
   # And only cleaning when we want to really remove all previous state
   clean
 
+  # The network is created to support the containers
+  docker network prune -f
+  docker network create "private-tangle"
+
   # When we install we ensure container images are updated
   updateContainers
 

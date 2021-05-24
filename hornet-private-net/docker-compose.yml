@@ -2,8 +2,8 @@ version: "3"
 
 networks:
   tangle:
-    name: private-tangle
-    enable_ipv6: false
+    external:
+      name: private-tangle
 
 services:
   coo:
