@@ -321,6 +321,16 @@ stopContainers () {
 	docker-compose --log-level ERROR down -v --remove-orphans
 }
 
+startTangle () {
+  if ! [ -f ./snapshots/private-tangle/full_snapshot.bin ]; then
+    echo "Install your Private Tangle first with './private-tangle.sh install'"
+    exit 128 
+  fi
+
+  export COO_PRV_KEYS="$(getPrivateKey coo-milestones-key-pair.txt)"
+  startContainers
+}
+
 case "${command}" in
 	"help")
     help
@@ -329,13 +339,12 @@ case "${command}" in
     installTangle
     ;;
   "start")
-    export COO_PRV_KEYS="$(getPrivateKey coo-milestones-key-pair.txt)"
-    startContainers
+    startTangle
     ;;
   "update")
     stopContainers
     updateContainers
-    startContainers
+    startTangle
     ;;
   "stop")
 		stopContainers
