@@ -124,6 +124,11 @@ installExplorer () {
 }
 
 startExplorer () {
+  if ! [ -d "$EXPLORER_SRC" ]; then
+    echo "Install the Tangle explorer first with './tangle-explorer.sh install"
+    exit 129
+  fi
+
   # Running the Explorer API
   docker-compose --log-level ERROR up -d  --build
 }
@@ -133,6 +138,11 @@ stopExplorer () {
 }
 
 updateExplorer () {
+  if ! [ -d "$EXPLORER_SRC" ]; then
+    echo "Install the Tangle explorer first with './tangle-explorer.sh install"
+    exit 129
+  fi
+  
   cd $EXPLORER_SRC
   git pull
 }

@@ -106,7 +106,7 @@ imageSetup () {
         echo "Using image: $image"
         sed -i 's/image: .\+/image: '$image'/g' docker-compose.yaml
     fi
-    
+
     # We ensure we have the image before
     docker-compose pull hornet
 }
@@ -135,7 +135,11 @@ updateHornet () {
       exit 128
     fi
 
+    stopHornet
+    
     imageSetup
+
+    startHornet
 }
 
 stopHornet () {
@@ -153,12 +157,10 @@ case "${command}" in
   "install")
     stopHornet
     installHornet
-    startHornet
+    docker-compose --log-level ERROR up -d
     ;;
   "update")
-    stopHornet
     updateHornet
-    startHornet
     ;;
   "start")
     startHornet

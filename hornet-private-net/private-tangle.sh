@@ -151,6 +151,19 @@ updateContainers () {
   docker-compose pull
 }
 
+updateTangle () {
+  if ! [ -f ./snapshots/private-tangle/full_snapshot.bin ]; then
+    echo "Install your Private Tangle first with './private-tangle.sh install'"
+    exit 129
+  fi
+
+  stopContainers
+
+  updateContainers
+
+  startTangle
+}
+
 ### 
 ### Generates the initial snapshot
 ### 
@@ -342,9 +355,7 @@ case "${command}" in
     startTangle
     ;;
   "update")
-    stopContainers
-    updateContainers
-    startTangle
+    updateTangle
     ;;
   "stop")
 		stopContainers
