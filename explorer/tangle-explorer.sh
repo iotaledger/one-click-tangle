@@ -8,16 +8,20 @@
 
 set -e
 
-### Initialization code
-
-EXPLORER_SRC=./explorer-src
-APP_DATA=./application-data
+help () {
+  echo "usage: tangle-explorer.sh [install|start|stop|update] [json-file-with-network-details.json] or [private-tangle-install-folder]"
+}
 
 if [ $#  -lt 1 ]; then
   echo "Illegal number of parameters"
   help
   exit 1
 fi
+
+### Initialization code
+
+EXPLORER_SRC=./explorer-src
+APP_DATA=./application-data
 
 command="$1"
 network_file="$2"
@@ -45,10 +49,6 @@ else
 fi
 
 ###################
-
-help () {
-  echo "usage: tangle-explorer.sh [install|start|stop] [json-file-with-network-details.json] or [private-tangle-install-folder]"
-}
 
 clean () {
   if [ -d $EXPLORER_SRC ]; then
@@ -125,7 +125,7 @@ installExplorer () {
 
 startExplorer () {
   if ! [ -d "$EXPLORER_SRC" ]; then
-    echo "Install the Tangle explorer first with './tangle-explorer.sh install"
+    echo "Install the Tangle explorer first with './tangle-explorer.sh install'"
     exit 129
   fi
 
@@ -139,12 +139,16 @@ stopExplorer () {
 
 updateExplorer () {
   if ! [ -d "$EXPLORER_SRC" ]; then
-    echo "Install the Tangle explorer first with './tangle-explorer.sh install"
+    echo "Install the Tangle explorer first with './tangle-explorer.sh install'"
     exit 129
   fi
-  
+
+  stopExplorer
+
   cd $EXPLORER_SRC
   git pull
+
+  startExplorer
 }
 
 case "${command}" in
@@ -162,9 +166,7 @@ case "${command}" in
 		stopExplorer
 		;;
   "update")
-		stopExplorer
-    updateExplorer
-    startExplorer
+		updateExplorer
 		;;
   *)
 		echo "Command not Found."
