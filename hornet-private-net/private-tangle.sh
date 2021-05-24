@@ -9,7 +9,7 @@
 set -e
 
 help () {
-  echo "usage: private-tangle.sh [start|stop|update|install]"
+  echo "usage: private-tangle.sh [start|stop|update|install] <coo_bootstrap_wait_time?>"
 }
 
 if [ $#  -lt 1 ]; then
@@ -22,6 +22,10 @@ command="$1"
 
 ip_address=$(echo $(dig +short myip.opendns.com @resolver1.opendns.com))
 COO_BOOTSTRAP_WAIT=10
+
+if [ -n "$2" ]; then
+  COO_BOOTSTRAP_WAIT="$2"
+fi
 
 clean () {
   # TODO: Differentiate between start, restart and remove
@@ -113,6 +117,9 @@ installTangle () {
   # And only cleaning when we want to really remove all previous state
   clean
 
+  # When we install we ensure container images are updated
+  updateContainers
+
   # Initial snapshot
   generateSnapshot
 
@@ -122,8 +129,14 @@ installTangle () {
   # Peering of the nodes is configured
   setupPeering
 
+  # Coordinator set up
   setupCoordinator
 
+  # And finally containers are started
+  startContainers
+}
+
+startContainers () {
   # Run the coordinator
   docker-compose --log-level ERROR up -d coo
 
@@ -132,6 +145,10 @@ installTangle () {
 
   # Run a regular node 
   docker-compose --log-level ERROR up -d node
+}
+
+updateContainers () {
+  docker-compose pull
 }
 
 ### 
@@ -304,13 +321,20 @@ stopContainers () {
 	docker-compose --log-level ERROR down -v --remove-orphans
 }
 
-# TODO: start, stop, remove, resume
 case "${command}" in
 	"help")
     help
     ;;
 	"install")
     installTangle
+    ;;
+  "start")
+    startContainers
+    ;;
+  "update")
+    stopContainers
+    updateContainers
+    startContainers
     ;;
   "stop")
 		stopContainers

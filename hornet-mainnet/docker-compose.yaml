@@ -28,3 +28,5 @@ services:
         - ./db/mainnet:/app/mainnetdb
         - ./snapshots/mainnet:/app/snapshots/mainnet
         - ./p2pstore:/app/p2pstore
+        cap_drop:
+            - ALL
