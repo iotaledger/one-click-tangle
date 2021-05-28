@@ -36,18 +36,24 @@ The three Hornet nodes, the Explorer (API and Web App).
 
 # Private Tangle Cryptographic materials, identities and addresses:
 
-Once the process finishes the following files should have been created for you:
+Once the process finishes the following files should have been created for you as enumerated below. 
+
+The P2P identities that can be used to peer these Nodes with other Nodes:
 
 * `coo.identity.txt`. The P2P identity of the Coordinator. 
 * `node1.identity.txt`. The P2P identity of the node1. 
 * `spammer.identity.txt`. The P2P identity of the Spammer. 
 
-The P2P identities can be used to peer these Nodes with other Nodes. 
+The address that holds all the IOTAs and its corresponding keys:
 
 * `key-pair.txt`. The Ed25519 Key pair corresponding to the address that holds all the IOTAs. 
 * `address.txt`. The address that holds all IOTAs initially. 
 
+The Coordinator's cryptographic materials:
+
 * `coo-milestones-key-pair.txt`. The Ed25519 key pair used by the Coordinator to sign milestones. Keep it safe!
 * `coo-milestones-public-key.txt`. The Ed25519 public key that can be used to verify Coordinator's milestones. 
 
-* `snapshots/private-tangle/full_snapshot.bin` The initial Private Tangle snapshot. It contains just one IOTA address that is holding all IOTAs. 
+The initial Private Tangle snapshot:
+
+* `snapshots/private-tangle/full_snapshot.bin`. It contains just one IOTA address that is holding all IOTAs. 
