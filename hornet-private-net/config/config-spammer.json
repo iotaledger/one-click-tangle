@@ -78,7 +78,7 @@
         "pendingReEnqueueInterval": "5s"
     },
     "tangle": {
-        "milestoneTimeout": "30s"
+        "milestoneTimeout": "120s"
     },
     "tipsel": {
         "maxDeltaMsgYoungestConeRootIndexToCMI": 8,
