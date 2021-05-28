@@ -54,7 +54,6 @@ First you need to clone the Repository
 
 ```
 git clone https://github.com/iotaledger/one-click-tangle
-git checkout -b chrysalis origin/chrysalis
 ```
 
 Afterwards you can install a Hornet Node by
@@ -71,7 +70,6 @@ First you need to clone the Repository
 
 ```
 git clone https://github.com/iotaledger/one-click-tangle
-git checkout -b chrysalis origin/chrysalis
 ```
 
 ```
