@@ -1,5 +1,7 @@
 # Private Tangle Setup using Hornet
 
+You can also use these scripts under the [AWS Marketplace](./README_AWS.md)
+
 ## Usage
 
 * Make the the bash script executable by running
