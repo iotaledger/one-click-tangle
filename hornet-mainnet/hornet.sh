@@ -129,6 +129,8 @@ installHornet () {
     peerSetup
 }
 
+# Update ensures that the latest known image at Docker Hub is used
+# However it does not ensure the latest config files are applied
 updateHornet () {
     if ! [ -f ./p2pstore/key.pub ]; then
       echo "Previous version of Hornet not running. Use './hornet.sh install' instead"

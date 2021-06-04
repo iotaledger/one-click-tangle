@@ -30,12 +30,9 @@ Optionally a Docker image name can be passed, even though, by default, the image
 ./hornet.sh start
 ```
 
-* Update Hornet by running
+* Update Hornet to the latest version known at Docker Hub (`gohornet/hornet:latest`) by running
 ```
 ./hornet.sh update
 ```
 
-If you want to ensure you update to the latest hornet version published on Docker you can execute
-```
-./hornet.sh -i "gohornet\/hornet:latest"
-```
+NB: The `update` command will not update to new versions of the config files as they may contain local changes that cannot be merged with the upstream changes. If that is the case you would need to stop Hornet, merge your current config files with the config files at [https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/config/config.json](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/config/config.json) and then start again Hornet. 
