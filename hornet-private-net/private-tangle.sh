@@ -161,8 +161,9 @@ updateTangle () {
 
   stopContainers
 
-  # Ensure we update to the latest version of codebase
-  cd .. && git pull && cd hornet-private-net
+  # We ensure we are now going to run with the latest Hornet version
+  image="gohornet\/hornet:latest"
+  sed -i 's/image: .\+/image: '$image'/g' docker-compose.yml
 
   updateContainers
 

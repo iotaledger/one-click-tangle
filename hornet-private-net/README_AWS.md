@@ -57,3 +57,25 @@ The Coordinator's cryptographic materials:
 The initial Private Tangle snapshot:
 
 * `snapshots/private-tangle/full_snapshot.bin`. It contains just one IOTA address that is holding all IOTAs. 
+
+# Operations
+
+You can update your Private Tangle to the latest version known by DockerHub by running:
+
+```console
+./private-tangle.sh update
+```
+
+NB: The `update` command will not update to new versions of the config files as they may contain local changes that cannot be merged with the upstream changes. If that is the case you would need to stop the Private Tangle, merge your current config files with the config files at [https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-private-net/config](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-private-net/config) and then start again your Private Tangle.
+
+You can stop your Private Tangle by running:
+
+```console
+./private-tangle.sh stop
+```
+
+You can reinstall your Private Tangle (**you will lose all data and configurations**) by running:
+
+```console
+./private-tangle.sh install
+```
