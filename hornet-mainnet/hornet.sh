@@ -140,7 +140,7 @@ updateHornet () {
     stopHornet
 
     image="gohornet\/hornet:latest"
-    imageSetup 
+    imageSetup
 
     startHornet
 }
