@@ -161,6 +161,9 @@ updateTangle () {
 
   stopContainers
 
+  # Ensure we update to the latest version of codebase
+  cd .. && git pull && cd hornet-private-net
+
   updateContainers
 
   startTangle
