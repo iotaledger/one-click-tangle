@@ -137,10 +137,8 @@ updateHornet () {
 
     stopHornet
 
-    # Ensure we update the codebase of one-click-tangle
-    cd .. && git pull && cd hornet-mainnet
-    
-    imageSetup
+    image="gohornet\/hornet:latest"
+    imageSetup 
 
     startHornet
 }
