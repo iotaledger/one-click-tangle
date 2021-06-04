@@ -70,3 +70,8 @@ You can reinstall Hornet (**you will lose all data and configurations**) by runn
 ```console
 ./hornet.sh install
 ```
+
+If you want to ensure you update to the latest hornet version published on Docker you can execute
+```
+./hornet.sh -i "gohornet\/hornet:latest"
+```

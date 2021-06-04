@@ -34,3 +34,8 @@ Optionally a Docker image name can be passed, even though, by default, the image
 ```
 ./hornet.sh update
 ```
+
+If you want to ensure you update to the latest hornet version published on Docker you can execute
+```
+./hornet.sh -i "gohornet\/hornet:latest"
+```
