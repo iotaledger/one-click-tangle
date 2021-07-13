@@ -188,7 +188,7 @@ generateSnapshot () {
   # Generate the snapshot
   cd snapshots/private-tangle
   docker-compose run --rm -v "$PWD:/output_dir" node hornet tool snapgen "private-tangle"\
-   "$(cat ../../address.txt)" 2779530283277761 /output_dir/full_snapshot.bin
+   "$(cat ../../address.txt)" 1000000000 /output_dir/full_snapshot.bin
 
   echo "Initial Ed25519 Address generated. You can find the keys at key-pair.txt and the address at address.txt"
 
