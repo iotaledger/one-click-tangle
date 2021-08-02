@@ -93,7 +93,7 @@ peerSetup () {
     if [ -n "$peer" ]; then
         echo "Peering with: $peer"
         # This is the case where no previous peer definition was there
-        sed -i 's/\[\]/\[{"alias": "peer1"},{"multiAddress": "'$peer'"}\]/g' config/peering.json
+        sed -i 's/\[\]/\[{"alias": "peer1","multiAddress": "'$peer'"}\]/g' config/peering.json
         # This is the case for overwriting previous peer definition
         sed -i 's/{"multiAddress":\s\+".\+"}/{"multiAddress": "'$peer'"}/g' config/peering.json
     fi
