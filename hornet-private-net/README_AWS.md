@@ -79,3 +79,6 @@ You can reinstall your Private Tangle (**you will lose all data and configuratio
 ```console
 ./private-tangle.sh install
 ```
+
+You can add extra Hornet nodes to your Private Tangle using the `private-hornet.sh` script found under the
+`extra-nodes` folder. The procedure is described [here](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-private-net/extra-nodes/README.md).
