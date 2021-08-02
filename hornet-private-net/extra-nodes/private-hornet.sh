@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Script to add a new Hornet Node to a Private Tangle
-# private-hornet.sh [install|start|stop] <node_details> <coo_public_key>? <peer_address>?
+
+# private-hornet.sh [install|update|start|stop] <node_details> <coo_public_key>? <peer_address>? <snapshot_file>?
 # node_details must be a colon-separated string including "node_name:api_port:peering_port:dashboard_port"
 # example "mynode:14627:15601:8082"
 # if the ports are not provided the default ones will be used
@@ -12,7 +13,7 @@ set -e
 source ../utils.sh
 
 help () {
-  echo "usage: private-hornet.sh [install|start|stop] <node_details> <coo_public_key>? <peer_address>? <snapshot_file>?"
+  echo "usage: private-hornet.sh [install|update|start|stop] <node_details> <coo_public_key>? <peer_address>? <snapshot_file>?"
 }
 
 if [ $#  -lt 2 ]; then
@@ -151,7 +152,6 @@ volumeSetup () {
 }
 
 bootstrapFiles () {
-  echo "$(pwd)"
   cp ../../docker-compose.yml .
   sed -i 's/node/'$node_name'/g' docker-compose.yml
   sed -i 's/0.0.0.0:'$DEFAULT_API_PORT'/0.0.0.0:'$api_port'/g' docker-compose.yml
@@ -168,6 +168,11 @@ bootstrapFiles () {
 }
 
 installNode () {
+  # Ensure the script does not stop if it has not been pruned
+  set +e
+  docker network create "private-tangle"
+  set -e
+
   # First of all volumes have to be set up
   volumeSetup
 
