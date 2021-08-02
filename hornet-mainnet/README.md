@@ -20,6 +20,8 @@ The `peer_multiAddress` parameter must conform to the format specified [here](ht
 
 Optionally a Docker image name can be passed, even though, by default, the image name present in the `docker-compose.yaml` file will be used, usually `gohornet/hornet:latest`. 
 
+A back slash should be added wherever there is a forward slash. For example, when defining the docker image `gohornet/hornet:latest` should be `gohornet\/hornet:latest` and a peer multiaddress like `/ip4/x.x.x.x/tcp/15600/p2p/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx` should be `\/ip4\/x.x.x.x\/tcp\/15600\/p2p\/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx` to avoid any error occuring during running or installing hornet.
+
 * Stop Hornet by running
 ```
 ./hornet.sh stop
