@@ -96,6 +96,8 @@ if ! [ -d ./nodes/"$node_name" ]; then
   mkdir ./nodes/"$node_name"
 fi
 
+cd  ./nodes/"$node_name"
+
 clean () {
   stopContainers
 
@@ -117,9 +119,7 @@ clean () {
 }
 
 # Sets up the necessary directories if they do not exist yet
-volumeSetup () {
-  cd  ./nodes/"$node_name"
-  
+volumeSetup () {  
   if ! [ -d ./config ]; then
     mkdir ./config
   fi
@@ -209,9 +209,9 @@ updateNode () {
 
   # We ensure we are now going to run with the latest Hornet version
   image="gohornet\/hornet:latest"
-  sed -i 's/image: .\+/image: '$image'/g' docker-compose.yml
+  sed -i 's/image: .\+/image: gohornet\/hornet:latest/g' docker-compose.yml
 
-  updateContainers
+  docker-compose pull
 
   startContainer
 }
@@ -271,6 +271,15 @@ stopContainers () {
 	docker-compose --log-level ERROR down -v --remove-orphans
 }
 
+stopNode () {
+  if ! [ -f ./db/LOG ]; then
+    echo "Install your Node first with './private-hornet.sh install'"
+    exit 128 
+  fi
+
+  stopContainers
+}
+
 startNode () {
   if ! [ -f ./db/LOG ]; then
     echo "Install your Node first with './private-hornet.sh install'"
@@ -294,7 +303,7 @@ case "${command}" in
     updateNode
     ;;
   "stop")
-		stopContainer
+		stopNode
 		;;
   *)
 		echo "Command not Found."
