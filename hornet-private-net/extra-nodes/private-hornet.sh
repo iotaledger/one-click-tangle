@@ -10,6 +10,7 @@
 set -e
 
 # Common utility functions
+chmod +x ../utils.sh
 source ../utils.sh
 
 help () {

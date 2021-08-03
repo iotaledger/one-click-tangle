@@ -8,6 +8,7 @@
 
 set -e
 
+chmod +x ./utils.sh
 source ./utils.sh
 
 help () {
