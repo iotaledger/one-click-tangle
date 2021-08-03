@@ -1,11 +1,20 @@
 #!/bin/bash
 
-# Script to add a new Hornet Node to a Private Tangle
+# Script to install and deploy an additional Hornet Node to a Private Tangle
 
-# private-hornet.sh [install|update|start|stop] <node_details> <coo_public_key>? <peer_address>? <snapshot_file>?
-# node_details must be a colon-separated string including "node_name:api_port:peering_port:dashboard_port"
-# example "mynode:14627:15601:8082"
-# if the ports are not provided the default ones will be used
+# private-hornet.sh install <node_connection_str> .- Installs a new Hornet Node on your Private Tangle
+# private-hornet.sh start   <node_name> .- Starts a Hornet Node of your Private Tangle
+# private-hornet.sh update  <node_name> .- Updates a Hornet Node of your Private Tangle
+# private-hornet.sh stop    <node_name> .- Stops a Hornet Node of your Private Tangle
+
+# <node_connection_str> must be a colon-separated string in the form
+# "node_name:api_port:peering_port:dashboard_port"
+# example: "mynode:14627:15601:8082"
+# if the ports are not provided the default ones (14265, 15600, 8081) will be used
+
+# Full signature and parameters is described below: 
+# private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress>? <snapshot_file>?
+
 
 set -e
 
@@ -14,7 +23,7 @@ chmod +x ../utils.sh
 source ../utils.sh
 
 help () {
-  echo "usage: private-hornet.sh [install|update|start|stop] <node_details> <coo_public_key>? <peer_address>? <snapshot_file>?"
+  echo "usage: private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress>? <snapshot_file>?"
 }
 
 if [ $#  -lt 2 ]; then

@@ -24,6 +24,8 @@ The code is composed of:
 
 - [**`hornet`:**](hornet-mainnet/README.md) Script to deploy a new Hornet Node connected to the mainnet. 
 - [**`private-tangle`:**](hornet-private-net/README.md) Script to deploy a new Private Tangle composed of Coordinator, Spammer and one regular Hornet Node. 
+- [**`private-tangle/extra-nodes`:**](hornet-private-net/extra-nodes/README.md) Script to add extra Hornet Nodes
+to an existing Private Tangle.
 - [**`explorer`:**](explorer/README.md) Script to deploy a new [Tangle Explorer](https://github.com/iotaledger/explorer).
 - [**`bootstrap`:**](bootstrap/README.md) Scripts that support Deployment on the AWS Marketplace for [Hornet](https://aws.amazon.com/marketplace/pp/B095HWF6JZ) and the [Private Tangle](https://aws.amazon.com/marketplace/pp/TBD).
 

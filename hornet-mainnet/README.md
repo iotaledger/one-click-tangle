@@ -4,7 +4,7 @@ You can also use these scripts under the [AWS Marketplace](./README_AWS.md)
 
 ## Usage
 
-* Make the the bash script executable by running
+* Make the bash script executable by running
 
 ```
 chmod +x hornet.sh

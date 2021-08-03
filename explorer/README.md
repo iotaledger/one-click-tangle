@@ -2,7 +2,7 @@
 
 ## Usage
 
-* Make the the bash script executable by running
+* Make the bash script executable by running
 ```
 chmod +x tangle-explorer.sh
 ```
