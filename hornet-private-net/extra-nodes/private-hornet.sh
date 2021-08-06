@@ -116,7 +116,7 @@ clean () {
   fi
 
   if [ -d ./p2pstore ]; then
-    sudo rm -Rf ./p2pstore
+    sudo rm -Rf ./p2pstore/*
   fi
 
   if [ -d ./config ]; then
