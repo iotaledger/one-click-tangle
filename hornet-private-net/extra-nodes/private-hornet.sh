@@ -174,7 +174,12 @@ bootstrapFiles () {
   cp ../../../config/profiles.json ./config/profiles.json
   cp ../../peering.json ./config/peering.json
 
-  cp "$snapshot_file" ./snapshots/private-tangle
+  if ! [[ "$OSTYPE" == "darwin"* ]]; then
+    sudo cp "$snapshot_file" ./snapshots/private-tangle
+    sudo chown -R 65532:65532 ./snapshots/private-tangle
+  else 
+    cp "$snapshot_file" ./snapshots/private-tangle
+  fi
 }
 
 installNode () {
