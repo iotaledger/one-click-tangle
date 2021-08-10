@@ -4,7 +4,7 @@ You can also use these scripts under the [AWS Marketplace](./README_AWS.md)
 
 ## Usage
 
-* Make the the bash script executable by running
+* Make the bash script executable by running
 ```
 chmod +x private-tangle.sh
 ```
@@ -38,3 +38,8 @@ The parameter `coo_bootstrap_wait_time` is optional (default is `10` seconds) an
 ```
 
 NB: The `update` command will not update to new versions of the config files as they may contain local changes that cannot be merged with the upstream changes. If that is the case you would need to stop the Private Tangle, merge your current config files with the config files at [https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-private-net/config](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-private-net/config) and then start again your Private Tangle.
+
+
+* Add extra Nodes to your Private Tangle
+
+Go to the `extra-nodes` folder and follow the recipe [here](./extra-nodes/README.md). 

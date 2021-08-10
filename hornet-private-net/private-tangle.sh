@@ -8,6 +8,9 @@
 
 set -e
 
+chmod +x ./utils.sh
+source ./utils.sh
+
 help () {
   echo "usage: private-tangle.sh [start|stop|update|install] <coo_bootstrap_wait_time?>"
 }
@@ -108,8 +111,6 @@ installTangle () {
   # First of all volumes have to be set up
   volumeSetup
 
-  # TODO: In the feature differentitate between "start", "stop", "remove"
-  # And only cleaning when we want to really remove all previous state
   clean
 
   # The network is created to support the containers
@@ -195,16 +196,6 @@ generateSnapshot () {
   cd .. && cd ..
 }
 
-# Extracts the public key from a key pair
-getPublicKey () {
-  echo $(cat "$1" | tail -1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
-}
-
-# Extracts the private key from a key pair
-getPrivateKey () {
-  echo $(cat "$1" | head -n 1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
-}
-
 ###
 ### Sets the Coordinator up by creating a key pair
 ###
@@ -260,27 +251,13 @@ bootstrapCoordinator () {
   fi  
 }
 
-setCooPublicKey () {
-  local public_key="$1"
-  sed -i 's/"key": ".*"/"key": "'$public_key'"/g' "$2"
-}
-
-generateP2PIdentity () {
-  docker-compose run --rm node hornet tool p2pidentity > $1
-}
-
 # Generates the P2P identities of the Nodes
 generateP2PIdentities () {
-  generateP2PIdentity node1.identity.txt
-  generateP2PIdentity coo.identity.txt
-  generateP2PIdentity spammer.identity.txt
+  generateP2PIdentity node node1.identity.txt
+  generateP2PIdentity node coo.identity.txt
+  generateP2PIdentity node spammer.identity.txt
 }
 
-setupIdentityPrivateKey () {
-  local private_key=$(cat $1 | head -n 1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
-  # and then set it on the config.json file
-  sed -i 's/"identityPrivateKey": ".*"/"identityPrivateKey": "'$private_key'"/g' $2
-}
 
 ###
 ### Sets up the identities of the different nodes
@@ -320,12 +297,6 @@ EOF
 
 }
 
-# Extracts the peerID from the identity file
-getPeerID () {
-  local identity_file="$1"
-  echo $(cat $identity_file | sed '3q;d' | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
-}
-
 ### 
 ### Sets the peering configuration
 ### 
@@ -337,8 +308,12 @@ setupPeering () {
   setupPeerIdentity "node1" "$node1_peerID" "spammer" "$spammer_peerID" config/peering-coo.json
   setupPeerIdentity "node1" "$node1_peerID" "coo" "$coo_peerID" config/peering-spammer.json
   setupPeerIdentity "coo" "$coo_peerID" "spammer" "$spammer_peerID" config/peering-node.json
-}
 
+  # We need this so that the peering can be properly updated
+  if ! [[ "$OSTYPE" == "darwin"* ]]; then
+    sudo chown 65532:65532 config/peering-node.json
+  fi
+}
 
 stopContainers () {
   echo "Stopping containers..."
