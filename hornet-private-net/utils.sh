@@ -30,5 +30,5 @@ setupIdentityPrivateKey () {
 # Extracts the peerID from the identity file
 getPeerID () {
   local identity_file="$1"
-  echo $(cat $identity_file | sed '3q;d' | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
+  echo $(cat $identity_file | sed '4q;d' | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
 }
