@@ -11,7 +11,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.4
+    image: gohornet/hornet:1.0.3
     restart: unless-stopped
     container_name: coo
     environment:
@@ -34,7 +34,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.4
+    image: gohornet/hornet:1.0.3
     restart: unless-stopped
     container_name: node1
     expose:
@@ -61,7 +61,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.4
+    image: gohornet/hornet:1.0.3
     restart: unless-stopped
     container_name: spammer
     expose:
