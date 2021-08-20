@@ -37,4 +37,8 @@ A back slash should be added wherever there is a forward slash. For example, whe
 ./hornet.sh update
 ```
 
+* Autopeering by default is disabled in the config file. In order to enable autopeering, add `"Autopeering"` to `node.enablePlugins`.
+
+Ensure that you have also specified an entry node in the `p2p.autopeering.entryNodes` to find new nodes. Entry nodes are encoded in `multiaddr` format.
+
 NB: The `update` command will not update to new versions of the config files as they may contain local changes that cannot be merged with the upstream changes. If that is the case you would need to stop Hornet, merge your current config files with the config files at [https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/config/config.json](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/config/config.json) and then start again Hornet. 
