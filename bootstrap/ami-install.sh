@@ -6,6 +6,11 @@
 
 set -e
 
+jqInstall () {
+  sudo yum install epel-release -y
+  sudo yum install jq -y
+}
+
 gitInstall () {
   echo "Installing git ..."
   sudo yum update -y
