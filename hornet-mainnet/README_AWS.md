@@ -2,7 +2,7 @@
 
 On the AWS Marketplace you can find the Hornet product [here](https://aws.amazon.com/marketplace/pp/B095HWF6JZ). 
 
-1. In the "Security Group Settings" before you launch the instance please click "Create New Based On Seller Settings" or make sure that ports, `8081` (Hornet's dashboard), `14265` (IOTA API), `15600` (IOTA Gossip Protocol) are exposed to the Internet. 
+1. In the "Security Group Settings" before you launch the instance please click "Create New Based On Seller Settings" or make sure that ports, `8081` (Hornet's dashboard), `14265` (IOTA API), `15600` (IOTA Gossip Protocol), `14626` (Autopeering) are exposed to the Internet. 
 
 2. Run this script: `/bin/install-hornet.sh`. 
 
