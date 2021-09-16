@@ -91,7 +91,7 @@ volumeSetup () {
 cooSetup () {
     cat config/config-template.json | jq --argjson protocol \
     "$(wget https://raw.githubusercontent.com/gohornet/hornet/main/config.json -O - -q | jq '.protocol')" \
-    '.p2p |= . + {$protocol}' > config/config.json
+    '. |= . + {$protocol}' > config/config.json
 }
 
 peerSetup () {
