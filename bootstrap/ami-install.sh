@@ -40,3 +40,5 @@ dockerInstall () {
 gitInstall
 
 dockerInstall
+
+jqInstall
