@@ -40,8 +40,6 @@ if [ "$4" == "-i" ]; then
     image="$5"
 fi
 
-echo "here"
-
 if ! [ -x "$(command -v jq)" ]; then
     echo "jq utility not installed"
     echo "You can install it following the instructions at https://stedolan.github.io/jq/download/"
