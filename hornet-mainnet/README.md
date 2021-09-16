@@ -16,7 +16,7 @@ chmod +x hornet.sh
 ./hornet.sh install -p <peer_multiAddress> -i <docker_image>
 ```
 
-The `peer_multiAddress` parameter must conform to the format specified [here](https://hornet.docs.iota.org/post_installation/peering.html)
+The `peer_multiAddress` parameter is optional and must conform to the format specified [here](https://hornet.docs.iota.org/post_installation/peering.html). If no peer specified autopeering will be configured. 
 
 Optionally a Docker image name can be passed, even though, by default, the image name present in the `docker-compose.yaml` file will be used, usually `gohornet/hornet:latest`. 
 
@@ -37,8 +37,10 @@ A back slash should be added wherever there is a forward slash. For example, whe
 ./hornet.sh update
 ```
 
-* Autopeering by default is disabled in the config file. In order to enable autopeering, add `"Autopeering"` to `node.enablePlugins`.
+## Troubleshooting
 
-Ensure that you have also specified an entry node in the `p2p.autopeering.entryNodes` to find new nodes. Entry nodes are encoded in `multiaddr` format.
+* Autopeering is only enabled if no peer address is provided. To check that autopeering is working correctly `node.enablePlugins` must include `"Autopeering"`.
+
+Ensure that there are entry nodes in the `p2p.autopeering.entryNodes`. Entry nodes are encoded in `multiaddr` format.
 
 NB: The `update` command will not update to new versions of the config files as they may contain local changes that cannot be merged with the upstream changes. If that is the case you would need to stop Hornet, merge your current config files with the config files at [https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/config/config.json](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/config/config.json) and then start again Hornet. 
