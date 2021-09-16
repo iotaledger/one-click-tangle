@@ -40,6 +40,12 @@ if [ "$4" == "-i" ]; then
     image="$5"
 fi
 
+if [ command -v jq2 &> /dev/null ]; then
+    echo "jq utility not installed"
+    echo "You can install it following the instructions at https://stedolan.github.io/jq/download/"
+    exit 156
+fi
+
 #####
 
 clean () {
@@ -78,7 +84,14 @@ volumeSetup () {
         sudo chown -R 65532:65532 db 
         sudo chown -R 65532:65532 snapshots 
         sudo chown -R 65532:65532 p2pstore
-    fi 
+    fi
+}
+
+# The coordinator public key ranges are obtained
+cooSetup () {
+    cat config/config-template.json | jq --argjson protocol \
+    "$(wget https://raw.githubusercontent.com/gohornet/hornet/main/config.json -O - -q | jq '.protocol')" \
+    '.p2p |= . + {$protocol}' > config/config.json
 }
 
 peerSetup () {
@@ -103,12 +116,6 @@ peerSetup () {
 }
 
 autopeeringSetup () {
-    if [ command -v jq2 &> /dev/null ]; then
-        echo "jq utility not installed"
-        echo "You can install it following the instructions at https://stedolan.github.io/jq/download/"
-        exit 156
-    fi
-
     # The autopeering plugin is enabled
     cat config/config.json | jq '.node.enablePlugins[.node.enablePlugins | length] |= . + "Autopeering"' > config/config-autopeering.json
 
@@ -146,6 +153,8 @@ installHornet () {
     imageSetup
 
     volumeSetup
+
+    cooSetup
 
     peerSetup
 }

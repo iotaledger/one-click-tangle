@@ -16,7 +16,6 @@ services:
         container_name: hornet
         expose:
         - 14265
-        - 14626
         - 15600
         - 8081
         ports:
