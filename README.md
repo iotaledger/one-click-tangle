@@ -36,7 +36,11 @@ Related Community Projects: [Hornet Playbook](https://github.com/nuriel77/hornet
 
 ## Prerequisites
 
-To execute these scripts you need [Docker](https://www.docker.com) and Docker Compose. **Docker Compose** is a tool for defining and running multi-container Docker applications. A series [YAML files](./docker-compose.yaml) are used to configure the required services. This means all container services can be brought up in a single command. Docker Compose is installed by default as part of Docker for Windows and Docker for Mac, however Linux users will need to follow the instructions found [here](https://docs.docker.com/compose/install/)
+* `jq` JSON command line utility. [Download](https://stedolan.github.io/jq/download/)
+
+* [GNU Sed](https://www.gnu.org/software/sed/).
+
+Last but not least, to execute these scripts you need [Docker](https://www.docker.com) and Docker Compose. **Docker Compose** is a tool for defining and running multi-container Docker applications. A series [YAML files](./docker-compose.yaml) are used to configure the required services. This means all container services can be brought up in a single command. Docker Compose is installed by default as part of Docker for Windows and Docker for Mac, however Linux users will need to follow the instructions found [here](https://docs.docker.com/compose/install/)
 
 You can check your current **Docker** and **Docker Compose** versions using the following commands:
 
