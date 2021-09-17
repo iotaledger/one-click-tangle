@@ -60,6 +60,11 @@ clean () {
         echo "Cleaning up previous P2P files"
         sudo rm -Rf ./p2pstore
     fi
+
+    if [ -d ./snapshots ]; then
+        echo "Cleaning up previous snapshot files"
+        sudo rm -Rf ./snapshots
+    fi
 }
 
 # Sets up the necessary directories if they do not exist yet
