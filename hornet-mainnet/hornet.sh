@@ -51,9 +51,9 @@ HORNET_UPSTREAM="https://raw.githubusercontent.com/gohornet/hornet/main/"
 #####
 
 clean () {
-    if [ -d ./db/mainnet ]; then
+    if [ -d ./db ]; then
         echo "Cleaning up previous DB files"
-        sudo rm -Rf ./db/mainnet
+        sudo rm -Rf ./db
     fi
 
     if [ -d ./p2pstore ]; then
