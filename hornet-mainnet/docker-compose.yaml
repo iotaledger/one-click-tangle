@@ -11,7 +11,7 @@ services:
         working_dir: /app
         networks:
             - tangle
-        image: gohornet/hornet:1.0.5
+        image: gohornet/hornet:latest
         restart: unless-stopped
         container_name: hornet
         expose:
