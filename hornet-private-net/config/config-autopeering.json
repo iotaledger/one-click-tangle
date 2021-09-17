@@ -1,0 +1,76 @@
+{
+    "restAPI": {
+        "jwtAuth": {
+            "enabled": false,
+            "salt": "HORNET"
+        },
+        "excludeHealthCheckFromAuth": false,
+        "permittedRoutes": [
+            "/health"
+        ],
+        "whitelistedAddresses": [
+            "127.0.0.1",
+            "::1"
+        ],
+        "bindAddress": "0.0.0.0:14265",
+        "powEnabled": true,
+        "powWorkerCount": 1,
+        "limits": {
+            "bodyLength": "1M",
+            "maxResults": 1000
+        }
+    },
+    "db": {
+        "engine": "rocksdb",
+        "path": "/app/db",
+        "autoRevalidation": false
+    },
+    "protocol": {
+        "networkID": "private-tangle",
+        "bech32HRP": "atoipt"
+    },
+    "requests": {
+        "discardOlderThan": "15s",
+        "pendingReEnqueueInterval": "5s"
+    },
+    "node": {
+        "alias": "node-autopeering",
+        "profile": "auto",
+        "enablePlugins": [
+            "Autopeering"
+        ]
+    },
+    "p2p": {
+        "bindMultiAddresses": [
+            "/ip4/0.0.0.0/tcp/15600"
+        ],
+        "connectionManager": {
+            "highWatermark": 10,
+            "lowWatermark": 5
+        },
+        "gossipUnknownPeersLimit": 4,
+        "db": {
+            "path": "p2pstore"
+        },
+        "reconnectInterval": "30s",
+        "autopeering": {
+            "bindAddress": "0.0.0.0:14626",
+            "entryNodesPreferIPv6": false,
+            "runAsEntryNode": true
+        }
+    },
+    "p2pdisc": {
+        "advertiseInterval": "30s",
+        "maxDiscoveredPeerConns": 4,
+        "rendezvousPoint": "between-two-vertices",
+        "routingTableRefreshPeriod": "60s"
+    },
+    "logger": {
+        "level": "info",
+        "disableCaller": true,
+        "encoding": "console",
+        "outputPaths": [
+            "stdout"
+        ]
+    }
+}
