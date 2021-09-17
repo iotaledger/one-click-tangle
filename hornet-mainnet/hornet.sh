@@ -40,17 +40,30 @@ if [ "$4" == "-i" ]; then
     image="$5"
 fi
 
+if ! [ -x "$(command -v jq)" ]; then
+    echo "jq utility not installed"
+    echo "You can install it following the instructions at https://stedolan.github.io/jq/download/"
+    exit 156
+fi
+
+HORNET_UPSTREAM="https://raw.githubusercontent.com/gohornet/hornet/main/"
+
 #####
 
 clean () {
-    if [ -d ./db/mainnet ]; then
+    if [ -d ./db ]; then
         echo "Cleaning up previous DB files"
-        sudo rm -Rf ./db/mainnet
+        sudo rm -Rf ./db
     fi
 
     if [ -d ./p2pstore ]; then
         echo "Cleaning up previous P2P files"
         sudo rm -Rf ./p2pstore
+    fi
+
+    if [ -d ./snapshots ]; then
+        echo "Cleaning up previous snapshot files"
+        sudo rm -Rf ./snapshots
     fi
 }
 
@@ -78,12 +91,25 @@ volumeSetup () {
         sudo chown -R 65532:65532 db 
         sudo chown -R 65532:65532 snapshots 
         sudo chown -R 65532:65532 p2pstore
-    fi 
+    fi
+}
+
+# The coordinator public key ranges are obtained
+cooSetup () {
+    cat config/config-template.json | jq --argjson protocol \
+    "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.protocol')" \
+    '. |= . + {$protocol}' > config/config.json
 }
 
 peerSetup () {
     # We obtain a new P2P identity for the Node
-    docker-compose run --rm hornet tool p2pidentity > p2pidentity.txt
+    set +e
+    docker-compose run --rm hornet tool p2pidentity-gen > p2pidentity.txt 2> /dev/null
+    # We try to keep backwards compatibility
+    if [ $? -eq 1 ]; then
+         docker-compose run --rm hornet tool p2pidentity > p2pidentity.txt
+    fi
+    set -e
     # Now we extract the private key 
     private_key=$(cat p2pidentity.txt | head -n 1 | cut -d ":" -f 2 | sed "s/ \+//g" | tr -d "\n" | tr -d "\r")
     # and then set it on the config.json file
@@ -96,7 +122,22 @@ peerSetup () {
         sed -i 's/\[\]/\[{"alias": "peer1","multiAddress": "'$peer'"}\]/g' config/peering.json
         # This is the case for overwriting previous peer definition
         sed -i 's/{"multiAddress":\s\+".\+"}/{"multiAddress": "'$peer'"}/g' config/peering.json
-    fi
+    else
+        echo "Configuring autopeering ..."
+        autopeeringSetup
+    fi 
+}
+
+autopeeringSetup () {
+    # The autopeering plugin is enabled
+    cat config/config.json | jq '.node.enablePlugins[.node.enablePlugins | length] |= . + "Autopeering"' > config/config-autopeering.json
+
+    # Then the autopeering configuration is added from Hornet
+    cat config/config-autopeering.json | jq --argjson autopeering \
+    "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.p2p.autopeering')" \
+    '.p2p |= . + {$autopeering}' > config/config.json
+
+    rm config/config-autopeering.json
 }
 
 imageSetup () {
@@ -125,6 +166,8 @@ installHornet () {
     imageSetup
 
     volumeSetup
+
+    cooSetup
 
     peerSetup
 }

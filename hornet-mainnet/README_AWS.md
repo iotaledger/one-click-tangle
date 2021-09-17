@@ -34,7 +34,7 @@ and then edit the `config/config.json` file, changing the password hash and salt
 
 The identity of your node is automatically generated and configured. You can find your Node P2P keys and identity in the `p2pidentity.txt` file. 
 
-You can add new peers when installing (`-p` option), or later, by login into the dashboard, and then through the "Peers" menu. 
+You can add new peers when installing (`-p` option), or later, by login into the dashboard, and then through the "Peers" menu. When installing, if no peer is specified then [autopeering](https://hornet.docs.iota.org/post_installation/peering/#autopeering) will be enabled, and your peers will be automatically discovered and configured. 
 
 NB: Another option is to add a peer through the `config/peering.json` file as described [here](https://hornet.docs.iota.org/post_installation/peering.html). In that case you will need to first stop Hornet, then edit the file and finally start Hornet again. 
 

@@ -11,17 +11,17 @@ services:
         working_dir: /app
         networks:
             - tangle
-        image: gohornet/hornet:1.0.2
+        image: gohornet/hornet:latest
         restart: unless-stopped
         container_name: hornet
         expose:
         - 14265
-        - 14626
         - 15600
         - 8081
+        - 14626
         ports:
         - "0.0.0.0:14265:14265"
-        - "0.0.0.0:14626:14626"
+        - "0.0.0.0:14626:14626/udp"
         - "0.0.0.0:15600:15600"
         - "0.0.0.0:8081:8081"
         volumes:
