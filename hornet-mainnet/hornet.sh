@@ -46,6 +46,8 @@ if ! [ -x "$(command -v jq)" ]; then
     exit 156
 fi
 
+HORNET_UPSTREAM="https://raw.githubusercontent.com/gohornet/hornet/main/"
+
 #####
 
 clean () {
@@ -90,7 +92,7 @@ volumeSetup () {
 # The coordinator public key ranges are obtained
 cooSetup () {
     cat config/config-template.json | jq --argjson protocol \
-    "$(wget https://raw.githubusercontent.com/gohornet/hornet/main/config.json -O - -q | jq '.protocol')" \
+    "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.protocol')" \
     '. |= . + {$protocol}' > config/config.json
 }
 
@@ -121,7 +123,7 @@ autopeeringSetup () {
 
     # Then the autopeering configuration is added from Hornet
     cat config/config-autopeering.json | jq --argjson autopeering \
-    "$(wget https://raw.githubusercontent.com/gohornet/hornet/main/config.json -O - -q | jq '.p2p.autopeering')" \
+    "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.p2p.autopeering')" \
     '.p2p |= . + {$autopeering}' > config/config.json
 
     rm config/config-autopeering.json
