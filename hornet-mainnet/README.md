@@ -16,7 +16,7 @@ chmod +x hornet.sh
 ./hornet.sh install -p <peer_multiAddress> -i <docker_image>
 ```
 
-The `peer_multiAddress` parameter is optional and must conform to the format specified [here](https://hornet.docs.iota.org/post_installation/peering.html). If no peer specified autopeering will be configured. 
+The `peer_multiAddress` parameter is optional and must conform to the format specified [here](https://hornet.docs.iota.org/post_installation/peering.html). If no peer specified [autopeering](https://hornet.docs.iota.org/post_installation/peering/#autopeering) will be enabled. 
 
 Optionally a Docker image name can be passed, even though, by default, the image name present in the `docker-compose.yaml` file will be used, usually `gohornet/hornet:latest`. 
 
@@ -39,7 +39,7 @@ A back slash should be added wherever there is a forward slash. For example, whe
 
 ## Troubleshooting
 
-* Autopeering is only enabled if no peer address is provided. To check that autopeering is working correctly `node.enablePlugins` must include `"Autopeering"`.
+* [Autopeering](https://hornet.docs.iota.org/post_installation/peering/#autopeering) is only enabled if no peer address is provided. To check that autopeering is working correctly `node.enablePlugins` must include `"Autopeering"`.
 
 Ensure that there are entry nodes in the `p2p.autopeering.entryNodes`. Entry nodes are encoded in `multiaddr` format.
 
