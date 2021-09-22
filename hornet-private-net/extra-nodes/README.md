@@ -23,9 +23,18 @@ chmod +x private-hornet.sh
 The first parameter is a Node connection string. Such string has different 
 fields separated by a colon (`:`). The first field is the (container and host) name 
 of your Node and, at installation time, it can be followed, optionally, by the TCP port 
-numbers corresponding to the *API endpoint*, the *peering endpoint* and the *dashboard endpoint*. 
+numbers (exposed on the host) corresponding to 
+the *API endpoint*, the *gossip peering endpoint* and the *dashboard endpoint*. 
 
-*Note: If no port numbers are provided, the default ones will be used: `14265`, `15600`, `8081`.*
+*Note: If no port numbers are provided, no ports will be exposed to the host. 
+
+*Note: You can omit some of the ports but the separator `:` has to be kept, for instance, if you just only want to  expose the dashboard port to the host you can run:
+
+*Note: By default your Node will be auto-peered using the default Entry Node provided off-the-shelf by the Private Tangle installation.
+
+```
+./private-hornet.sh install "my-node:::8082"
+```
 
  * Install a new Hornet Node passing the Private Tangle parameters on the command line
 
@@ -39,8 +48,9 @@ numbers corresponding to the *API endpoint*, the *peering endpoint* and the *das
 ```
 
 The first parameter is the Node connection string as explained above. The second parameter is the 
-*Coordinator's public key*. The third parameter is the *peer multi-address* of the Node you are going 
-to peer with. The last parameter is the *snapshot* file that will be used to sync up an initial ledger state. 
+*Coordinator's public key*. The third parameter can be either  a *peer multi-address* of the Node you are going 
+to peer with or an entry node for autopeering, for instance, `\/dns\/node-autopeering\/udp\/14626\/autopeering\/14bPxgiL7ALdQd9Qmb3z4uwCsX4M7PGPeouNaVPx45ax`. 
+The last parameter is the *snapshot* file that will be used to sync up an initial ledger state. 
 
 * Stop an existing Node by running 
 
