@@ -26,15 +26,15 @@ of your Node and, at installation time, it can be followed, optionally, by the T
 numbers (exposed on the host) corresponding to 
 the *API endpoint*, the *gossip peering endpoint* and the *dashboard endpoint*. 
 
-*Note: If no port numbers are provided, i.e. only the container name is supplied, no ports will be exposed to the host. 
+*Note*: If no port numbers are provided, i.e. only the container name is supplied, no ports will be exposed to the host. 
 
-*Note: You can omit some of the ports but the separator `:` has to be kept, for instance, if you just only want to  expose the dashboard port to the host you can run:
+*Note*: You can omit some of the ports but the separator `:` has to be kept, for instance, if you just only want to  expose the dashboard port to the host you can run:
 
 ```
 ./private-hornet.sh install "my-node:::8082"
 ```
 
-*Note: By default your Node will be peered using the default autopeering Entry Node provided off-the-shelf by the Private Tangle installation. 
+*Note*: By default your Node will be peered using the default autopeering Entry Node provided off-the-shelf by the Private Tangle installation. 
 
  * Install a new Hornet Node passing the Private Tangle parameters on the command line
 
