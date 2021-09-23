@@ -54,6 +54,10 @@ clean () {
   if [ -d ./snapshots/private-tangle ]; then
     sudo rm -Rf ./snapshots/private-tangle/*
   fi
+
+  # We need to do this so that initially the permissions are user's permissions
+  resetPeeringFile config/peering-node.json
+  resetPeeringFile config/peering-spammer.json
 }
 
 # Sets up the necessary directories if they do not exist yet

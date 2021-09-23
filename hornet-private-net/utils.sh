@@ -60,3 +60,17 @@ removeSubfolderContent () {
 setEntryNode () {
   sed -i 's/"entryNodes": \[.*\]/"entryNodes": \["'$1'"\]/g' "$2"
 }
+
+# Resets a peering file
+resetPeeringFile() {
+  if [ -f "$1" ]; then
+    sudo rm "$1"
+  fi
+  
+  cat <<EOF > "$1"
+  {
+    "peers": [
+    ]
+  } 
+EOF
+}
