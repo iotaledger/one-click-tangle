@@ -21,7 +21,7 @@ You can get access to the Hornet dashboard by opening on your Web Browser the fo
 The username and password of the dashboard application is `admin`. You can set a new password by executing
 
 ```console
-docker-compose run --rm hornet tool pwdhash 
+docker-compose run --rm hornet tool pwd-hash 
 ```
 and then edit the `config/config.json` file, changing the password hash and salt by the new values (under the  `dashboard` section). Afterwards you will need to restart Hornet by running: 
 
