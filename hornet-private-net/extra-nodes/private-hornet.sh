@@ -13,7 +13,7 @@
 # if the ports are not provided the default ones (14265, 15600, 8081) will be used
 
 # Full signature and parameters is described below: 
-# private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress>? <snapshot_file>?
+# private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress|autopeering_multiaddres>? <snapshot_file>?
 
 
 set -e
@@ -27,7 +27,7 @@ DEFAULT_PEERING_PORT="15600"
 DEFAULT_DASHBOARD_PORT="8081"
 
 help () {
-  echo "usage: private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress>? <snapshot_file>?"
+  echo "usage: private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress|autopeering_multiaddres>? <snapshot_file>?"
 }
 
 if [ $#  -lt 2 ]; then
