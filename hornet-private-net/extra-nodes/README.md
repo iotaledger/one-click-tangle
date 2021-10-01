@@ -1,6 +1,6 @@
 # Private Tangle Extra Nodes
 
-You can also use these scripts under the [AWS Marketplace](./README_AWS.md).
+You can also use these scripts under the [AWS Marketplace](../README_AWS.md).
 
 Once you have an up and running Private Tangle, this utility allows adding extra Hornet nodes. 
 

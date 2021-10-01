@@ -13,7 +13,7 @@
 # if the ports are not provided the default ones (14265, 15600, 8081) will be used
 
 # Full signature and parameters is described below: 
-# private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress|autopeering_multiaddres>? <snapshot_file>?
+# private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress|autopeering_multiaddress>? <snapshot_file>?
 
 
 set -e
