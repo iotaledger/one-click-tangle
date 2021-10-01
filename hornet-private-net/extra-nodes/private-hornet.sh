@@ -65,7 +65,7 @@ fi
 
 if [ -n "$4" ]; then
   # We determine whether the address is a peer address or an entry node address
-  if [ "$4" =~ .*"\/autopeering\/".* ]; then
+  if [[ "$4" =~ .*"\/autopeering\/".* ]]; then
     entry_node="$4"
   else 
     peer_address="$4"
