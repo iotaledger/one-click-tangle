@@ -65,7 +65,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "5d41327da6f479a9559797db95ff239332c234fea01c2be103967b346c1024e5",
+                "key": "678db435e9ee1f122dae939e8cf07c7657a93aeac395220fdf6e1c38db9b0d06",
                 "start": 0,
                 "end": 0
             }
@@ -107,13 +107,13 @@
             "Prometheus",
             "Spammer",
             "Coordinator",
-            "Autopeering",
             "ZMQ"
         ],
         "enablePlugins": [
             "URTS",
             "RestAPI",
-            "MQTT"
+            "MQTT",
+            "Autopeering"
         ]
     },
     "p2p": {
@@ -125,11 +125,16 @@
             "lowWatermark": 5
         },
         "gossipUnknownPeersLimit": 4,
-        "identityPrivateKey": "87ea04e6a7a3ecb02d211158dfe0538c54c90d68b79fad60339fdd57d3fcfac0c432a7b48a102ed3e11ddeefc84a2b1ce3e2abc537cc694d1bf20e653bd016c2",
-        "peerStore": {
-            "path": "./p2pstore/node"
+        "db": {
+            "path": "p2pstore"
         },
-        "reconnectInterval": "30s"
+        "reconnectInterval": "30s",
+        "autopeering": {
+            "bindAddress": "0.0.0.0:14626",
+            "entryNodes": ["/dns/node-autopeering/udp/14626/autopeering/14bPxgiL7ALdQd9Qmb3z4uwCsX4M7PGPeouNaVPx45ax"],
+            "entryNodesPreferIPv6": false,
+            "runAsEntryNode": false
+          }
     },
     "p2pdisc": {
         "advertiseInterval": "30s",

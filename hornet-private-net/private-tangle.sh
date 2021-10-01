@@ -39,25 +39,25 @@ clean () {
     sudo rm ./db/private-tangle/coordinator.state
   fi
 
-  if [ -d ./db/private-tangle/coo.db ]; then
-    sudo rm -Rf ./db/private-tangle/coo.db/*
-  fi
-
-  if [ -d ./db/private-tangle/node1.db ]; then
-    sudo rm -Rf ./db/private-tangle/node1.db/*
-  fi
-
-  if [ -d ./db/private-tangle/spammer.db ]; then
-    sudo rm -Rf ./db/private-tangle/spammer.db/*
+  if [ -d ./db/private-tangle ]; then
+    cd ./db/private-tangle
+    removeSubfolderContent "coo.db" "node1.db" "spammer.db" "node-autopeering.db"
+    cd ../..
   fi
 
   if [ -d ./p2pstore ]; then
-    sudo rm -Rf ./p2pstore
+    cd ./p2pstore
+    removeSubfolderContent coo node1 spammer "node-autopeering"
+    cd ..
   fi
 
   if [ -d ./snapshots/private-tangle ]; then
     sudo rm -Rf ./snapshots/private-tangle/*
   fi
+
+  # We need to do this so that initially the permissions are user's permissions
+  resetPeeringFile config/peering-node.json
+  resetPeeringFile config/peering-spammer.json
 }
 
 # Sets up the necessary directories if they do not exist yet
@@ -71,17 +71,9 @@ volumeSetup () {
     mkdir ./db/private-tangle
   fi
 
-  if ! [ -d ./db/private-tangle/coo.db ]; then
-    mkdir ./db/private-tangle/coo.db
-  fi
-
-  if ! [ -d ./db/private-tangle/spammer.db ]; then
-    mkdir ./db/private-tangle/spammer.db
-  fi
-
-  if ! [ -d ./db/private-tangle/node1.db ]; then
-    mkdir ./db/private-tangle/node1.db
-  fi
+  cd ./db/private-tangle
+  createSubfolders coo.db spammer.db node1.db node-autopeering.db
+  cd ../..
 
   # Snapshots
   if ! [ -d ./snapshots ]; then
@@ -96,6 +88,10 @@ volumeSetup () {
   if ! [ -d ./p2pstore ]; then
     mkdir ./p2pstore
   fi
+
+  cd ./p2pstore
+  createSubfolders coo spammer node1 node-autopeering
+  cd ..
 
   ## Change permissions so that the Tangle data can be written (hornet user)
   ## TODO: Check why on MacOS this cause permission problems
@@ -131,6 +127,12 @@ installTangle () {
 
   # Peering of the nodes is configured
   setupPeering
+
+  # Autopeering entry node is configured
+  setupAutopeering
+
+  # Autopeering entry node is started
+  startAutopeering
 
   # Coordinator set up
   setupCoordinator
@@ -177,18 +179,18 @@ updateTangle () {
 generateSnapshot () {
   echo "Generating an initial snapshot..."
     # First a key pair is generated
-  docker-compose run --rm node hornet tool ed25519key > key-pair.txt
+  docker-compose run --rm node hornet tool ed25519-key > key-pair.txt
 
   # Extract the public key use to generate the address
   local public_key="$(getPublicKey key-pair.txt)"
 
   # Generate the address
-  docker-compose run --rm node hornet tool ed25519addr "$public_key" | cut -d ":" -f 2\
-   | sed "s/ \+//g" | tr -d "\n" | tr -d "\r" > address.txt
+  cat key-pair.txt | awk -F : '{if ($1 ~ /ed25519 address/) print $2}' \
+  | sed "s/ \+//g" | tr -d "\n" | tr -d "\r" > address.txt
 
   # Generate the snapshot
   cd snapshots/private-tangle
-  docker-compose run --rm -v "$PWD:/output_dir" node hornet tool snapgen "private-tangle"\
+  docker-compose run --rm -v "$PWD:/output_dir" node hornet tool snap-gen "private-tangle"\
    "$(cat ../../address.txt)" 1000000000 /output_dir/full_snapshot.bin
 
   echo "Initial Ed25519 Address generated. You can find the keys at key-pair.txt and the address at address.txt"
@@ -202,7 +204,7 @@ generateSnapshot () {
 setupCoordinator () {
   local coo_key_pair_file=coo-milestones-key-pair.txt
 
-  docker-compose run --rm node hornet tool ed25519key > "$coo_key_pair_file"
+  docker-compose run --rm coo hornet tool ed25519-key > "$coo_key_pair_file"
   # Private Key is exported as it is needed to run the Coordinator
   export COO_PRV_KEYS="$(getPrivateKey $coo_key_pair_file)"
 
@@ -254,20 +256,18 @@ bootstrapCoordinator () {
 # Generates the P2P identities of the Nodes
 generateP2PIdentities () {
   generateP2PIdentity node node1.identity.txt
-  generateP2PIdentity node coo.identity.txt
-  generateP2PIdentity node spammer.identity.txt
-}
+  generateP2PIdentity coo coo.identity.txt
+  generateP2PIdentity spammer spammer.identity.txt
 
+  # Identity of the autopeering node
+  generateP2PIdentity node-autopeering node-autopeering.identity.txt
+}
 
 ###
 ### Sets up the identities of the different nodes
 ###
 setupIdentities () {
   generateP2PIdentities
-
-  setupIdentityPrivateKey node1.identity.txt config/config-node.json
-  setupIdentityPrivateKey coo.identity.txt config/config-coo.json
-  setupIdentityPrivateKey spammer.identity.txt config/config-spammer.json
 }
 
 # Sets up the identity of the peers
@@ -312,7 +312,26 @@ setupPeering () {
   # We need this so that the peering can be properly updated
   if ! [[ "$OSTYPE" == "darwin"* ]]; then
     sudo chown 65532:65532 config/peering-node.json
+    sudo chown 65532:65532 config/peering-spammer.json
   fi
+}
+
+###
+### Sets the autopeering configuration
+### 
+setupAutopeering () {
+  local entry_peerID=$(getAutopeeringID node-autopeering.identity.txt)
+  local multiaddr="\/dns\/node-autopeering\/udp\/14626\/autopeering\/$entry_peerID"
+
+  setEntryNode $multiaddr config/config-node.json
+  setEntryNode $multiaddr config/config-spammer.json
+}
+
+startAutopeering () {
+  # Run the autopeering entry node
+  echo "Starting autopeering entry node ..."
+  docker-compose --log-level ERROR up -d node-autopeering
+  sleep 5
 }
 
 stopContainers () {
@@ -325,6 +344,8 @@ startTangle () {
     echo "Install your Private Tangle first with './private-tangle.sh install'"
     exit 128 
   fi
+
+  startAutopeering
 
   export COO_PRV_KEYS="$(getPrivateKey coo-milestones-key-pair.txt)"
   startContainers

@@ -11,7 +11,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.3
+    image: gohornet/hornet:latest
     restart: unless-stopped
     container_name: coo
     environment:
@@ -23,7 +23,7 @@ services:
       - ./config/profiles.json:/app/profiles.json:ro
       - ./config/peering-coo.json:/app/peering.json:ro
       - ./db/private-tangle/coo.db:/app/db
-      - ./p2pstore:/app/p2pstore
+      - ./p2pstore/coo:/app/p2pstore
       - ./db/private-tangle:/app/coo-state
       - ./snapshots:/app/snapshots
     cap_drop:
@@ -34,7 +34,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.3
+    image: gohornet/hornet:latest
     restart: unless-stopped
     container_name: node1
     expose:
@@ -42,6 +42,7 @@ services:
       - 8081
       - 1883
       - 15600
+      - "14626/udp"
     ports:
       - "0.0.0.0:14265:14265"
       - "0.0.0.0:8081:8081"
@@ -51,7 +52,7 @@ services:
       - ./config/profiles.json:/app/profiles.json
       - ./config/peering-node.json:/app/peering.json
       - ./db/private-tangle/node1.db:/app/db
-      - ./p2pstore:/app/p2pstore
+      - ./p2pstore/node1:/app/p2pstore
       - ./snapshots:/app/snapshots
     cap_drop:
         - ALL
@@ -61,18 +62,38 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.3
+    image: gohornet/hornet:latest
     restart: unless-stopped
     container_name: spammer
     expose:
-      - 14265
       - 15600
+      - "14626/udp"
     volumes:
       - ./config/config-spammer.json:/app/config.json:ro
       - ./config/profiles.json:/app/profiles.json
       - ./config/peering-spammer.json:/app/peering.json
       - ./db/private-tangle/spammer.db:/app/db
-      - ./p2pstore:/app/p2pstore
+      - ./p2pstore/spammer:/app/p2pstore
       - ./snapshots:/app/snapshots
+    cap_drop:
+        - ALL
+
+  node-autopeering:
+    hostname: node-autopeering
+    # network_mode: host
+    networks:
+      - tangle
+    image: gohornet/hornet:latest
+    restart: unless-stopped
+    container_name: node-autopeering
+    expose:
+      - "14626/udp"
+    ports:
+      - "0.0.0.0:14626:14626/udp"
+    volumes:
+      - ./config/config-autopeering.json:/app/config.json:ro
+      - ./config/profiles.json:/app/profiles.json
+      - ./db/private-tangle/node-autopeering.db:/app/db
+      - ./p2pstore/node-autopeering:/app/p2pstore
     cap_drop:
         - ALL
