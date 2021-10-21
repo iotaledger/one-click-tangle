@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hornet
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: hornet
+  template:
+    metadata:
+      labels:
+        app: hornet
+    spec:
+      #securityContext:
+      # runAsUser: 65532
+      # runAsGroup: 65532
+      containers:
+      - image: gohornet/hornet:latest
+        name: hornet
+        args: ["--config", "/config/config.json", "--peering", "/config/peering.json", "--profiles", "/config/profiles.json"]
+        ports:
+        - name: w1
+          protocol: TCP
+          containerPort: 15600
+        - name: w2
+          protocol: UDP
+          containerPort: 14626
+        - name: w3
+          protocol: TCP
+          containerPort: 14265
+        - name: w4
+          protocol: TCP
+          containerPort: 8081
+        - name: w5
+          protocol: TCP
+          containerPort: 1883
+        volumeMounts:
+        - mountPath: /config
+          name: configuration
+        - mountPath: /app/mainnetdb
+          name: mainnetdb
+        - mountPath: /app/snapshots/mainnet
+          name: snapshots
+      volumes:
+      - name: mainnetdb
+        emptyDir: {}
+      - name: snapshots
+        emptyDir: {}
+      - name: configuration
+        configMap:
+          name: hornet-config
+          items:
+          - key: config.json
+            path: config.json
+          - key: profiles.json
+            path: profiles.json
+          - key: peering.json
+            path: peering.json
+
+
+
+            
