@@ -1,9 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: hornet
 spec:
-  replicas: 1
+  # replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -13,27 +13,35 @@ spec:
       labels:
         app: hornet
     spec:
-      #securityContext:
-      # runAsUser: 65532
-      # runAsGroup: 65532
       containers:
       - image: gohornet/hornet:latest
         name: hornet
         args: ["--config", "/config/config.json", "--peering", "/config/peering.json", "--profiles", "/config/profiles.json"]
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "250m"
+          #limits:
+          #  memory: "8000Mi"
+          #  cpu: "4000m"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 14265
         ports:
-        - name: w1
+        - name: gossip
           protocol: TCP
           containerPort: 15600
-        - name: w2
+        - name: autopeering
           protocol: UDP
           containerPort: 14626
-        - name: w3
+        - name: rest
           protocol: TCP
           containerPort: 14265
-        - name: w4
+        - name: dashboard
           protocol: TCP
           containerPort: 8081
-        - name: w5
+        - name: mqtt
           protocol: TCP
           containerPort: 1883
         volumeMounts:
@@ -45,9 +53,11 @@ spec:
           name: snapshots
       volumes:
       - name: mainnetdb
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: hornet-mainnetdb-pvc
       - name: snapshots
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: hornet-snapshot-pvc
       - name: configuration
         configMap:
           name: hornet-config

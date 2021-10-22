@@ -5,11 +5,11 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - name: w2
+  - name: autopeering
     port: 30100
     nodePort: 30100
     protocol: UDP
-    targetPort: w2
+    targetPort: autopeering
   selector:
     app: hornet
 ---
@@ -20,21 +20,21 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - name: w1
+  - name: gossip
     port: 15600
     protocol: TCP
-    targetPort: 15600
-  - name: w3
+    targetPort: gossip
+  - name: rest
     port: 14265
     protocol: TCP
     targetPort: 14265
-  - name: w4
+  - name: dashboard
     port: 8081
     protocol: TCP
-    targetPort: 8081
-  - name: w5
+    targetPort: dashboard
+  - name: mqtt
     port: 1883
     protocol: TCP
-    targetPort: 1883
+    targetPort: mqtt
   selector:
     app: hornet
