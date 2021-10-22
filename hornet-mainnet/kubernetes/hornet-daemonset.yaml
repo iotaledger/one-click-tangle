@@ -59,17 +59,17 @@ spec:
         - "/config/peering.json"
         - "--profiles"
         - "/config/profiles.json"
-        # resources:
-        #  requests:
-        #    memory: "100Mi"
-        #    cpu: "250m"
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "250m"
         #  limits:
         #    memory: "8000Mi"
         #    cpu: "4000m"
-        #readinessProbe:
-        #  httpGet:
-        #    path: /health
-        #    port: 14265
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 14265
         ports:
         - name: gossip
           protocol: TCP
@@ -118,8 +118,6 @@ spec:
         configMap:
           name: hornet-config
           items:
-          #- key: final-config.json
-          #  path: final-config.json
           - key: config-template.json
             path: config-template.json
           - key: profiles.json
