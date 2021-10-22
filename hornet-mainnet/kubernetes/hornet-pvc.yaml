@@ -7,7 +7,7 @@ spec:
     requests:
       storage: 1Gi
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -18,5 +18,16 @@ spec:
     requests:
       storage: 1Gi
   accessModes:
-    - ReadWriteOnce
-  
+  - ReadWriteOnce
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hornet-p2pstore-pvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+  - ReadWriteOnce
+---

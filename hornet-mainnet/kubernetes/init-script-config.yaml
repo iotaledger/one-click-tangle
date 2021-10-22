@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-hornet-config
+data:
+  hornet-config.sh: |
+    #!/bin/bash
+
+    set -e
+
+    HORNET_UPSTREAM="https://raw.githubusercontent.com/gohornet/hornet/main/"
+
+    # The coordinator public key ranges are obtained
+    cooSetup () {
+        cat /config/config-template.json | jq --argjson protocol \
+        "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.protocol')" \
+        '. |= . + {$protocol}' > /config-out/config.json
+    }
+
+    autopeeringSetup () {
+
+        # The autopeering plugin is enabled
+        cat /config-out/config.json | jq '.node.enablePlugins[.node.enablePlugins | length] |= . + "Autopeering"' > /config-out/config-autopeering.json
+
+        # Then the autopeering configuration is added from Hornet
+        cat /config-out/config-autopeering.json | jq --argjson autopeering \
+        "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.p2p.autopeering')" \
+        '.p2p |= . + {$autopeering}' > /config-out/config-autopeering-1.json
+
+        cat /config-out/config-autopeering-1.json | jq ".p2p.autopeering.bindAddress = \"0.0.0.0:30100\"" > /config-out/config.json
+
+        rm /config-out/config-autopeering.json
+        rm /config-out/config-autopeering-1.json
+    }
+
+    setupDashboardCredentials () {
+        cat /config-out/config.json | jq ".dashboard.auth.passwordHash = \"$PASSWORD_HASH\"" | jq ".dashboard.auth.passwordSalt = \"$PASSWORD_SALT\"" > /config-out/config-new.json
+        mv /config-out/config-new.json /config-out/config.json
+    }
+
+    cooSetup
+
+    autopeeringSetup
+    
+    setupDashboardCredentials
+
+    # cat /config-out/config.json | jq .

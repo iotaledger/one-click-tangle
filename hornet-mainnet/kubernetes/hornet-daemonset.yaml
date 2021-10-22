@@ -3,7 +3,6 @@ kind: DaemonSet
 metadata:
   name: hornet
 spec:
-  # replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -13,21 +12,64 @@ spec:
       labels:
         app: hornet
     spec:
+      initContainers:
+      - name: configure-coordinator-and-autopeering
+        image: stedolan/jq
+        command: ["/init-scripts/hornet-config.sh"]
+        volumeMounts:
+        - name: init-configuration
+          mountPath: /init-scripts
+        - name: configuration
+          mountPath: /config
+        - name: init-tmp
+          mountPath: /config-out
+        envFrom:
+        - secretRef:
+            name: hornet-dashboard-secret
+
+#      - name: print-configuration
+#        image: busybox:1.28
+#        command: ["sh", "-c", "hexdump -C /config-out/config.json"]
+#        volumeMounts:
+#        - name: init-tmp
+#          mountPath: /config-out
+
+#      - name: dump
+#        image: busybox:1.28
+#        command: ["sh", "-c", "diff /config/final-config.json /config-out/config.json"]
+#        volumeMounts:
+#        - name: init-tmp
+#          mountPath: /config-out
+#        - name: configuration
+#          mountPath: /config
+
+#      - name: generate-peer-identity
+#        image: gohornet/hornet:latest
+#        command: ['sh', '-c', 'tool p2pidentity-gen > /config-out/autopeering.txt']
+#        volumeMounts:
+#        - mountPath: /config-out
+#          name: init-tmp
       containers:
-      - image: gohornet/hornet:latest
-        name: hornet
-        args: ["--config", "/config/config.json", "--peering", "/config/peering.json", "--profiles", "/config/profiles.json"]
-        resources:
-          requests:
-            memory: "100Mi"
-            cpu: "250m"
-          #limits:
-          #  memory: "8000Mi"
-          #  cpu: "4000m"
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 14265
+      - name: hornet
+        image: gohornet/hornet:latest
+        args: 
+        - "--config"
+        - "/config-out/config.json"
+        - "--peering"
+        - "/config/peering.json"
+        - "--profiles"
+        - "/config/profiles.json"
+        # resources:
+        #  requests:
+        #    memory: "100Mi"
+        #    cpu: "250m"
+        #  limits:
+        #    memory: "8000Mi"
+        #    cpu: "4000m"
+        #readinessProbe:
+        #  httpGet:
+        #    path: /health
+        #    port: 14265
         ports:
         - name: gossip
           protocol: TCP
@@ -45,30 +87,42 @@ spec:
           protocol: TCP
           containerPort: 1883
         volumeMounts:
-        - mountPath: /config
-          name: configuration
-        - mountPath: /app/mainnetdb
-          name: mainnetdb
-        - mountPath: /app/snapshots/mainnet
-          name: snapshots
+        - name: init-tmp
+          mountPath: /config-out
+        - name: configuration
+          mountPath: /config
+        - name: mainnetdb
+          mountPath: /app/mainnetdb
+        - name: snapshots
+          mountPath: /app/snapshots/mainnet
+        - name: p2pstore
+          mountPath: /app/p2pstore
+
       volumes:
+      - name: init-tmp
+        emptyDir: {}
+      - name: p2pstore
+        persistentVolumeClaim:
+          claimName: hornet-p2pstore-pvc
       - name: mainnetdb
         persistentVolumeClaim:
           claimName: hornet-mainnetdb-pvc
       - name: snapshots
         persistentVolumeClaim:
           claimName: hornet-snapshot-pvc
-      - name: configuration
+      - name: init-configuration
+        configMap:
+          name: init-hornet-config
+          defaultMode: 0777
+      - name: configuration 
         configMap:
           name: hornet-config
           items:
-          - key: config.json
-            path: config.json
+          #- key: final-config.json
+          #  path: final-config.json
+          - key: config-template.json
+            path: config-template.json
           - key: profiles.json
             path: profiles.json
           - key: peering.json
             path: peering.json
-
-
-
-            
