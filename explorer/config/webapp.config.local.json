@@ -1,4 +1,5 @@
 {
-    "apiEndpoint": "http://localhost:4000",
-    "googleAnalyticsId": "GOOGLE-ANALYTICS-ID"
+  "apiEndpoint": "http://localhost:4000",
+  "googleAnalyticsId": "GOOGLE-ANALYTICS-ID",
+  "identityResolverEnabled": true
 }
