@@ -10,7 +10,9 @@ Windows Subsystem for Linux also needs to be installed on your machine https://d
 
 A distro where you will be running your linux distribution needs to be installed. One of the best option is Ubuntu which can be found here https://ubuntu.com/wsl
 
-Open the linux distro that you installed from the windows store and install docker-compose in the WSL distribution. Notes on how to install it can be found here https://docs.docker.com/compose/install/ 
+Ensure WSL 2 backend is enabled. This will allow you to run docker commands from the linux distro you just downloaded. Information on how to enable this can be found here https://docs.docker.com/desktop/windows/wsl/
+
+Open the linux distro that you installed from the windows store and install docker-compose in the WSL distribution. Notes on how to install it can be found here https://docs.docker.com/compose/install/
 
 Ensure docker-compose v2 is disabled. There are two ways to do this:
 
