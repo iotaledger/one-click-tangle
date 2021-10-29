@@ -1,5 +1,5 @@
 {
-  "network": "PrivateTangle",
+  "network": "tangle",
   "label": "Tangle",
   "provider": "http://node1:14265",
   "protocolVersion": "chrysalis",
