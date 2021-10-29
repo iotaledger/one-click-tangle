@@ -43,3 +43,9 @@ NB: The `update` command will not update to new versions of the config files as 
 * Add extra Nodes to your Private Tangle
 
 Go to the `extra-nodes` folder and follow the recipe [here](./extra-nodes/README.md). 
+
+## Notes on IOTA Frameworks
+
+If you want to use [IOTA Identity](https://github.com/identity.rs) on your Private Tangle you can do it by assigning the network identifier `tangle` to the DID method used, for instance `did:iota:tangle:F7PAPm2LqngmmN2uu3DSmHAvu74zA5f8c7c9R75qnMkG`. A DID generation Rust example can be found [here](https://github.com/iotaledger/identity.rs/blob/dev/examples/low-level-api/private_tangle.rs). 
+
+Note: If you install the Tangle Explorer the Identity Resolver will be enabled by default. The URL to inspect your generated DIDs will be typically of the form `http://localhost:8082/tangle/identity-resolver/{DID}`, for instance `http://localhost:8082/tangle/identity-resolver/did:iota:tangle:F7PAPm2LqngmmN2uu3DSmHAvu74zA5f8c7c9R75qnMkG`
