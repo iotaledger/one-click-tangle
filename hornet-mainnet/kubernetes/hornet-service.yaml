@@ -7,7 +7,6 @@ spec:
   ports:
   - name: autopeering
     port: 30100
-    nodePort: 30100
     protocol: UDP
     targetPort: autopeering
   selector:
