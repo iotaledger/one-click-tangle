@@ -25,6 +25,10 @@ wsl --list
 5. Docker Desktop Settings
 - Enable WSL integration with new Ubuntu distribution (*Settings > Resources > WSL INTEGRATION*)
 - Make sure Docker Compose v2 is <ins>deactivated</ins> (*Settings>General*)
+- You can also deactivate Docker Compose v2 by running
+```console
+docker-compose disable-v2
+```
 
 6. Clone [one-click-tangle](https://github.com/iotaledger/one-click-tangle) repository with the following CMD commands
 ```console
