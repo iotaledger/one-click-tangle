@@ -42,11 +42,11 @@ cd one-click-tangle
     - Run Ubuntu as <ins>administrator</ins>
     - Navigate to <ins>your</ins> repo path with the following Linux command
     ```console
-        cd /mnt/<repo_path>/one-click-tangle/hornet-private-net/
+    cd /mnt/<repo_path>/one-click-tangle/hornet-private-net/
     ```
     - Trigger shell script with 30 seconds to wait for the Coordinator bootstrap step with the following Linux command (This will set up several docker containers)
     ```console
-        ./private-tangle.sh install 30
+    ./private-tangle.sh install 30
     ```
     Interact with private tangle as described in this [README](https://github.com/iotaledger/one-click-tangle/blob/a8ff9269b76fd7f3eb1e4ef95426ca8fc263e52b/hornet-private-net/README.md)
 \
@@ -54,11 +54,11 @@ cd one-click-tangle
     - Run Ubuntu as <ins>administrator</ins>
     - Navigate to <ins>your</ins> repo path with the following Linux command
     ```console
-        cd /mnt/<repo_path>/one-click-tangle/hornet-mainnet/
+    cd /mnt/<repo_path>/one-click-tangle/hornet-mainnet/
     ```
     - Trigger shell script to set up hornet mainnet node
     ```console
-        ./hornet.sh install
+    ./hornet.sh install
     ```
     Interact with mainnet node as described in this [README](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/README.md)
 \
@@ -66,10 +66,10 @@ cd one-click-tangle
     - Run Ubuntu as <ins>administrator</ins>
     - Navigate to <ins>your</ins> repo path with the following Linux command
     ```console
-        cd /mnt/<repo_path>/one-click-tangle/explorer/
+    cd /mnt/<repo_path>/one-click-tangle/explorer/
     ```
     - Trigger shell script to set up explorer while passing the necessary network parameter
     ```console
-        ./tangle-explorer.sh install [<network-definition.json> or <private-tangle-install-folder>]
+    ./tangle-explorer.sh install [<network-definition.json> or <private-tangle-install-folder>]
     ```
     Interact with explorer as described in this [README](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/explorer/README.md)
