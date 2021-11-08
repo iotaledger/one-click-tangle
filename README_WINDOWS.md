@@ -49,9 +49,7 @@ cd one-click-tangle
     ./private-tangle.sh install 30
     ```
     - Interact with private tangle (start/stop/update) as described in this [README](https://github.com/iotaledger/one-click-tangle/blob/a8ff9269b76fd7f3eb1e4ef95426ca8fc263e52b/hornet-private-net/README.md)
-
     - Add extra nodes to private tangle as described in this [README](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-private-net/extra-nodes/README.md)
-<br/>
 - hornet-mainnet (Chrysalis mainnet node)
     - Run Ubuntu as <ins>administrator</ins>
     - Navigate to <ins>your</ins> repo path with the following Linux command
@@ -63,7 +61,7 @@ cd one-click-tangle
     ./hornet.sh install
     ```
     - Interact with mainnet node (start/stop/update) as described in this [README](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/README.md)
-<br/>
+
 - explorer (IOTA Explorer for private tangle)
     - Run Ubuntu as <ins>administrator</ins>
     - Navigate to <ins>your</ins> repo path with the following Linux command
@@ -75,4 +73,3 @@ cd one-click-tangle
     ./tangle-explorer.sh install [<network-definition.json> or <private-tangle-install-folder>]
     ```
     - Interact with explorer (start/stop/update) as described in this [README](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/explorer/README.md)
-<br/>
