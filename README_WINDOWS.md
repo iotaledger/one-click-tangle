@@ -1,4 +1,4 @@
-# Instructions to Set up a Private Tangle on Windows 10
+# Instructions to Set up One-click-tangle on Windows 10
 
 1. Install [Docker for Windows](https://docs.docker.com/desktop/windows/install)
 - Make sure to also install the required Windows components for WSL 2 ([Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about))
