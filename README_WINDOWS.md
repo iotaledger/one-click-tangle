@@ -43,7 +43,7 @@
 
 ##### 7. Install One-Click-Tangle Components
 - Now you can install different components available in the one-click-tangle repo
-- Run Ubuntu as <ins>administrator</ins> and follow your desired readme
+- **NOTE:** Instead of using the mentioned `chmod` command in the referenced readme's, you need to run Ubuntu as <ins>administrator</ins> for the necessary rights
 
 - ##### Private Hornet Node Tangle
     - Navigate to `hornet-private-tangle` folder in the `one-click-tangle` repo
@@ -51,6 +51,8 @@
         cd /mnt/<repo_path>/one-click-tangle/hornet-private-net/
     ```
     - Run commands as described in the hornet-private-net [readme](/hornet-private-net/README.md)
+    - **NOTE:** When installing the private tangle script it's recommended to use a `coo_bootstrap_wait_time` of 30 seconds
+        - `./private-tangle.sh install 30`
 - ##### Mainnet Hornet Node
     - Navigate to `hornet-mainnet` folder in the `one-click-tangle` repo
     ```console
