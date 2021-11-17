@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hornet-set
+spec:
+  serviceName: hornet-tcp
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hornet
+  template:
+    metadata:
+      labels:
+        app: hornet
+    spec:
+      terminationGracePeriodSeconds: 10
+      initContainers:
+      - name: create-volumes
+        image: busybox
+        command:
+            - cp /app/peering.json /ledger/peering/peering.json
+        volumeMounts:
+            - mountPath: /ledger/peering
+              name: hornet-ledger
+              subPath: peering
+            - name: configuration
+              mountPath: /app/peering.json
+              subPath: peering.json
+      containers:
+      - name: hornet
+        image: gohornet/hornet:latest
+        workingDir: /app
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "250m"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8081
+        ports:
+        - name: gossip
+          protocol: TCP
+          containerPort: 15600
+        - name: autopeering
+          protocol: UDP
+          containerPort: 14626
+        - name: rest
+          protocol: TCP
+          containerPort: 14265
+        - name: dashboard
+          protocol: TCP
+          containerPort: 8081
+        volumeMounts:
+        - name: configuration
+          mountPath: /app/config.json
+          subPath: config.json
+        - name: hornet-ledger
+          subPath: peering
+          mountPath: /app/peering.json
+        - name: hornet-ledger
+          subPath: mainnetdb
+          mountPath: /app/mainnetdb
+        - name: hornet-ledger
+          subPath: p2pstore
+          mountPath: /app/p2pstore
+        - name: hornet-ledger
+          subPath: snapshots
+          mountPath: /app/snapshots/mainnet
+      volumes:
+      - name: configuration 
+        configMap:
+          name: hornet-config
+  volumeClaimTemplates: 
+    - metadata: 
+        name: hornet-ledger
+      spec: 
+        accessModes: 
+          - ReadWriteOnce
+        resources: 
+          requests: 
+            storage: 20Gi
