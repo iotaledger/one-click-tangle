@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # Script to run a new Hornet Chrysalis Node
-# hornet.sh deploy .- Intalls a new Hornet Node (and starts it)
-# hornet.sh delete .- Starts a new Hornet Node
+# hornet.sh deploy .- Installs a new Hornet Node (and starts it)
+# hornet.sh stop .- Scales to 0
+# hornet.sh undeploy .- Undeploys the Hornet Node
 # hornet.sh update .- Updates the Hornet Node
 
 set -e
 
 help () {
-  echo "usage: hornet-k8s.sh [deploy|update|delete] -p <peer_multiAdress> -i <docker_image>"
+  echo "usage: hornet-k8s.sh [deploy|stop|update|undeploy] -p <peer_multiAdress> -i <docker_image>"
 }
 
 ##### Command line parameter processing
@@ -109,15 +110,21 @@ deployHornet () {
 
     peerSetup
 
+    # Namespace on which the node or nodes will be living
     kubectl create namespace tangle --dry-run=client -o yaml | kubectl apply -f -
 
-    # Config Map is created
-    kubectl -n tangle create configmap hornet-config --from-file=config
+    # Config Map is created or overewritten
+    kubectl -n tangle create configmap hornet-config --from-file=config --dry-run=client -o yaml | kubectl apply -f -
     # Service associated and Statefulset associated
     kubectl apply -n tangle -f k8s/hornet-service.yaml
     kubectl apply -n tangle -f k8s/hornet.yaml
 }
 
+undeployHornet () {
+    kubectl delete -n tangle -f k8s/hornet-service.yaml
+    kubectl delete -n tangle -f k8s/hornet.yaml
+    kubectl delete -n tangle configmap hornet-config
+}
 
 ######################
 ## Script starts here
@@ -128,6 +135,9 @@ case "${command}" in
     ;;
   "deploy")
     deployHornet
+    ;;
+  "undeploy")
+    undeployHornet
     ;;
   "update")
     updateHornet

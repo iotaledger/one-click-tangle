@@ -18,7 +18,11 @@ spec:
       - name: create-volumes
         image: busybox
         command:
-            - cp /app/peering.json /ledger/peering/peering.json
+            - sh
+            - -c
+        args:
+            - >-
+                cp /app/peering.json /ledger/peering/peering.json
         volumeMounts:
             - mountPath: /ledger/peering
               name: hornet-ledger
@@ -34,8 +38,8 @@ spec:
         terminationMessagePolicy: File
         resources:
           requests:
-            memory: "100Mi"
-            cpu: "250m"
+            memory: "1Gi"
+            cpu: "1"
         readinessProbe:
           httpGet:
             path: /
@@ -58,7 +62,7 @@ spec:
           mountPath: /app/config.json
           subPath: config.json
         - name: hornet-ledger
-          subPath: peering
+          subPath: peering/peering.json
           mountPath: /app/peering.json
         - name: hornet-ledger
           subPath: mainnetdb
