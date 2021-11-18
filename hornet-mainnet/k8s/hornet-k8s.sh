@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Script to run a new Hornet Chrysalis Node
-# hornet.sh deploy .- Installs a new Hornet Node (and starts it)
-# hornet.sh stop .- Scales to 0
+# Script to deploy a new Hornet Chrysalis Node on Kubernetes
+# hornet.sh deploy .- Deploys a new Hornet Node on the cluster
+# hornet.sh scale .- Scales Hornet
 # hornet.sh undeploy .- Undeploys the Hornet Node
 # hornet.sh update .- Updates the Hornet Node
 
 set -e
 
 help () {
-  echo "usage: hornet-k8s.sh [deploy|stop|update|undeploy] -p <peer_multiAdress> -i <docker_image>"
+  echo "usage: hornet-k8s.sh [deploy|scale|update|undeploy] -p <peer_multiAdress> -i <docker_image>"
 }
 
 ##### Command line parameter processing
@@ -52,44 +52,11 @@ if ! [ -x "$(command -v kubectl)" ]; then
     exit 158
 fi
 
-HORNET_UPSTREAM="https://raw.githubusercontent.com/gohornet/hornet/main/"
-
 #####
 
-
-# The coordinator public key ranges are obtained
-cooSetup () {
-    cat config-template/config.json | jq --argjson protocol \
-    "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.protocol')" \
-    '. |= . + {$protocol}' > config/config.json
-}
-
-peerSetup () {
-    # And now we configure our Node's peers
-    cp config-template/peering.json config/peering.json
-    if [ -n "$peer" ]; then
-        echo "Peering with: $peer"
-        # This is the case where no previous peer definition was there
-        sed -i 's/\[\]/\[{"alias": "peer1","multiAddress": "'$peer'"}\]/g' config/peering.json
-        # This is the case for overwriting previous peer definition
-        sed -i 's/{"multiAddress":\s\+".\+"}/{"multiAddress": "'$peer'"}/g' config/peering.json
-    else
-        echo "Configuring autopeering ..."
-        autopeeringSetup
-    fi 
-}
-
-autopeeringSetup () {
-    # The autopeering plugin is enabled
-    cat config/config.json | jq '.node.enablePlugins[.node.enablePlugins | length] |= . + "Autopeering"' > config/config-autopeering.json
-
-    # Then the autopeering configuration is added from Hornet
-    cat config/config-autopeering.json | jq --argjson autopeering \
-    "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.p2p.autopeering')" \
-    '.p2p |= . + {$autopeering}' > config/config.json
-
-    rm config/config-autopeering.json
-}
+cp ../config-template/*.json ./config
+chmod +x ../utils.sh
+source ../utils.sh
 
 imageSetup () {
     # The image only is set if it is passed as parameter
@@ -104,8 +71,6 @@ imageSetup () {
 }
 
 deployHornet () {
-    cp config-template/profiles.json config/profiles.json
-
     cooSetup
 
     peerSetup
@@ -115,14 +80,15 @@ deployHornet () {
 
     # Config Map is created or overewritten
     kubectl -n tangle create configmap hornet-config --from-file=config --dry-run=client -o yaml | kubectl apply -f -
+
     # Service associated and Statefulset associated
-    kubectl apply -n tangle -f k8s/hornet-service.yaml
-    kubectl apply -n tangle -f k8s/hornet.yaml
+    kubectl apply -n tangle -f hornet-service.yaml
+    kubectl apply -n tangle -f hornet.yaml
 }
 
 undeployHornet () {
-    kubectl delete -n tangle -f k8s/hornet-service.yaml
-    kubectl delete -n tangle -f k8s/hornet.yaml
+    kubectl delete -n tangle -f hornet-service.yaml
+    kubectl delete -n tangle -f hornet.yaml
     kubectl delete -n tangle configmap hornet-config
 }
 
