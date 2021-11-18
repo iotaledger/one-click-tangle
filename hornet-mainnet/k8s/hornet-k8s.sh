@@ -9,35 +9,33 @@
 set -e
 
 help () {
-  echo "usage: hornet-k8s.sh [deploy|scale|update|undeploy] -p <peer_multiAdress> -i <docker_image>"
+  echo "usage: hornet-k8s.sh [deploy|scale|update|undeploy]"
+  echo "Parameter: NAMESPACE=<Kubernetes Namespace>"
+  echo "Parameter: INSTANCES=<Number of Instances>"
+  echo "Parameter: IMAGE=<Docker Images to be used>"
+  echo "Parameter: PEER=<multiPeerAddress>"
 }
 
 ##### Command line parameter processing
 
 command="$1"
-peer=""
-image=""
+peer="$PEER"
+image="$IMAGE"
+namespace="$NAMESPACE"
+instances="$INSTANCES"
+
+if [ -z "$namespace" ]; then
+    namespace="tangle"
+fi
+
+if [ -z "$instances" ]; then
+    instances=1
+fi
 
 if [ $#  -lt 1 ]; then
     echo "Illegal number of parameters"
     help
     exit 1
-fi
-
-if [ "$2" == "-p" ]; then
-    peer="$3"
-fi
-
-if [ "$4" == "-p" ]; then
-    peer="$5"
-fi
-
-if [ "$2" == "-i" ]; then
-    image="$3"
-fi
-
-if [ "$4" == "-i" ]; then
-    image="$5"
 fi
 
 if ! [ -x "$(command -v jq)" ]; then
@@ -76,20 +74,26 @@ deployHornet () {
     peerSetup
 
     # Namespace on which the node or nodes will be living
-    kubectl create namespace tangle --dry-run=client -o yaml | kubectl apply -f -
+    kubectl create namespace $namespace --dry-run=client -o yaml | kubectl apply -f -
 
     # Config Map is created or overewritten
-    kubectl -n tangle create configmap hornet-config --from-file=config --dry-run=client -o yaml | kubectl apply -f -
+    kubectl -n $namespace create configmap hornet-config --from-file=config --dry-run=client -o yaml | kubectl apply -f -
 
     # Service associated and Statefulset associated
-    kubectl apply -n tangle -f hornet-service.yaml
-    kubectl apply -n tangle -f hornet.yaml
+    kubectl apply -n $namespace -f hornet-rest-service.yaml
+    kubectl apply -n $namespace -f hornet-service.yaml
+    kubectl apply -n $namespace -f hornet.yaml
 }
 
 undeployHornet () {
-    kubectl delete -n tangle -f hornet-service.yaml
-    kubectl delete -n tangle -f hornet.yaml
-    kubectl delete -n tangle configmap hornet-config
+    kubectl delete -n $namespace -f hornet-rest-service.yaml
+    kubectl delete -n $namespace -f hornet-service.yaml
+    kubectl delete -n $namespace -f hornet.yaml
+    kubectl delete -n $namespace configmap hornet-config
+}
+
+scaleHornet () {
+    kubectl scale -n $namespace statefulsets hornet-set --replicas=$instances
 }
 
 ######################
@@ -104,6 +108,9 @@ case "${command}" in
     ;;
   "undeploy")
     undeployHornet
+    ;;
+  "scale")
+    scaleHornet
     ;;
   "update")
     updateHornet

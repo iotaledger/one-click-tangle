@@ -10,10 +10,6 @@ spec:
     port: 15600
     protocol: TCP
     targetPort: gossip
-  - name: rest
-    port: 14265
-    protocol: TCP
-    targetPort: 14265
   - name: dashboard
     port: 8081
     protocol: TCP
