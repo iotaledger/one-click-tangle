@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hornet-rest-balancer
+spec:
+  type: LoadBalancer
+  ports:
+  - name: rest
+    port: 14265
+    protocol: TCP
+    targetPort: 14265
+  selector:
+    app: hornet
