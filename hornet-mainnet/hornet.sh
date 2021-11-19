@@ -49,6 +49,8 @@ if ! [ -x "$(command -v jq)" ]; then
     exit 156
 fi
 
+cp config-template/*.json ./config
+
 #####
 
 clean () {

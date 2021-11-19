@@ -24,13 +24,10 @@ spec:
             - >-
                 mkdir -p /ledger/peering &&
                 cp /app/peering.json /ledger/peering/peering.json &&
-                chown 65532:65532 /ledger/peering/peering.json &&
                 mkdir -p /ledger/mainnetdb &&
-                chown 65532:65532 /ledger/mainnetdb && 
-                mkdir -p /ledger/snapshots && 
-                chown 65532:65532 /ledger/snapshots &&
+                mkdir -p /ledger/snapshots &&                 
                 mkdir -p /ledger/p2pstore &&
-                chown 65532:65532 /ledger/p2pstore
+                chown -R 65532:65532 /ledger
         volumeMounts:
             - mountPath: /ledger
               name: hornet-ledger
