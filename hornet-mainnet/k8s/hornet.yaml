@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: hornet-set
 spec:
-  serviceName: hornet-tcp
+  serviceName: hornet-rest
   replicas: 1
   selector:
     matchLabels:
@@ -49,8 +49,12 @@ spec:
             cpu: "250m"
         readinessProbe:
           httpGet:
-            path: /
-            port: 8081
+            path: /api/v1/info
+            port: 14265
+        livenessProbe:
+          httpGet:
+            path: /api/v1/info
+            port: 14265
         ports:
         - name: gossip
           protocol: TCP
