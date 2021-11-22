@@ -79,13 +79,15 @@ deployHornet () {
     # Config Map is created or overewritten
     kubectl -n $namespace create configmap hornet-config --from-file=config --dry-run=client -o yaml | kubectl apply -f -
 
-    # Service associated and Statefulset associated
+    # Service, Ingress associated and Statefulset associated
     kubectl apply -n $namespace -f hornet-rest-service.yaml
     kubectl apply -n $namespace -f hornet-service.yaml
     kubectl apply -n $namespace -f hornet.yaml
+    kubectl apply -n $namespace -f hornet-ingress.yaml
 }
 
 undeployHornet () {
+    kubectl delete -n $namespace -f hornet-ingress.yaml
     kubectl delete -n $namespace -f hornet-rest-service.yaml
     kubectl delete -n $namespace -f hornet-service.yaml
     kubectl delete -n $namespace -f hornet.yaml
