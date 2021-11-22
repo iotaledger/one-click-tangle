@@ -56,7 +56,7 @@ cp ../config-template/*.json ./config
 chmod +x ../utils.sh
 source ../utils.sh
 
-imageSetup () {
+createStatefulSet () {
     # The image only is set if it is passed as parameter
     # Otherwise the image is taken from the docker-compose
     if [ -n "$image" ]; then
@@ -66,6 +66,18 @@ imageSetup () {
 
     # We ensure we have the image before
     docker-compose pull hornet
+}
+
+createNodePortServices () {
+    for  (( i=0; i<$INSTANCES; i++ ))
+    do
+        cat hornet-service.yaml | kubectl patch --dry-run=client -p \
+        $'metadata:\n  namespace: '"$namespace" -o yaml -f -\
+        | kubectl patch --dry-run=client -p $'metadata:\n  name: 'hornet-tcp-"$i" -o yaml -f -\
+        | kubectl patch --dry-run=client -p \
+        '{"spec":{"selector":{"statefulset.kubernetes.io/pod-name": '\"hornet-set-"$i"\"'}}}' -o yaml -f -\
+        | kubectl apply -f -
+    done
 }
 
 deployHornet () {
@@ -81,9 +93,11 @@ deployHornet () {
 
     # Service, Ingress associated and Statefulset associated
     kubectl apply -n $namespace -f hornet-rest-service.yaml
-    kubectl apply -n $namespace -f hornet-service.yaml
     kubectl apply -n $namespace -f hornet.yaml
     kubectl apply -n $namespace -f hornet-ingress.yaml
+
+    # Finally the NodePort services are created
+    createNodePortServices
 }
 
 undeployHornet () {
