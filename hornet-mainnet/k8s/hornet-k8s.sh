@@ -16,11 +16,12 @@ help () {
   echo "Parameter: PEER=<multiPeerAddress>"
 }
 
+target=k8s
+
 ##### Command line parameter processing
 
 command="$1"
 peer="$PEER"
-image="$IMAGE"
 namespace="$NAMESPACE"
 instances="$INSTANCES"
 
@@ -57,26 +58,27 @@ chmod +x ../utils.sh
 source ../utils.sh
 
 createStatefulSet () {
-    # The image only is set if it is passed as parameter
-    # Otherwise the image is taken from the docker-compose
-    if [ -n "$image" ]; then
-        echo "Using image: $image"
-        sed -i 's/image: .\+/image: '$image'/g' docker-compose.yaml
-    fi
-
-    # We ensure we have the image before
-    docker-compose pull hornet
+    cat hornet.yaml | kubectl patch -n $namespace --dry-run=client -p \
+    $'spec:\n  replicas: '"$instances" -o yaml -f - \
+    | kubectl apply -f -
 }
 
 createNodePortServices () {
-    for  (( i=0; i<$INSTANCES; i++ ))
+    for  (( i=0; i<$instances; i++ ))
     do
         cat hornet-service.yaml | kubectl patch --dry-run=client -p \
-        $'metadata:\n  namespace: '"$namespace" -o yaml -f -\
-        | kubectl patch --dry-run=client -p $'metadata:\n  name: 'hornet-tcp-"$i" -o yaml -f -\
+        $'metadata:\n  namespace: '"$namespace" -o yaml -f - \
+        | kubectl patch --dry-run=client -p $'metadata:\n  name: 'hornet-tcp-"$i" -o yaml -f - \
         | kubectl patch --dry-run=client -p \
-        '{"spec":{"selector":{"statefulset.kubernetes.io/pod-name": '\"hornet-set-"$i"\"'}}}' -o yaml -f -\
+        '{"spec":{"selector":{"statefulset.kubernetes.io/pod-name": '\"hornet-set-"$i"\"'}}}' -o yaml -f - \
         | kubectl apply -f -
+    done
+}
+
+deleteNodePortServices () {
+    for  (( i=0; i<$instances; i++ ))
+    do
+        kubectl -n $namespace delete service hornet-tcp-"$i"
     done
 }
 
@@ -93,7 +95,7 @@ deployHornet () {
 
     # Service, Ingress associated and Statefulset associated
     kubectl apply -n $namespace -f hornet-rest-service.yaml
-    kubectl apply -n $namespace -f hornet.yaml
+    createStatefulSet
     kubectl apply -n $namespace -f hornet-ingress.yaml
 
     # Finally the NodePort services are created
@@ -103,7 +105,7 @@ deployHornet () {
 undeployHornet () {
     kubectl delete -n $namespace -f hornet-ingress.yaml
     kubectl delete -n $namespace -f hornet-rest-service.yaml
-    kubectl delete -n $namespace -f hornet-service.yaml
+    deleteNodePortServices
     kubectl delete -n $namespace -f hornet.yaml
     kubectl delete -n $namespace configmap hornet-config
 }

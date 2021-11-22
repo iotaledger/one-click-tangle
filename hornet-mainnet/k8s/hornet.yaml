@@ -36,7 +36,7 @@ spec:
               subPath: peering.json
       containers:
       - name: hornet
-        image: gohornet/hornet:latest
+        image: gohornet/hornet:1.0.5
         securityContext:
           runAsUser: 65532
           runAsGroup: 65532
