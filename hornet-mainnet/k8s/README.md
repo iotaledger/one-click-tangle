@@ -48,7 +48,7 @@ If `INSTANCES=0` then your Hornet node will be stopped.
 Your Hornet node(s) will be exposed through K8s "Nodeport" Services. Such Services are:
 
 * `hornet-rest` it is a K8s Service that exposes the REST endpoint and might be served by multiple Hornet nodes. 
-* `hornet-tcp-<n>` one or more K8s Services that exposes the gossip and dashboard and it is only served by one Hornet node. 
+* `hornet-<n>` one or more K8s Services that exposes the gossip and dashboard and it is only served by one Hornet node. 
 
 In order to know the ports on the K8s Workers where these Services are exposed, you can run (assuming you are using the `tangle` K8s namespace): 
 
@@ -57,13 +57,12 @@ kubectl -n tangle describe service hornet-rest
 ```
 
 ```
-kubectl -n tangle describe service hornet-tcp-1
+kubectl -n tangle describe service hornet-0
 ```
 
 ## Additional parameters
 
 * `NAMESPACE`: conveys a Kubernetes namespace to be used to deploy Hornet. It will be created if it does not exist yet
-* `IMAGE`:  conveys the Hornet image to be used, particularly when an update is performed. 
 
 ## Troubleshooting
 
