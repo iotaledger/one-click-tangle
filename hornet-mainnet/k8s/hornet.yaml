@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: hornet-set
+  labels:
+    source: one-click-tangle
 spec:
   serviceName: hornet-rest
   replicas: 1
@@ -37,6 +39,10 @@ spec:
       containers:
       - name: hornet
         image: gohornet/hornet:1.0.5
+        envFrom:
+        - secretRef:         
+            name: hornet-secret
+            optional: false
         securityContext:
           runAsUser: 65532
           runAsGroup: 65532

@@ -57,6 +57,21 @@ cp ../config-template/*.json ./config
 chmod +x ../utils.sh
 source ../utils.sh
 
+createSecret () {
+    # We remove the Dashboard secret from the config
+    cat ../config-template/config.json \
+    | jq 'del(.dashboard.auth.passwordHash) | del(.dashboard.auth.passwordSalt)' - \
+    > config/config.json
+
+    # Now these secrets are stored on a Secret
+    dashboard_hash=$(cat ../config-template/config.json | jq -r '.dashboard.auth.passwordHash' -)
+    dashboard_salt=$(cat ../config-template/config.json | jq -r '.dashboard.auth.passwordSalt'  -)
+    
+
+    kubectl  -n $namespace create secret generic hornet-secret --from-literal='DASHBOARD_AUTH_PASSWORDHASH='"$dashboard_hash" \
+    --from-literal='DASHBOARD_AUTH_PASSWORDSALT='"$dashboard_salt" --dry-run=client -o yaml | kubectl apply -f -
+}
+
 createStatefulSet () {
     cat hornet.yaml | kubectl patch -n $namespace --dry-run=client -p \
     $'spec:\n  replicas: '"$instances" -o yaml -f - \
@@ -68,7 +83,7 @@ createNodePortServices () {
     do
         cat hornet-service.yaml | kubectl patch --dry-run=client -p \
         $'metadata:\n  namespace: '"$namespace" -o yaml -f - \
-        | kubectl patch --dry-run=client -p $'metadata:\n  name: 'hornet-tcp-"$i" -o yaml -f - \
+        | kubectl patch --dry-run=client -p $'metadata:\n  name: 'hornet-"$i" -o yaml -f - \
         | kubectl patch --dry-run=client -p \
         '{"spec":{"selector":{"statefulset.kubernetes.io/pod-name": '\"hornet-set-"$i"\"'}}}' -o yaml -f - \
         | kubectl apply -f -
@@ -83,12 +98,14 @@ deleteNodePortServices () {
 }
 
 deployHornet () {
+    # Namespace on which the node or nodes will be living
+    kubectl create namespace $namespace --dry-run=client -o yaml | kubectl apply -f -
+
+    createSecret
+
     cooSetup
 
     peerSetup
-
-    # Namespace on which the node or nodes will be living
-    kubectl create namespace $namespace --dry-run=client -o yaml | kubectl apply -f -
 
     # Config Map is created or overewritten
     kubectl -n $namespace create configmap hornet-config --from-file=config --dry-run=client -o yaml | kubectl apply -f -
@@ -112,6 +129,8 @@ undeployHornet () {
 
 scaleHornet () {
     kubectl scale -n $namespace statefulsets hornet-set --replicas=$instances
+    # Finally the NodePort services are created
+    createNodePortServices
 }
 
 ######################

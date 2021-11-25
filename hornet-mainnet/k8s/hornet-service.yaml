@@ -1,7 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: hornet-tcp
+  name: hornet-0
+  labels:
+    source: one-click-tangle
 spec:
   type: NodePort
   externalTrafficPolicy: Local
@@ -14,5 +16,9 @@ spec:
     port: 8081
     protocol: TCP
     targetPort: dashboard
+  - name: autopeering
+    port: 14266
+    protocol: UDP
+    targetPort: autopeering
   selector:
     statefulset.kubernetes.io/pod-name: hornet-set-0

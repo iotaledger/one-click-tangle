@@ -2,16 +2,29 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hornet-ingress
+  labels:
+    source: one-click-tangle
   annotations:
-    kubernetes.io/ingress.class: alb
+    kubernetes.io/ingress.class: nginx
+# Uncomment for GKE: kubernetes.io/ingress.class: gce
+# Uncomment for AWS EKS: kubernetes.io/ingress.class: alb
+# Uncomment for AWS EKS: alb.ingress.kubernetes.io/subnets: subnet-aa1649cc, subnet-a656cffc, subnet-fdf3dcb5
+# Uncomment for AWS EKS: alb.ingress.kubernetes.io/scheme: internet-facing
 spec:
   rules:
   - http:
       paths:
-      - path: /*
-        pathType: ImplementationSpecific
+      - path: /api
+        pathType: Prefix
         backend:
           service:
             name: hornet-rest
             port:
               name: rest
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hornet-0
+            port:
+              name: dashboard
