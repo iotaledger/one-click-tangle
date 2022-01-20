@@ -52,7 +52,7 @@ The first parameter is the Node connection string as explained above. The second
 to peer with or an entry node for autopeering, for instance, `\/dns\/node-autopeering\/udp\/14626\/autopeering\/14bPxgiL7ALdQd9Qmb3z4uwCsX4M7PGPeouNaVPx45ax`. 
 The last parameter is the *snapshot* file that will be used to sync up an initial ledger state. 
 
-* Stop an existing Node by running 
+* Stop an existing Node by running
 
 ```
 ./private-hornet.sh stop my-node
@@ -62,10 +62,4 @@ The last parameter is the *snapshot* file that will be used to sync up an initia
 
 ```
 ./private-hornet.sh start my-node
-```
-
-* Update an existing Node's container image to the latest version. 
-
-```
-./private-hornet.sh update my-node
 ```

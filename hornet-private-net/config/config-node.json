@@ -5,25 +5,25 @@
             "salt": "HORNET"
         },
         "excludeHealthCheckFromAuth": false,
-        "permittedRoutes": [
+        "publicRoutes": [
             "/health",
             "/mqtt",
             "/api/v1/info",
             "/api/v1/tips",
-            "/api/v1/messages/:messageID",
-            "/api/v1/messages/:messageID/metadata",
-            "/api/v1/messages/:messageID/raw",
-            "/api/v1/messages/:messageID/children",
-            "/api/v1/messages",
-            "/api/v1/transactions/:transactionID/included-message",
-            "/api/v1/milestones/:milestoneIndex",
-            "/api/v1/milestones/:milestoneIndex/utxo-changes",
-            "/api/v1/outputs/:outputID",
-            "/api/v1/addresses/:address",
-            "/api/v1/addresses/:address/outputs",
-            "/api/v1/addresses/ed25519/:address",
-            "/api/v1/addresses/ed25519/:address/outputs",
-            "/api/v1/treasury"
+            "/api/v1/messages*",
+            "/api/v1/transactions*",
+            "/api/v1/milestones*",
+            "/api/v1/outputs*",
+            "/api/v1/addresses*",
+            "/api/v1/treasury",
+            "/api/v1/receipts*",
+            "/api/plugins/participation/events*",
+            "/api/plugins/participation/outputs*",
+            "/api/plugins/participation/addresses*"
+        ],
+        "protectedRoutes": [
+            "/api/v1/*",
+            "/api/plugins/*"
         ],
         "whitelistedAddresses": [
             "127.0.0.1",
@@ -65,7 +65,7 @@
         "milestonePublicKeyCount": 1,
         "publicKeyRanges": [
             {
-                "key": "678db435e9ee1f122dae939e8cf07c7657a93aeac395220fdf6e1c38db9b0d06",
+                "key": "222b96706c2ce6be7ecbc6cc2812ff3b67d636af3da24b9bbad96593edafe917",
                 "start": 0,
                 "end": 0
             }
@@ -131,7 +131,7 @@
         "reconnectInterval": "30s",
         "autopeering": {
             "bindAddress": "0.0.0.0:14626",
-            "entryNodes": ["/dns/node-autopeering/udp/14626/autopeering/14bPxgiL7ALdQd9Qmb3z4uwCsX4M7PGPeouNaVPx45ax"],
+            "entryNodes": ["/dns/node-autopeering/udp/14626/autopeering/3rZokdSjHzEkcg3zY2ci27LuMowD9P3SQckNsQyHvc7b"],
             "entryNodesPreferIPv6": false,
             "runAsEntryNode": false
           }
