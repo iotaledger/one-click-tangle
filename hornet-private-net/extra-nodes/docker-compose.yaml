@@ -12,9 +12,10 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:latest
+    image: gohornet/hornet:1.1.3
     restart: unless-stopped
     container_name: node
+    stop_grace_period: 5m
     expose:
       - 14265
       - 8081

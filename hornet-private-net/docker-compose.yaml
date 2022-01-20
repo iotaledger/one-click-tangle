@@ -11,9 +11,10 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.5
+    image: gohornet/hornet:1.1.3
     restart: unless-stopped
     container_name: coo
+    stop_grace_period: 5m
     environment:
       - COO_PRV_KEYS
     expose:
@@ -34,9 +35,10 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.5
+    image: gohornet/hornet:1.1.3
     restart: unless-stopped
     container_name: node1
+    stop_grace_period: 5m
     expose:
       - 14265
       - 8081
@@ -62,9 +64,10 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.5
+    image: gohornet/hornet:1.1.3
     restart: unless-stopped
     container_name: spammer
+    stop_grace_period: 5m
     expose:
       - 15600
       - "14626/udp"
@@ -83,9 +86,10 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.0.5
+    image: gohornet/hornet:1.1.3
     restart: unless-stopped
     container_name: node-autopeering
+    stop_grace_period: 5m
     expose:
       - "14626/udp"
     ports:

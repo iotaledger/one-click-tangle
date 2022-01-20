@@ -3,7 +3,6 @@
 # Script to run a new Private Tangle
 # private-tangle.sh install .- Installs a new Private Tangle
 # private-tangle.sh start   .- Starts a new Private Tangle
-# private-tangle.sh update  .- Updates the Private Tangle
 # private-tangle.sh stop    .- Stops the Tangle
 
 set -e
@@ -12,7 +11,8 @@ chmod +x ./utils.sh
 source ./utils.sh
 
 help () {
-  echo "usage: private-tangle.sh [start|stop|update|install] <coo_bootstrap_wait_time?>"
+  echo "Installs Private Tangle based on Hornet version: $(cat docker-compose.yaml | grep image | cut -d : -f 3)"
+  echo "usage: private-tangle.sh [start|stop|install] <coo_bootstrap_wait_time?>"
 }
 
 if [ $#  -lt 1 ]; then
@@ -156,30 +156,13 @@ updateContainers () {
   docker-compose pull
 }
 
-updateTangle () {
-  if ! [ -f ./snapshots/private-tangle/full_snapshot.bin ]; then
-    echo "Install your Private Tangle first with './private-tangle.sh install'"
-    exit 129
-  fi
-
-  stopContainers
-
-  # We ensure we are now going to run with the latest Hornet version
-  image="gohornet\/hornet:latest"
-  sed -i 's/image: .\+/image: '$image'/g' docker-compose.yml
-
-  updateContainers
-
-  startTangle
-}
-
 ### 
 ### Generates the initial snapshot
 ### 
 generateSnapshot () {
   echo "Generating an initial snapshot..."
     # First a key pair is generated
-  docker-compose run --rm node hornet tool ed25519-key > key-pair.txt
+  docker-compose run --rm node tool ed25519-key > key-pair.txt
 
   # Extract the public key use to generate the address
   local public_key="$(getPublicKey key-pair.txt)"
@@ -190,7 +173,7 @@ generateSnapshot () {
 
   # Generate the snapshot
   cd snapshots/private-tangle
-  docker-compose run --rm -v "$PWD:/output_dir" node hornet tool snap-gen "private-tangle"\
+  docker-compose run --rm -v "$PWD:/output_dir" node tool snap-gen "private-tangle"\
    "$(cat ../../address.txt)" 1000000000 /output_dir/full_snapshot.bin
 
   echo "Initial Ed25519 Address generated. You can find the keys at key-pair.txt and the address at address.txt"
@@ -204,7 +187,7 @@ generateSnapshot () {
 setupCoordinator () {
   local coo_key_pair_file=coo-milestones-key-pair.txt
 
-  docker-compose run --rm coo hornet tool ed25519-key > "$coo_key_pair_file"
+  docker-compose run --rm coo tool ed25519-key > "$coo_key_pair_file"
   # Private Key is exported as it is needed to run the Coordinator
   export COO_PRV_KEYS="$(getPrivateKey $coo_key_pair_file)"
 
@@ -227,7 +210,7 @@ bootstrapCoordinator () {
   fi
 
   # Bootstrap the coordinator
-  docker-compose run -d --rm -e COO_PRV_KEYS=$COO_PRV_KEYS coo hornet --cooBootstrap --cooStartIndex 0 > coo.bootstrap.container
+  docker-compose run -d --rm -e COO_PRV_KEYS=$COO_PRV_KEYS coo --cooBootstrap --cooStartIndex 0 > coo.bootstrap.container
 
   # Waiting for coordinator bootstrap
   # We guarantee that if bootstrap has not finished yet we sleep another time 
@@ -360,9 +343,6 @@ case "${command}" in
     ;;
   "start")
     startTangle
-    ;;
-  "update")
-    updateTangle
     ;;
   "stop")
 		stopContainers

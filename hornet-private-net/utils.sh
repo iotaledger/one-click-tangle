@@ -18,7 +18,7 @@ setCooPublicKey () {
 }
 
 generateP2PIdentity () {
-  docker-compose run --rm "$1" hornet tool p2pidentity-gen > "$2"
+  docker-compose run --rm "$1" tool p2pidentity-gen > "$2"
 }
 
 setupIdentityPrivateKey () {

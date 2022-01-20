@@ -4,7 +4,6 @@
 
 # private-hornet.sh install <node_connection_str> .- Installs a new Hornet Node on your Private Tangle
 # private-hornet.sh start   <node_name> .- Starts a Hornet Node of your Private Tangle
-# private-hornet.sh update  <node_name> .- Updates a Hornet Node of your Private Tangle
 # private-hornet.sh stop    <node_name> .- Stops a Hornet Node of your Private Tangle
 
 # <node_connection_str> must be a colon-separated string in the form
@@ -13,7 +12,7 @@
 # if the ports are not provided the default ones (14265, 15600, 8081) will be used
 
 # Full signature and parameters is described below: 
-# private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress|autopeering_multiaddress>? <snapshot_file>?
+# private-hornet.sh [install|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress|autopeering_multiaddress>? <snapshot_file>?
 
 
 set -e
@@ -27,7 +26,8 @@ DEFAULT_PEERING_PORT="15600"
 DEFAULT_DASHBOARD_PORT="8081"
 
 help () {
-  echo "usage: private-hornet.sh [install|update|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress|autopeering_multiaddres>? <snapshot_file>?"
+  echo "Installs an extra node based on Hornet version: $(cat docker-compose.yaml | grep image | cut -d : -f 3)"
+  echo "usage: private-hornet.sh [install|start|stop] <node_connection_str> <coo_public_key>? <peer_multiAdress|autopeering_multiaddres>? <snapshot_file>?"
 }
 
 if [ $#  -lt 2 ]; then
@@ -158,8 +158,8 @@ volumeSetup () {
 }
 
 bootstrapFiles () {
-  cp ../../docker-compose.yml .
-  sed -i 's/node/'$node_name'/g' docker-compose.yml
+  cp ../../docker-compose.yaml .
+  sed -i 's/node/'$node_name'/g' docker-compose.yaml
 
   local ports_init_str="  ports:"
 
@@ -184,7 +184,7 @@ bootstrapFiles () {
   
   # If no ports are set we do not concat anything
   if ! [ "$ports" == "$ports_init_str" ]; then
-    echo "$ports" >> docker-compose.yml
+    echo "$ports" >> docker-compose.yaml
   fi
 
   cp ../../../config/config-node.json ./config/config.json
@@ -237,23 +237,6 @@ installNode () {
 startContainer () {
   # Run a regular node 
   docker-compose --log-level ERROR up -d "$node_name"
-}
-
-updateNode () {
-  if ! [ -f ./db/LOG ]; then
-    echo "Install your Node first with './private-hornet.sh install'"
-    exit 129
-  fi
-
-  stopContainers
-
-  # We ensure we are now going to run with the latest Hornet version
-  image="gohornet\/hornet:latest"
-  sed -i 's/image: .\+/image: gohornet\/hornet:latest/g' docker-compose.yml
-
-  docker-compose pull
-
-  startContainer
 }
 
 ###
@@ -315,7 +298,7 @@ stopContainers () {
 }
 
 stopNode () {
-  if ! [ -f ./db/LOG ]; then
+  if ! [ -f ./db/tangle/LOG ]; then
     echo "Install your Node first with './private-hornet.sh install'"
     exit 128 
   fi
@@ -324,7 +307,7 @@ stopNode () {
 }
 
 startNode () {
-  if ! [ -f ./db/LOG ]; then
+  if ! [ -f ./db/tangle/LOG ]; then
     echo "Install your Node first with './private-hornet.sh install'"
     exit 128 
   fi
@@ -341,9 +324,6 @@ case "${command}" in
     ;;
   "start")
     startNode
-    ;;
-  "update")
-    updateNode
     ;;
   "stop")
 		stopNode

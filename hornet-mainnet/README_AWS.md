@@ -53,14 +53,6 @@ eec6d1dd21c5   gohornet/hornet:latest             "/app/hornet"            10 mi
 
 ## Node Operations
 
-You can update Hornet to the latest version known by DockerHub by running:
-
-```console
-./hornet.sh update
-```
-
-NB: The `update` command will not update to new versions of the config files as they may contain local changes that cannot be merged with the upstream changes. If that is the case you would need to stop Hornet, merge your current config files with the config files at [https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/config/config.json](https://github.com/iotaledger/one-click-tangle/blob/chrysalis/hornet-mainnet/config/config.json) and then start again Hornet.
-
 You can stop Hornet by running:
 
 ```console
