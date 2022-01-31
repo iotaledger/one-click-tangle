@@ -90,9 +90,9 @@ cooSetup () {
 
 peerSetup () {
     # And now we configure our Node's peers
+    cp config-template/peering-template.json config/peering.json
     if [ -n "$peer" ]; then
         echo "Peering with: $peer"
-        cp config-template/peering-template.json config/peering.json
         # This is the case where no previous peer definition was there
         sed -i 's/\[\]/\[{"alias": "peer1","multiAddress": "'$peer'"}\]/g' config/peering.json
     else
@@ -125,6 +125,8 @@ installHornet () {
     clean
 
     volumeSetup
+
+    cp config-template/profiles.json config/profiles.json
 
     cooSetup
 
