@@ -83,7 +83,7 @@ volumeSetup () {
 
 # The coordinator public key ranges are obtained
 cooSetup () {
-    cat config/config-template.json | jq --argjson protocol \
+    cat config-template/config-template.json | jq --argjson protocol \
     "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.protocol')" \
     '. |= . + {$protocol}' > config/config.json
 }
@@ -92,7 +92,7 @@ peerSetup () {
     # And now we configure our Node's peers
     if [ -n "$peer" ]; then
         echo "Peering with: $peer"
-        cp config/peering-template.json config/peering.json
+        cp config-template/peering-template.json config/peering.json
         # This is the case where no previous peer definition was there
         sed -i 's/\[\]/\[{"alias": "peer1","multiAddress": "'$peer'"}\]/g' config/peering.json
     else
