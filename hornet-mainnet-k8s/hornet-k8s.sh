@@ -15,8 +15,6 @@ help () {
   echo "Parameter: INGRESS_CLASS=<IngressClass: one of ['nginx', 'gce', 'alb']>"
 }
 
-target=k8s
-
 ##### Command line parameter processing
 
 command="$1"
@@ -57,23 +55,33 @@ fi
 
 #####
 
-cp ../config-template/*.json ./config
-chmod +x ../utils.sh
-source ../utils.sh
+hornet_base_dir="../hornet-mainnet"
+
+cp $hornet_base_dir/config-template/profiles.json config/profiles.json
+cp $hornet_base_dir/config-template/config-template.json config/config-template.json
+cp $hornet_base_dir/config-template/peering-template.json config/peering.json
+
+chmod +x $hornet_base_dir/utils.sh
+source $hornet_base_dir/utils.sh
 
 createSecret () {
     # We remove the Dashboard secret from the config
-    cat ../config-template/config.json \
+    cat config/config-template.json \
     | jq 'del(.dashboard.auth.passwordHash) | del(.dashboard.auth.passwordSalt)' - \
     > config/config.json
 
     # Now these secrets are stored on a Secret
-    dashboard_hash=$(cat ../config-template/config.json | jq -r '.dashboard.auth.passwordHash' -)
-    dashboard_salt=$(cat ../config-template/config.json | jq -r '.dashboard.auth.passwordSalt'  -)
-    
+    dashboard_hash=$(cat config/config-template.json | jq -r '.dashboard.auth.passwordHash' -)
+    dashboard_salt=$(cat config/config-template.json | jq -r '.dashboard.auth.passwordSalt'  -)
 
+    rm config/config-template.json
+    
     kubectl  -n $namespace create secret generic hornet-secret --from-literal='DASHBOARD_AUTH_PASSWORDHASH='"$dashboard_hash" \
     --from-literal='DASHBOARD_AUTH_PASSWORDSALT='"$dashboard_salt" --dry-run=client -o yaml | kubectl apply -f -
+
+    private_key=$(openssl genpkey -algorithm ed25519)
+    # Secret with the Private Key of the Node is also created
+    kubectl -n $namespace create secret generic hornet-private-key --from-literal='private_key='"$private_key" --dry-run=client -o yaml | kubectl apply -f -
 }
 
 createStatefulSet () {
@@ -132,6 +140,8 @@ undeployHornet () {
     deleteNodePortServices
     kubectl delete -n $namespace -f hornet.yaml
     kubectl delete -n $namespace configmap hornet-config
+    kubectl delete -n $namespace secret hornet-secret
+    kubectl delete -n $namespace secret hornet-private-key
 }
 
 scaleHornet () {

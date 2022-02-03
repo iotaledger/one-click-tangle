@@ -36,6 +36,9 @@ spec:
             - name: configuration
               mountPath: /app/peering.json
               subPath: peering.json
+            - name: private-key
+              mountPath: /app/p2pstore/identity.key
+              subPath: private_key 
       containers:
       - name: hornet
         image: gohornet/hornet:1.1.3
@@ -57,10 +60,12 @@ spec:
           httpGet:
             path: /api/v1/info
             port: 14265
+          initialDelaySeconds: 55
         livenessProbe:
           httpGet:
             path: /api/v1/info
             port: 14265
+          initialDelaySeconds: 60
         ports:
         - name: gossip
           protocol: TCP
@@ -78,6 +83,9 @@ spec:
         - name: configuration
           mountPath: /app/config.json
           subPath: config.json
+        - name: private-key
+          mountPath: /app/p2pstore/identity.key
+          subPath: private_key
         - name: hornet-ledger
           subPath: peering/peering.json
           mountPath: /app/peering.json
@@ -94,6 +102,9 @@ spec:
       - name: configuration 
         configMap:
           name: hornet-config
+      - name: private-key
+        secret:
+          secretName: hornet-private-key
   volumeClaimTemplates: 
     - metadata: 
         name: hornet-ledger

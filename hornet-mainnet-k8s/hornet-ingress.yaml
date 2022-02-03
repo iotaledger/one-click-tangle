@@ -6,7 +6,7 @@ metadata:
     source: one-click-tangle
   annotations:
     # 'gce' for GKE, 'alb' for 'EKS'
-    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.class: nginx
 # Uncomment for AWS EKS: alb.ingress.kubernetes.io/subnets: subnet-aa1649cc, subnet-a656cffc, subnet-fdf3dcb5
 # Uncomment for AWS EKS: alb.ingress.kubernetes.io/scheme: internet-facing
 spec:
