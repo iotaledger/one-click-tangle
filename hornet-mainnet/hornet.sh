@@ -102,8 +102,8 @@ installHornet () {
     volumeSetup
 
     cp config-template/profiles.json config/profiles.json
-    cp config-template/config.json config/config.json
-    cp config-template/peering.json config/peering.json
+    cp config-template/config-template.json config/config.json
+    cp config-template/peering-template.json config/peering.json
 
     cooSetup
 
