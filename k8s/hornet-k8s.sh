@@ -4,7 +4,6 @@
 # hornet.sh deploy .- Deploys a new Hornet Node on the cluster
 # hornet.sh scale .- Scales Hornet
 # hornet.sh undeploy .- Undeploys the Hornet Node
-# hornet.sh update .- Updates the Hornet Node
 
 set -e
 
@@ -12,8 +11,8 @@ help () {
   echo "usage: hornet-k8s.sh [deploy|scale|update|undeploy]"
   echo "Parameter: NAMESPACE=<Kubernetes Namespace>"
   echo "Parameter: INSTANCES=<Number of Instances>"
-  echo "Parameter: IMAGE=<Docker Images to be used>"
   echo "Parameter: PEER=<multiPeerAddress>"
+  echo "Parameter: INGRESS_CLASS=<IngressClass: one of ['nginx', 'gce', 'alb']>"
 }
 
 target=k8s
@@ -24,6 +23,7 @@ command="$1"
 peer="$PEER"
 namespace="$NAMESPACE"
 instances="$INSTANCES"
+ingress_class="$INGRESS_CLASS"
 
 if [ -z "$namespace" ]; then
     namespace="tangle"
@@ -31,6 +31,10 @@ fi
 
 if [ -z "$instances" ]; then
     instances=1
+fi
+
+if [ -z "$ingress_class" ]; then
+    ingress_class="nginx"
 fi
 
 if [ $#  -lt 1 ]; then
@@ -93,7 +97,7 @@ createNodePortServices () {
 deleteNodePortServices () {
     for  (( i=0; i<$instances; i++ ))
     do
-        kubectl -n $namespace delete service hornet-tcp-"$i"
+        kubectl -n $namespace delete service hornet-"$i"
     done
 }
 
@@ -113,6 +117,9 @@ deployHornet () {
     # Service, Ingress associated and Statefulset associated
     kubectl apply -n $namespace -f hornet-rest-service.yaml
     createStatefulSet
+
+    # Ingress class is established
+    sed -i 's/\(kubernetes.io\/ingress.class\)\(.*\)/\1: '$ingress_class'/g' hornet-ingress.yaml
     kubectl apply -n $namespace -f hornet-ingress.yaml
 
     # Finally the NodePort services are created
@@ -148,9 +155,6 @@ case "${command}" in
     ;;
   "scale")
     scaleHornet
-    ;;
-  "update")
-    updateHornet
     ;;
   *)
 	echo "Command not Found."

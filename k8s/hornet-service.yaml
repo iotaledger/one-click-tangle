@@ -17,7 +17,7 @@ spec:
     protocol: TCP
     targetPort: dashboard
   - name: autopeering
-    port: 14266
+    port: 14626
     protocol: UDP
     targetPort: autopeering
   selector:
