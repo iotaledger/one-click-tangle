@@ -79,9 +79,18 @@ createSecret () {
     kubectl  -n $namespace create secret generic hornet-secret --from-literal='DASHBOARD_AUTH_PASSWORDHASH='"$dashboard_hash" \
     --from-literal='DASHBOARD_AUTH_PASSWORDSALT='"$dashboard_salt" --dry-run=client -o yaml | kubectl apply -f -
 
-    private_key=$(openssl genpkey -algorithm ed25519)
+    # for each of the instances a new secret with private key is created
+    literal=""
+    for  (( i=0; i<$instances; i++ ))
+    do
+        private_key=$(openssl genpkey -algorithm ed25519)
+        literal=$literal"--from-literal=private-key-$i=$private_key"
+    done
+
+    echo $literal
+
     # Secret with the Private Key of the Node is also created
-    kubectl -n $namespace create secret generic hornet-private-key --from-literal='private_key='"$private_key" --dry-run=client -o yaml | kubectl apply -f -
+    kubectl -n $namespace create secret generic hornet-private-key "$literal" --dry-run=client -o yaml | kubectl apply -f -
 }
 
 createStatefulSet () {
@@ -99,6 +108,14 @@ createNodePortServices () {
         | kubectl patch --dry-run=client -p \
         '{"spec":{"selector":{"statefulset.kubernetes.io/pod-name": '\"hornet-set-"$i"\"'}}}' -o yaml -f - \
         | kubectl apply -f -
+    done
+}
+
+# Peers the nodes between them
+peerNodes () {
+    for  (( i=0; i<$instances; i++ ))
+    do
+        
     done
 }
 
