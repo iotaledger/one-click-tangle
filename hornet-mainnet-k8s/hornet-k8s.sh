@@ -126,9 +126,8 @@ deployHornet () {
     kubectl apply -n $namespace -f hornet-rest-service.yaml
     createStatefulSet
 
-    # Ingress class is established
-    sed -i 's/\(kubernetes.io\/ingress.class\)\(.*\)/\1: '$ingress_class'/g' hornet-ingress.yaml
     kubectl apply -n $namespace -f hornet-ingress.yaml
+    kubectl annotate -f hornet-ingress.yaml -n $namespace --overwrite kubernetes.io/ingress.class=$ingress_class
 
     # Finally the NodePort services are created
     createNodePortServices

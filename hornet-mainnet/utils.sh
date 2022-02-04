@@ -2,7 +2,7 @@
 
 # Common utilities both used by hornet.sh and hornet-k8s.sh
 
-HORNET_UPSTREAM="https://raw.githubusercontent.com/gohornet/hornet/main/"
+HORNET_UPSTREAM="https://raw.githubusercontent.com/gohornet/hornet/mainnet/"
 
 # The coordinator public key ranges are obtained
 cooSetup () {
