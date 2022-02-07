@@ -64,6 +64,8 @@ cp $hornet_base_dir/config-template/peering-template.json config/peering.json
 chmod +x $hornet_base_dir/utils.sh
 source $hornet_base_dir/utils.sh
 
+p2p_identities=( )
+
 createSecret () {
     # We remove the Dashboard secret from the config
     cat config/config-template.json \
@@ -83,9 +85,18 @@ createSecret () {
     literal=""
     for  (( i=0; i<$instances; i++ ))
     do
-        private_key=$(openssl genpkey -algorithm ed25519)
-        literal=$literal"--from-literal=private-key-$i=$private_key"
+        openssl genpkey -algorithm ed25519 -out identity.key
+        private_key="$(cat identity.key)"
+        p2p_identity=$(docker run -it -v "$PWD:/p2pstore/" gohornet/hornet:1.1.3 tool p2pidentity-extract /p2pstore |\
+          tail -n 1 | cut -f 2 -d : | tr -d '\r\n ')
+        p2p_identities+=("$p2p_identity")
+        literal=$literal"--from-literal=private-key-$i='$private_key'"
     done
+
+    echo $p2p_identities
+
+    # Last key is removed
+    rm identity.key
 
     echo $literal
 
@@ -113,9 +124,13 @@ createNodePortServices () {
 
 # Peers the nodes between them
 peerNodes () {
-    for  (( i=0; i<$instances; i++ ))
+    for  (( i=1; i<$instances; i++ ))
     do
-        
+       cp config/peering.json config/peering-$i.json
+       peerHost=hornet-set-${i+1}
+       peerAddr=
+       alias=
+       multiAddress="/dns/$peerAddr/tcp/15600/p2p/$peerAddr"
     done
 }
 
