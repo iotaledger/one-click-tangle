@@ -15,6 +15,7 @@ spec:
       labels:
         app: hornet
     spec:
+      # restartPolicy: OnFailure
       terminationGracePeriodSeconds: 10
       initContainers:
       - name: create-volumes
@@ -74,7 +75,8 @@ spec:
           initialDelaySeconds: 55
         livenessProbe:
           httpGet:
-            path: /health
+            # path: /health
+            path: /api/v1/info
             port: 14265
           initialDelaySeconds: 60
         ports:
