@@ -31,20 +31,19 @@ spec:
             - >-
                 export POD_NUMBER=${POD_NAME##*-} &&
                 mkdir -p /ledger/peering &&
-                cp /app/peering.json /ledger/peering/peering.json &&
+                cp /peering/peering-${POD_NUMBER}.json /ledger/peering/peering.json &&
                 mkdir -p /ledger/mainnetdb &&
                 mkdir -p /ledger/snapshots &&                 
                 mkdir -p /ledger/p2pstore &&
-                cat /private-keys/private-key-${POD_NUMBER} &&
-                cp /private-keys/private-key-${POD_NUMBER} /secrets/identity.key &&
+                cp /private-keys/identity-${POD_NUMBER}.key /secrets/identity.key &&
                 chown -R 65532:65532 /ledger &&
                 chown -R 65532:65532 /secrets
         volumeMounts:
             - mountPath: /ledger
               name: hornet-ledger
             - name: configuration
-              mountPath: /app/peering.json
-              subPath: peering.json 
+              mountPath: /peering
+              readOnly: true 
             - name: private-key
               mountPath: /private-keys
               readOnly: true

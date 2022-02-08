@@ -1,3 +1,4 @@
 /config/config.json
-/config/peering.json
+/config/peering-*.json
 /config/profiles.json
+/config/keys/**

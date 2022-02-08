@@ -47,6 +47,12 @@ if ! [ -x "$(command -v jq)" ]; then
     exit 156
 fi
 
+if ! [ -x "$(command -v openssl)" ]; then
+    echo "openssl not installed"
+    echo "You can install it following instructions at https://formulae.brew.sh/formula/openssl@1.1"
+    exit 156
+fi
+
 if ! [ -x "$(command -v kubectl)" ]; then
     echo "kubectl utility not installed"
     echo "You can install it following the instructions at https://kubernetes.io/docs/tasks/tools/"
@@ -64,7 +70,8 @@ cp $hornet_base_dir/config-template/peering-template.json config/peering.json
 chmod +x $hornet_base_dir/utils.sh
 source $hornet_base_dir/utils.sh
 
-p2p_identities=( )
+# P2P identities of the nodes
+declare -a p2p_identities
 
 createSecret () {
     # We remove the Dashboard secret from the config
@@ -81,27 +88,30 @@ createSecret () {
     kubectl  -n $namespace create secret generic hornet-secret --from-literal='DASHBOARD_AUTH_PASSWORDHASH='"$dashboard_hash" \
     --from-literal='DASHBOARD_AUTH_PASSWORDSALT='"$dashboard_salt" --dry-run=client -o yaml | kubectl apply -f -
 
+    mkdir -p config/keys
+
     # for each of the instances a new secret with private key is created
-    literal=""
     for  (( i=0; i<$instances; i++ ))
     do
-        openssl genpkey -algorithm ed25519 -out identity.key
-        private_key="$(cat identity.key)"
+        # If the proper version of OpenSSL is not installed this has highly chances fo failure
+        set +e
+        openssl genpkey -algorithm ed25519 -out config/keys/identity.key
+        if ! [ $? -eq 0 ]; then
+            echo "Cannot generate a private key for your node. Please check your OpenSSL version"
+            exit -100
+        fi
+        set -e
+
+        # We need to store this to later perform the Node peering
         p2p_identity=$(docker run -it -v "$PWD:/p2pstore/" gohornet/hornet:1.1.3 tool p2pidentity-extract /p2pstore |\
-          tail -n 1 | cut -f 2 -d : | tr -d '\r\n ')
-        p2p_identities+=("$p2p_identity")
-        literal=$literal"--from-literal=private-key-$i='$private_key'"
+          tail -n 1 | cut -f 2 -d : | tr -d '\r\n ')          
+        p2p_identities[i]="$p2p_identity"
+
+        mv config/keys/identity.key config/keys/identity-$i.key
     done
 
-    echo $p2p_identities
-
-    # Last key is removed
-    rm identity.key
-
-    echo $literal
-
     # Secret with the Private Key of the Node is also created
-    kubectl -n $namespace create secret generic hornet-private-key "$literal" --dry-run=client -o yaml | kubectl apply -f -
+    kubectl -n $namespace create secret generic hornet-private-key --from-file=config/keys --dry-run=client -o yaml | kubectl apply -f -
 }
 
 createStatefulSet () {
@@ -124,14 +134,20 @@ createNodePortServices () {
 
 # Peers the nodes between them
 peerNodes () {
-    for  (( i=1; i<$instances; i++ ))
+    for  (( i=1; i<(instances); i++ ))
     do
-       cp config/peering.json config/peering-$i.json
-       peerHost=hornet-set-${i+1}
-       peerAddr=
-       alias=
-       multiAddress="/dns/$peerAddr/tcp/15600/p2p/$peerAddr"
+       peerHost=hornet-set-$((i-1))
+       peerAddr=${p2p_identities[$((i-1))]}
+       alias="$peerHost"
+       multiAddress="/dns/$peerHost/tcp/15600/p2p/$peerAddr"
+       cat $hornet_base_dir/config-template/peering-template.json | \
+       jq '.' | jq '.peers |= . + [{ "alias": "'$alias'", "multiAddress": "'$multiAddress'"}]' > config/peering-$i.json
     done
+
+    # Peering config of the first node
+    mv config/peering.json config/peering-0.json
+
+    echo "Nodes peered"
 }
 
 deleteNodePortServices () {
@@ -150,6 +166,9 @@ deployHornet () {
     cooSetup
 
     peerSetup
+
+    # Now we peer the nodes among themselves
+    peerNodes
 
     # Config Map is created or overewritten
     kubectl -n $namespace create configmap hornet-config --from-file=config --dry-run=client -o yaml | kubectl apply -f -
