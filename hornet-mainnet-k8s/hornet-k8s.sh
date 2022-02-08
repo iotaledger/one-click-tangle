@@ -136,7 +136,7 @@ createNodePortServices () {
 peerNodes () {
     for  (( i=1; i<(instances); i++ ))
     do
-       peerHost=hornet-set-$((i-1))
+       peerHost=hornet-$((i-1))
        peerAddr=${p2p_identities[$((i-1))]}
        alias="$peerHost"
        multiAddress="/dns/$peerHost/tcp/15600/p2p/$peerAddr"
