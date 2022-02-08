@@ -24,6 +24,8 @@ A back slash should be added wherever there is a forward slash. For example, whe
 
 *By default the Node will be deployed under the `tangle` namespace*
 
+By default all the Nodes will be automatically peered among them.
+
 * Undeploy Hornet by running
 ```
 ./hornet-k8s.sh undeploy
@@ -34,14 +36,16 @@ A back slash should be added wherever there is a forward slash. For example, whe
 INSTANCES=<number of instances> ./hornet-k8s.sh scale
 ```
 
-If `INSTANCES=0` then your Hornet node will be stopped. 
+If `INSTANCES=0` then your Hornet node will be stopped.
+
+*Known Limitations: Scaling up does not automatically peer new nodes. This feature is on the backlog.*
 
 ## Getting access to your Hornet Node
 
 Your Hornet node(s) will be exposed through K8s "Nodeport" Services. Such Services are:
 
-* `hornet-rest` it is a K8s Service that exposes the REST endpoint and might be served by multiple Hornet nodes. 
-* `hornet-tcp-<n>` one or more K8s Services that exposes the gossip and dashboard and it is only served by one Hornet node. 
+* `hornet-rest` it is a K8s Service that exposes the REST endpoint and might be served by multiple Hornet nodes.
+* `hornet-<n>` one or more K8s Services that exposes the gossip and dashboard and it is only served by one Hornet node.
 
 In order to know the ports on the K8s Workers where these Services are exposed, you can run (assuming you are using the `tangle` K8s namespace):
 
@@ -50,7 +54,7 @@ kubectl -n tangle describe service hornet-rest
 ```
 
 ```
-kubectl -n tangle describe service hornet-tcp-1
+kubectl -n tangle describe service hornet-0
 ```
 
 ## Additional parameters
