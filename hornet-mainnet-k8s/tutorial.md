@@ -2,23 +2,23 @@
 
 In this tutorial you will learn how to run [IOTA](https://wiki.iota.org/chrysalis-docs/welcome) mainnet [Hornet](https://wiki.iota.org/hornet/welcome) nodes on a Kubernetes (K8s) environment. [Kubernetes](https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/) is a portable, extensible, open-source platform for managing containerized workloads and services, that facilitates both **declarative configuration** and automation. It has a large, rapidly growing ecosystem. K8s services, support and tools are widely available from multiple cloud providers.
 
-If you are not familiar with K8s we recommend you to start by [learning the technology](https://kubernetes.io/docs/tutorials/kubernetes-basics/).
+If you are not familiar with K8s we recommend you to start by [learning the K8s technology](https://kubernetes.io/docs/tutorials/kubernetes-basics/).
 
 ## Introduction
 
 Running Hornet nodes on K8s can enjoy all the advantages of a declarative, managed, portable and automated container-based environment. However, as Hornet nodes are stateful services with several persistence, configuration and peering requirements, the task can be challenging. To overcome it, the IOTA Foundation under the [one-click-tangle](https://github.com/iotaledger/one-click-tangle) project is providing K8s recipes and associated scripts that intend to educate developers on how nodes can be automatically deployed, peered and load balanced in a portable way.
 
-Furthermore, a ready to be used script allows running multiple Hornet instances "in one click" in your K8s environment of choice, but also provides a blueprint of the best practices to be followed by K8s administrators when deploying production-ready environments.
+Furthermore, a ready to be used script allows running multiple Hornet instances "in one click" in your K8s environment of choice, but also provides a blueprint with the best practices to be leveraged by K8s administrators when deploying production-ready environments.
 
 ## Deployment using the "one click" script
 
 For running the [one click script](https://github.com/iotaledger/one-click-tangle/hornet-mainnet-k8s/README.md) you need to get access to a K8s cluster. For local development we recommend [microk8s](https://microk8s.io/).
-In addition you need the [kubectl](https://kubernetes.io/docs/tasks/tools/) command line tool properly configured to get access to your cluster.
+In addition you need the [kubectl](https://kubernetes.io/docs/tasks/tools/) command line tool [properly configured](https://kubernetes.io/docs/reference/kubectl/overview/) to get access to your cluster.
 
 The referred script accepts the following parameters (passed as command line variables):
 
 * `NAMESPACE`: The namespace where the one-click script will create the K8s objects. `tangle` by default.
-* `PEER`: A multipeer address that will be used to peer your nodes with. If no address is provided, autopeering will be configured.
+* `PEER`: A multipeer address that will be used to peer your nodes with. If no address is provided, autopeering will be configured for the first Hornet Node of the set.
 * `INSTANCES`: The number of Hornet instances to be deployed. `1` by default.
 * `INGRESS_CLASS`: The class associated to the [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) object that will be used to expose externally the Node API endpoint so that it can be load balanced. It can depend on the target K8s environment. `nginx` by default.
 
@@ -96,7 +96,18 @@ hornet-rest   NodePort   10.60.3.96     <none>        14265:31480/TCP           
 
 Additionally, you can run  `kubectl describe services -n tangle` to get more details about the endpoints supporting the referred Services.
 
-Note: The name of the Services is important as will allow to address them by DNS name within the cluster. For instance, if you want to peer two nodes within the cluster you can refer 
+Note: The name of the Services is important as will allow to address Hornet Nodes by DNS name *within the cluster*. For instance, if you want to peer a Hornet Node within the cluster you can refer to it with the name of its bound Service, for instance, `hornet-0`.
+
+* An [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/) controller intended to expose the load-balanced Hornet REST API endpoint outside the cluster, under the `/api` path. For convenience also the dashboard corresponding to the first Hornet in the Statefulset is also exposed through the `/` path.
+
+```sh
+kubectl get ingress -n tangle -o=wide
+```
+
+```ascii
+NAME             CLASS    HOSTS   ADDRESS        PORTS   AGE
+hornet-ingress   <none>   *       34.120.54.67   80      21h
+```
 
 * A [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) that contains the configuration applied to each Hornet Node, including the peering configuration. (Remember that our Hornet nodes, that belong to an Statefulset, are peered among them). 
 
@@ -110,7 +121,7 @@ hornet-config      6      19h
 kube-root-ca.crt   1      19h
 ```
 
-Likewise, `kubectl describe configmap hornet-config` can be run to obtain more details about the ConfigMap.
+Likewise, `kubectl describe configmap hornet-config` can be run to obtain more details about such ConfigMap.
 
 * [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) of the Nodes (keys, etc.). Two secrets are created:
 
@@ -158,22 +169,151 @@ and you will get an output similar to (that will correspond to the endpoint of t
 server: https://192.168.64.2:16443
 ```
 
+Additionally you can get access to your Node REST API endpoint through the external load balancer defined by the Ingress Controller. In the case of a local configuration this does not make so much a difference as the machine where the Ingress Controller lives is just the same as the Service machine. However in the case of a real environment provided by a Cloud Provider your Ingress controller will be usually mapped to a load balancer exposed through a public IP address. You can find more information below when we talk about the specifics of commercial cloud environments.
+
 ### Working with multiple instances
 
+If you want to work with multiple instances you can scale your current K8s Statefulset by running
 
+```sh
+INSTANCES=2 hornet-k8s.sh scale
+```
+
+If the cluster has enough resources automatically a new Hornet node will be spawned and peered with your original one.
+
+You will notice that one more Pod `(hornet-set-1`) will be running,
+
+```sh
+kubectl get pods -n tangle -o=wide
+```
+
+```ascii
+NAME           READY   STATUS    RESTARTS   AGE
+hornet-set-0   1/1     Running   0          24h
+hornet-set-1   1/1     Running   0          24h
+```
+
+a new Persistent Volume
+
+```sh
+kubectl get pvc -n tangle -o=wide
+```
+
+```ascii
+hornet-ledger-hornet-set-0   Bound    pvc-905fe9c7-6a10-4b29-a9fd-a405fd49a5fd   20Gi       RWO            standard       24h
+hornet-ledger-hornet-set-1   Bound    pvc-95b3b566-4602-4a36-8b1b-5e6bf75e5c6f   20Gi       RWO            standard       24h
+```
+
+and an additional Service `hornet-1`.
+
+```sh
+kubectl get services -n tangle -o=wide
+```
+
+```ascii
+NAME          TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)                                          AGE   
+hornet-0      NodePort   10.60.4.75     <none>        15600:30744/TCP,8081:30132/TCP,14626:32083/UDP   24h   
+hornet-1      NodePort   10.60.7.44     <none>        15600:32184/TCP,8081:31776/TCP,14626:31729/UDP   24h   
+hornet-rest   NodePort   10.60.3.96     <none>        14265:31480/TCP                                  24h
+```
+
+The REST service now will be load balancing two Pods as you can check out yourself:
+
+```sh
+kubectl describe services/hornet-rest -n tangle 
+```
+
+```ascii
+Name:                     hornet-rest
+Namespace:                tangle
+Labels:                   app=hornet-api
+                          source=one-click-tangle
+Selector:                 app=hornet
+Type:                     NodePort
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.60.3.96
+IPs:                      10.60.3.96
+Port:                     rest  14265/TCP
+TargetPort:               14265/TCP
+NodePort:                 rest  31480/TCP
+Endpoints:                10.56.0.18:14265,10.56.9.32:14265
+Session Affinity:         None
+External Traffic Policy:  Cluster
+```
+
+And last but not least if your `hornet-0` node is synced `hornet-1` should also be synced as `hornet-0` and `hornet-1` will be peered between them. You can check it out by connecting to the corresponding dashboards.
 
 ## Deep dive. The "one-click" script internals
 
+In this section of the tutorial you will learn the internals of our blueprints for deploying Hornet Nodes on K8s. 
 
+The figure below shows the different K8s onjects used and their relationships. 
 
+* [hornet.yaml]() 
+* [hornet-service.yaml]()
+* [hornet-rest-service.yaml]()
+* [hornet-ingress.yaml]()
+
+For ConfigMaps and Secrets there are no YAML definition files as they are created on the fly through the `kubectl` command line.
+Actually they are created from a config directory that is automatically generated by the one click script. You can see the contents of those objects by running
+
+```sh
+kubectl get configmap/hornet-config -n tangle -o=yaml
+```
+
+The same for secrets of the Hornet dashboard (all the nodes share the same admin credentials)
+
+```sh
+kubectl get secrets/hornet-secret -n tangle -o=yaml
+```
+
+and for the Nodes' private keys:
+
+```sh
+kubectl get secrets/hornet-private-key -n tangle -o=yaml
+```
 
 ## Google Kubernetes environment (GKE) specifics
 
+Our deployment recipes are fully portable to the GKE cloud commercial environment. The only custom step is to
+ensure that the Ingress Controller is properly annotated with ``. You can do that by just executing
 
+```sh
+kubectl annotate 
+```
+
+Alternatively if you are using the "one click" script you can just execute
+
+```sh
+INGRESS_CLASS=gce hornet-k8s.sh deploy
+```
+
+On the other hand to get access to the Service Node Ports you would need to have a cluster with public workers and enable firewall rules using the gcloud tool as follows:
+
+```sh
+```
+
+You can always known on which cluster worker node you are running Hornet by running:
+
+```sh
+kubectl get pods -n tangle -o=wide
+```
+
+```ascii
+```
+
+Also with `kubectl describe nodes` you will be able to know the IP addreses of your K8s cluster worker nodes. 
 
 ## Amazon Kubernetes environment (EKS) specifics
 
+Our deployment recipes are fully portable to the EKS commercial environment. However there are certain steps that have to be taken on your cluster so that the Ingress Controller is properly managed to an AWS Application Load Balancer (ALB). 
+
+* You need to
+* Then you need to annotate your Ingress Controller with
+* And finally with
 
 
 ## Conclusions
 
+The availability of reference recipes is key to facilitate the deployment of IOTA mainnet Hornet nodes. The IOTA Foundation provides them as a blueprint that can be customised by developers and administrators in their journey towards a production-ready deployment. The reference recipes have been designed with portability and simplicity in mind and tested successfully on some popular commercial cloud environments. 
