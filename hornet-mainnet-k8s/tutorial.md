@@ -28,7 +28,9 @@ For deploying a Hornet node using the default parameter values you just need to 
 hornet-k8s.sh deploy
 ```
 
-After executing the script different Kubernetes objects will be created (under the `tangle` namespace) as enumerated below (you can see the `kubectl` instruction to get details about them):
+After executing the script different Kubernetes objects will be created (under the `tangle` namespace) as enumerated and depicted below (you can see the `kubectl` instruction to get details about them):
+
+![K8s Object map](hornet-kubernetes-object-map.png)
 
 * [Namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) where all the objects live, `tangle` by default.
 
@@ -246,11 +248,11 @@ And last but not least if your `hornet-0` node is synced `hornet-1` should also 
 
 ## Deep dive. The "one-click" script internals
 
-In this section of the tutorial you will learn the internals of our blueprints for deploying Hornet Nodes on K8s.
+In this section of the tutorial you will learn the internals of our blueprints for deploying Hornet Nodes on K8s. The figure below depicts the target deployment architecture behind our proposed blueprint. 
 
-![K8s Object map](hornet-kubernetes-object-map.png)
+![K8s Deployment Architecture](hornet-kubernetes-deployment.png)
 
-The figure above shows the formerly described K8s objects used and their relationships. Now we are going to give more details about them and what are the K8s manifests that declare them, all of them available at the [repository](https://github.com/iotaledger/one-click-tangle/tree/chrysalis/hornet-mainnet-k8s). The label `source=one-click-tangle` is generally used to mark these K8s objects.
+The figure presented before shows the formerly described K8s objects used and their relationships. Now we are going to give more details about them and what are the K8s manifests that declare them, all of them available at the [repository](https://github.com/iotaledger/one-click-tangle/tree/chrysalis/hornet-mainnet-k8s). The label `source=one-click-tangle` is generally used to mark these K8s objects.
 
 ### Statefulset `hornet-set`
 
