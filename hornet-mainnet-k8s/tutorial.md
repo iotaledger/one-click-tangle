@@ -12,7 +12,7 @@ Furthermore, a ready to be used [script](https://github.com/iotaledger/one-click
 
 ## Deployment using the "one click" script
 
-For running the [one click script](https://github.com/iotaledger/one-click-tangle/hornet-mainnet-k8s/README.md) you need to get access to a K8s cluster. For local development we recommend [microk8s](https://microk8s.io/).
+For running the [one click script](https://github.com/iotaledger/one-click-tangle/hornet-mainnet-k8s/README.md) you need to get access to a K8s cluster. For local development we recommend [microk8s](https://microk8s.io/). Instructions on how to install it can be found [here](https://blog.jarrousse.org/installing-microk8s-on-mac-os-x/).
 In addition you need the [kubectl](https://kubernetes.io/docs/tasks/tools/) command line tool [properly configured](https://kubernetes.io/docs/reference/kubectl/overview/) to get access to your cluster.
 
 The referred script accepts the following parameters (passed as variables on the command line):
@@ -110,7 +110,7 @@ kubectl get ingress -n tangle -o=wide
 
 ```ascii
 NAME             CLASS    HOSTS   ADDRESS        PORTS   AGE
-hornet-ingress   <none>   *       34.120.54.67   80      21h
+hornet-ingress   <none>   *       34.1.1.1   80      21h
 ```
 
 In the example above you can observe that public IP address of the load balancer associated to the Ingress Controller is shown. This will actually happen when you are deploying on a commercial public cloud service.  
@@ -320,8 +320,7 @@ kubectl get secrets/hornet-private-key -n tangle -o=yaml
 
 ## Google Kubernetes environment (GKE) specifics
 
-Our deployment recipes are fully portable to the GKE cloud commercial environment. The only custom step is to
-ensure that the Ingress Controller is properly annotated with `kubernetes.io/ingress.class: gce`. You can do that by just executing
+Our deployment recipes are fully portable to the [GKE](https://cloud.google.com/kubernetes-engine) public cloud environment. The only custom step is to ensure that the Ingress Controller is properly annotated with `kubernetes.io/ingress.class: gce`. You can do that by just executing
 
 ```sh
 kubectl annotate -f hornet-ingress.yaml -n $NAMESPACE --overwrite kubernetes.io/ingress.class=gce
@@ -355,21 +354,47 @@ Once you know the worker and its IP address you can get access to each individua
 kubectl get services -n $NAMESPACE
 ```
 
-Once you know the port you have to create firewall rules so that such port is reachable. That can be done using the [gcloud](https://cloud.google.com/sdk/docs/install) tool. For instance, if our Hornet Node's dashboard is mapped to port `34200`:
+Once you know the port you have to create firewall rules so that such port is reachable. That can be done using the [gcloud](https://cloud.google.com/sdk/docs/install) tool. For instance, if our Hornet Node's dashboard is mapped to port `34200` and the public IP address of our K8s worker is `1.1.1.1`:
 
 ```sh
 gcloud compute firewall-rules create test-hornet-dashboard --allow tcp:34200
 ```
 
-Afterwards we can open up a browser and load `http://IP_ADDR_OF_MY_WORKER:34200` to get access to the Hornet Node's dashboard.
+Afterwards we can open up a browser and load `http://1.1.1.1:34200` to get access to the Hornet Node's dashboard.
+
+Other interesting aspects you may have to look into when moving to a production-ready system is the encryption of Secrets.
 
 ## Amazon Kubernetes environment (EKS) specifics
 
-Our deployment recipes are fully portable to the EKS commercial environment. However there are certain steps that have to be taken on your cluster so that the Ingress Controller is properly managed to an AWS Application Load Balancer (ALB).
+Our deployment recipes are fully portable to the [EKS](https://aws.amazon.com/eks/) commercial public cloud environment. However there are certain preparation steps that have to be executed on your cluster so that the Ingress Controller is properly mapped to an AWS Application Load Balancer (ALB). In addition, as it happens with the GKE environment (see above) you can get access to your Hornet Nodes through its Service Node Port. The procedure to be followed is similar and it as well requires a cluster with public workers and security groups configured so that traffic is enabled to the corresponding Service Node Ports.
 
-* You need to
-* Then you need to annotate your Ingress Controller with
-* And finally with
+There are several preparation steps to be done on your cluster so that Ingress Controller objects are mapped to AWS Application Load Balancers. Please read these documents and follow the corresponding instructions on your cluster:
+
+* [https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html) 
+* [https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html)
+* [https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html)
+* [https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/)
+
+In addition you need to annotate your Ingress Controller with the following:
+
+* `kubernetes.io/ingress.class=alb`
+* `alb.ingress.kubernetes.io/scheme=internet-facing`
+* `alb.ingress.kubernetes.io/subnets` a comma-separated list of the IDs of the subnets that can actually host the Services being load balanced, for instance `subnet-aa1649cc, subnet-a656cffc, subnet-fdf3dcb5`.
+
+Remember that you can annotate your Ingress Controller with `kubectl annotate`.
+
+If all the cluster preparations and annotations have been made properly if you execute:
+
+```sh
+kubectl get ingress -n $NAMESPACE -o=wide
+```
+
+you will be able to find the DNS name of your external load balancer. (Please note it can take a while DNS servers to sync up).
+
+```ascii
+NAME             CLASS    HOSTS   ADDRESS                                                                 PORTS   AGE
+hornet-ingress   <none>   *       xyz.eu-west-1.elb.amazonaws.com                                         80      71m
+```
 
 ## Conclusions
 
