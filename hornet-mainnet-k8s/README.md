@@ -8,13 +8,13 @@
 
 * Make the bash script executable by running
 
-```
+```sh
 chmod +x hornet-k8s.sh
 ```
 
 * Deploy a Hornet Node connected to the Chrysalis mainnet
 
-```
+```sh
 PEER=<peer_multiAddress> ./hornet-k8s.sh deploy
 ```
 
@@ -27,33 +27,33 @@ A back slash should be added wherever there is a forward slash. For example, whe
 By default all the Nodes will be automatically peered among them.
 
 * Undeploy Hornet by running
-```
+
+```sh
 ./hornet-k8s.sh undeploy
 ```
 
 * Scale Hornet by running
-```
+
+```sh
 INSTANCES=<number of instances> ./hornet-k8s.sh scale
 ```
 
 If `INSTANCES=0` then your Hornet node will be stopped.
 
-*Known Limitations: Scaling up does not automatically peer new nodes. This feature is on the backlog.*
-
 ## Getting access to your Hornet Node
 
-Your Hornet node(s) will be exposed through K8s "Nodeport" Services. Such Services are:
+Your Hornet node(s) will be exposed through K8s "Node Port" Services. Such Services are:
 
 * `hornet-rest` it is a K8s Service that exposes the REST endpoint and might be served by multiple Hornet nodes.
 * `hornet-<n>` one or more K8s Services that exposes the gossip and dashboard and it is only served by one Hornet node.
 
 In order to know the ports on the K8s Workers where these Services are exposed, you can run (assuming you are using the `tangle` K8s namespace):
 
-```
+```sh
 kubectl -n tangle describe service hornet-rest
 ```
 
-```
+```sh
 kubectl -n tangle describe service hornet-0
 ```
 
@@ -67,3 +67,7 @@ kubectl -n tangle describe service hornet-0
 * [Autopeering](https://hornet.docs.iota.org/post_installation/peering/#autopeering) is only enabled if no peer address is provided. To check that autopeering is working correctly `node.enablePlugins` must include `"Autopeering"`.
 
 Ensure that there are entry nodes in the `p2p.autopeering.entryNodes`. Entry nodes are encoded in `multiaddr` format.
+
+## Limitations
+
+Network policies for isolating the Pods are not provided by this version.

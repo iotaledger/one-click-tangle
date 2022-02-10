@@ -141,6 +141,8 @@ hornet-private-key    Opaque                                3      20h
 hornet-secret         Opaque                                2      20h
 ```
 
+Note: Network Policies are not provided by this blueprint but in a real production environment they should be defined, so that Pods are properly restricted to perform outbound connections or receive inbound connections.
+
 ### Getting access to your Hornet Node
 
 Once your Hornet Node has been deployed on the cluster you would want to get access to it from the outside. Fortunately that is easy as we have already created [K8s Services of type NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport). It essentially means that your Hornet Node will be accessible through certain ports published on the Kubernetes machine where Hornet is actually running.
