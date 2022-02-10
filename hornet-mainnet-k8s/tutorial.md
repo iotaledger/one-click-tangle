@@ -246,17 +246,51 @@ And last but not least if your `hornet-0` node is synced `hornet-1` should also 
 
 ## Deep dive. The "one-click" script internals
 
-In this section of the tutorial you will learn the internals of our blueprints for deploying Hornet Nodes on K8s. 
+In this section of the tutorial you will learn the internals of our blueprints for deploying Hornet Nodes on K8s.
 
-The figure below shows the different K8s onjects used and their relationships. 
+![K8s Object map](/object-map.png)
 
-* [hornet.yaml]() 
-* [hornet-service.yaml]()
-* [hornet-rest-service.yaml]()
-* [hornet-ingress.yaml]()
+The figure above shows the formerly described K8s objects used and their relationships. Now we are going to give more details about them and what are the K8s manifests that declare them, all of them available at the [repository](https://github.com/iotaledger/one-click-tangle/tree/chrysalis/hornet-mainnet-k8s). The label `source=one-click-tangle` is generally used to mark these K8s objects.
+
+### Statefulset `hornet-set`
+
+`hornet.yaml`. It contains the definition of the Statefulset (`hornet-set`) that controls the execution of the Hornet Pods. The Statefulset also is bound to a `volumeClaimTemplate` so that each Hornet Node on the set can be bound to its own K8s Persistent Volume. Such Statefulset is labelled as `source=one-click-tangle` and the selector used for the Pods is `app=hornet`. In addition the Statefulset is bound to the Service `hornet-rest`. More details about it are given later.
+
+The template contains the Pod definition which declares different volumes:
+
+* `configuration` which is mapped to the `hornet-config` ConfigMap.
+* `private-key` which is mapped to the `hornet-private-key` Secret.
+* `secrets-volume` an `emptyDir` internal volume where the Hornet Node private key will be actually copied.
+
+The Pod definition within the Statefulset contains one initialization container (`create-volumes`) and one regular container (`hornet`). The initialization container is in charge of preparing the corresponding volumes so that the `hornet` container volume mounts are ready to be used with the proper files inside and suitable permissions. In fact, the initialization container copies the Hornet Node private key and peering configuration so that each Hornet is bound to its own different private key and peering details.
+
+The `hornet` container declares the following volume mounts which are key to make Hornet run properly within its Pod:
+
+* `/app/config.json` against the `configuration` volume. 
+* `app/p2p2store` against the `p2pstore` subfolder of the `hornet-ledger` Persistent Volume.
+* `app/p2pstore/identity.key` against the transient, internal `secrets-volume` of the Pod.
+* `app/peering.json` against the `peering` subfolder of the `hornet-ledger` Persistent Volume. Please note that this is necessary as the peering configuration is dynamic and new peers might be added during the lifecycle of the Hornet Node.
+* `app/mainnetdb` against the `mainnetdb`subfolder of the  `hornet-ledger` Persistent Volume.
+* `app/snapshots/mainnet` against the `snapshots` subfolder of the `hornet-ledger` Persistent Volume.
+
+Apart from that the Pod template configuration declares extra configuration details such as `liveness` and `readiness` probes, security contexts, and links to other resources such as the Secret that defines the dashboard authorization keys (actually mapped into environment variables).  
+
+### Services
+
+There are two different kind of Services used in our approach:
+
+* A Node Port Service `hornet-rest` (declared by the `hornet-rest-service.yaml` manifest) that is just bound to the Statefulset and to the port `14265` of the Hornet Nodes. Its purpose is to enable exposing the REST API endpoint of the Hornet nodes. The endpoint Pods of such a Service are those labeled as `app=hornet`. 
+
+* One Node Port Service (`hornet-0`, `hornet-1`, `hornet-n`) per Hornet Node, declared by the `hornet-service.yaml` manifest. These Node Port Services are intended to expose access to the individual dashboard, gossip and autopeering endpoints of each node. Thus, it is *only bound to one and only one Hornet Node*. For this purpose its configuration includes `externalTrafficPolicy` `local` and a selector named `statefulset.kubernetes.io/pod-name: hornet-set-x` where `x` corresponds to the Pod number of the Hornet Node the Service is bound to. Under the hood the one-click script takes care of creating as many Services of this type as needed. 
+
+### Ingress Controller `hornet-ingress`
+
+The Ingress Controller `hornet-ingress` is configured so that the `hornet-rest` Service can be externally load balanced. There are two path mappings `/api` which backend is the  `hornet-rest` Service and `/` which backend is the dashboard of the `hornet-0` Service. The latter is just for convenience reasons. In the default configuration the `kubernetes.io/ingress.class` is `nginx` but that can be overridden for specific cloud environments (see below).
+
+### ConfigMap and Secrets
 
 For ConfigMaps and Secrets there are no YAML definition files as they are created on the fly through the `kubectl` command line.
-Actually they are created from a config directory that is automatically generated by the one click script. You can see the contents of those objects by running
+Actually they are created from a `config` directory that is automatically generated by the "one click" script. You can see the contents of those objects by running
 
 ```sh
 kubectl get configmap/hornet-config -n tangle -o=yaml
