@@ -12,7 +12,7 @@ Furthermore, a ready to be used [script](https://github.com/iotaledger/one-click
 
 ## Deployment using the "one click" script
 
-For running the [one click script](https://github.com/iotaledger/one-click-tangle/hornet-mainnet-k8s/README.md) you need to get access to a K8s cluster. For local development we recommend [microk8s](https://microk8s.io/). Instructions on how to install it can be found [here](https://blog.jarrousse.org/installing-microk8s-on-mac-os-x/).
+For running the [one click script](https://github.com/iotaledger/one-click-tangle/hornet-mainnet-k8s/README.md) you need to get access to a K8s cluster. For local development we recommend [microk8s](https://microk8s.io/). Instructions on how to install it can be found [here](https://blog.jarrousse.org/installing-microk8s-on-mac-os-x/). You may also need to enable the ingress add-on on micro-k8s with `microk8s.enable ingress`.
 In addition you need the [kubectl](https://kubernetes.io/docs/tasks/tools/) command line tool [properly configured](https://kubernetes.io/docs/reference/kubectl/overview/) to get access to your cluster.
 
 The referred script accepts the following parameters (passed as variables on the command line):
@@ -177,7 +177,7 @@ and you will get an output similar to (that will correspond to the endpoint of t
 server: https://192.168.64.2:16443
 ```
 
-Additionally you can get access to your Hornet Node REST API endpoint through the external load balancer defined by the Ingress Controller. In the case of a local configuration this does not make so much a difference as the machine where the Ingress Controller lives is just the same as the Service machine. However in the case of a real environment provided by a public cloud provider your Ingress controller will be usually mapped to a load balancer exposed through a public IP address. You can find more information below when we talk about specifics of commercial public cloud environments.
+Additionally you can get access to your Hornet Node REST API endpoint through the external load balancer defined by the Ingress Controller. In the case of a local configuration this does not make so much a difference as the machine where the Ingress Controller lives is just the same as the Service machine (more details at [https://kubernetes.github.io/ingress-nginx](https://kubernetes.github.io/ingress-nginx)). However in the case of a real environment provided by a public cloud provider, your Ingress controller will usually be mapped to a load balancer exposed through a public IP address. You can find more information below when we talk about specifics of commercial public cloud environments.
 
 *Remember that it might take a while for your Hornet Pods to be running and ready*
 
@@ -366,7 +366,7 @@ Other interesting aspects you may have to look into when moving to a production-
 
 ## Amazon Kubernetes environment (EKS) specifics
 
-Our deployment recipes are fully portable to the [EKS](https://aws.amazon.com/eks/) commercial public cloud environment. However there are certain preparation steps that have to be executed on your cluster so that the Ingress Controller is properly mapped to an AWS Application Load Balancer (ALB). In addition, as it happens with the GKE environment (see above) you can get access to your Hornet Nodes through its Service Node Port. The procedure to be followed is similar and it as well requires a cluster with public workers and security groups configured so that traffic is enabled to the corresponding Service Node Ports.
+Our deployment recipes are fully portable to the [EKS](https://aws.amazon.com/eks/) commercial public cloud environment. However there are certain preparation steps (including IAM permission grants) that have to be executed on your cluster so that the Ingress Controller is properly mapped to an AWS Application Load Balancer (ALB). In addition, as it happens with the GKE environment (see above) you can get access to your Hornet Nodes through its Service Node Port. The procedure to be followed is similar to the one described above, and it as well requires a cluster with public workers and security groups configured so that traffic is enabled to the corresponding Service Node Ports.
 
 There are several preparation steps to be done on your cluster so that Ingress Controller objects are mapped to AWS Application Load Balancers. Please read these documents and follow the corresponding instructions on your cluster:
 
