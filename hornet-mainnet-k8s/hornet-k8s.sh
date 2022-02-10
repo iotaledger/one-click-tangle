@@ -20,7 +20,8 @@ help () {
 command="$1"
 peer="$PEER"
 namespace="$NAMESPACE"
-instances="$INSTANCES"
+declare -i instances="$INSTANCES"
+declare -i replicas=0
 ingress_class="$INGRESS_CLASS"
 
 if [ -z "$namespace" ]; then
@@ -63,10 +64,6 @@ fi
 
 hornet_base_dir="../hornet-mainnet"
 
-cp $hornet_base_dir/config-template/profiles.json config/profiles.json
-cp $hornet_base_dir/config-template/config-template.json config/config-template.json
-cp $hornet_base_dir/config-template/peering-template.json config/peering.json
-
 chmod +x $hornet_base_dir/utils.sh
 source $hornet_base_dir/utils.sh
 
@@ -80,8 +77,8 @@ createSecret () {
     > config/config.json
 
     # Now these secrets are stored on a Secret
-    dashboard_hash=$(cat config/config-template.json | jq -r '.dashboard.auth.passwordHash' -)
-    dashboard_salt=$(cat config/config-template.json | jq -r '.dashboard.auth.passwordSalt'  -)
+    local dashboard_hash=$(cat config/config-template.json | jq -r '.dashboard.auth.passwordHash' -)
+    local dashboard_salt=$(cat config/config-template.json | jq -r '.dashboard.auth.passwordSalt'  -)
 
     rm config/config-template.json
     
@@ -91,7 +88,7 @@ createSecret () {
     mkdir -p config/keys
 
     # for each of the instances a new secret with private key is created
-    for  (( i=0; i<$instances; i++ ))
+    for  (( i=$replicas; i<$instances; i++ ))
     do
         # If the proper version of OpenSSL is not installed this has highly chances fo failure
         set +e
@@ -121,7 +118,7 @@ createStatefulSet () {
 }
 
 createNodePortServices () {
-    for  (( i=0; i<$instances; i++ ))
+    for  (( i=$replicas; i<$instances; i++ ))
     do
         cat hornet-service.yaml | kubectl patch --dry-run=client -p \
         $'metadata:\n  namespace: '"$namespace" -o yaml -f - \
@@ -134,7 +131,8 @@ createNodePortServices () {
 
 # Peers the nodes between them
 peerNodes () {
-    for  (( i=1; i<(instances); i++ ))
+    local start=$((replicas+1))
+    for  (( i=$start; i<$instances; i++ ))
     do
        peerHost=hornet-$((i-1))
        peerAddr=${p2p_identities[$((i-1))]}
@@ -157,7 +155,19 @@ deleteNodePortServices () {
     done
 }
 
+initialise () {
+    # Resetting previous state
+    rm -Rf config/keys/*
+    rm -Rf config/peering*.json
+
+    cp $hornet_base_dir/config-template/profiles.json config/profiles.json
+    cp $hornet_base_dir/config-template/config-template.json config/config-template.json
+    cp $hornet_base_dir/config-template/peering-template.json config/peering.json
+}
+
 deployHornet () {
+    initialise
+
     # Namespace on which the node or nodes will be living
     kubectl create namespace $namespace --dry-run=client -o yaml | kubectl apply -f -
 
@@ -195,6 +205,16 @@ undeployHornet () {
 }
 
 scaleHornet () {
+    # First we need to know whether we are upscaling or downscaling
+    # If upscaling we need to generate additional secrets and additional peering configuration
+    replicas=$(kubectl get statefulsets/hornet-set -n $namespace -o jsonpath='{.spec.replicas}' | tr -d '\r\n')
+    if [ $instances -gt $replicas]; then
+        # We create additional secrets if needed
+        createSecret
+         # Now we peer the nodes among themselves
+        peerNodes
+    fi
+
     kubectl scale -n $namespace statefulsets hornet-set --replicas=$instances
     # Finally the NodePort services are created
     createNodePortServices

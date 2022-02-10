@@ -349,7 +349,6 @@ Our deployment recipes are fully portable to the EKS commercial environment. How
 * Then you need to annotate your Ingress Controller with
 * And finally with
 
-
 ## Conclusions
 
 The availability of reference recipes is key to facilitate the deployment of IOTA mainnet Hornet nodes. The IOTA Foundation provides them as a blueprint that can be customised by developers and administrators in their journey towards a production-ready deployment. The reference recipes have been designed with portability and simplicity in mind and tested successfully on some popular commercial cloud environments. 
