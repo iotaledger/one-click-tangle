@@ -181,7 +181,7 @@ INSTANCES=2 hornet-k8s.sh scale
 
 If the cluster has enough resources automatically a new Hornet node will be spawned and peered with your original one.
 
-You will notice that one more Pod `(hornet-set-1`) will be running,
+You will notice that one more Pod `(hornet-set-1`) will be running:
 
 ```sh
 kubectl get pods -n tangle -o=wide
@@ -248,7 +248,7 @@ And last but not least if your `hornet-0` node is synced `hornet-1` should also 
 
 In this section of the tutorial you will learn the internals of our blueprints for deploying Hornet Nodes on K8s.
 
-![K8s Object map](/object-map.png)
+![K8s Object map](hornet-kubernetes-object-map.png)
 
 The figure above shows the formerly described K8s objects used and their relationships. Now we are going to give more details about them and what are the K8s manifests that declare them, all of them available at the [repository](https://github.com/iotaledger/one-click-tangle/tree/chrysalis/hornet-mainnet-k8s). The label `source=one-click-tangle` is generally used to mark these K8s objects.
 
