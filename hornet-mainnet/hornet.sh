@@ -7,6 +7,9 @@
 
 set -e
 
+chmod +x ./utils.sh
+source ./utils.sh
+
 help () {
   echo "Installs Hornet version:  $(cat docker-compose.yaml | grep image | cut -d : -f 3)"
   echo "usage: hornet.sh [install||start|stop] -p <peer_multiAdress>"
@@ -52,6 +55,10 @@ clean () {
         echo "Cleaning up previous snapshot files"
         sudo rm -Rf ./snapshots
     fi
+
+    rm -f config/config.json || true
+    rm -f config/peering.json || true
+    rm -f config/profiles.json || true
 }
 
 # Sets up the necessary directories if they do not exist yet
@@ -81,38 +88,6 @@ volumeSetup () {
     fi
 }
 
-# The coordinator public key ranges are obtained
-cooSetup () {
-    cat config/config-template.json | jq --argjson protocol \
-    "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.protocol')" \
-    '. |= . + {$protocol}' > config/config.json
-}
-
-peerSetup () {
-    # And now we configure our Node's peers
-    if [ -n "$peer" ]; then
-        echo "Peering with: $peer"
-        cp config/peering-template.json config/peering.json
-        # This is the case where no previous peer definition was there
-        sed -i 's/\[\]/\[{"alias": "peer1","multiAddress": "'$peer'"}\]/g' config/peering.json
-    else
-        echo "Configuring autopeering ..."
-        autopeeringSetup
-    fi 
-}
-
-autopeeringSetup () {
-    # The autopeering plugin is enabled
-    cat config/config.json | jq '.node.enablePlugins[.node.enablePlugins | length] |= . + "Autopeering"' > config/config-autopeering.json
-
-    # Then the autopeering configuration is added from Hornet
-    cat config/config-autopeering.json | jq --argjson autopeering \
-    "$(wget $HORNET_UPSTREAM/config.json -O - -q | jq '.p2p.autopeering')" \
-    '.p2p |= . + {$autopeering}' > config/config.json
-
-    rm config/config-autopeering.json
-}
-
 startHornet () {
     if ! [ -f ./snapshots/mainnet/full_snapshot.bin ]; then
         echo "Install Hornet first with './hornet.sh install'"
@@ -125,6 +100,10 @@ installHornet () {
     clean
 
     volumeSetup
+
+    cp config-template/profiles.json config/profiles.json
+    cp config-template/config-template.json config/config.json
+    cp config-template/peering-template.json config/peering.json
 
     cooSetup
 

@@ -22,7 +22,8 @@ This repository is where the IOTA Foundation hosts the open-source code for depl
 
 The code is composed of:
 
-- [**`hornet`:**](hornet-mainnet/README.md) Script to deploy a new Hornet Node connected to the mainnet. 
+- [**`hornet`:**](hornet-mainnet/README.md) Script to deploy a new Hornet Node connected to the mainnet.
+- [**`hornet-k8s`:**](hornet-mainnet-k8s/README.md) Script to deploy a set of Hornet Nodes connected to the mainnet (Kubernetes).
 - [**`private-tangle`:**](hornet-private-net/README.md) Script to deploy a new Private Tangle composed of Coordinator, Spammer and one regular Hornet Node. 
 - [**`private-tangle/extra-nodes`:**](hornet-private-net/extra-nodes/README.md) Script to add extra Hornet Nodes
 to an existing Private Tangle.
