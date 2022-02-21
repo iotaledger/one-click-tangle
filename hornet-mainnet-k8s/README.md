@@ -1,6 +1,6 @@
 # Hornet Chrysalis Node on Kubernetes
 
-(For a detailed explanation please read the [tutorial on the IOTA Wiki](https://wiki.iota.org/chrysalis-docs/tutorials/mainnet_hornet_node_k8s) 
+(For a detailed explanation please read the [tutorial on the IOTA Wiki](https://wiki.iota.org/chrysalis-docs/tutorials/mainnet_hornet_node_k8s)) 
 
 ## Prerequisites
 
