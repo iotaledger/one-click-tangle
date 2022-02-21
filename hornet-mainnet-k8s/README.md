@@ -1,5 +1,7 @@
 # Hornet Chrysalis Node on Kubernetes
 
+(For a detailed explanation please read the [tutorial on the IOTA Wiki](https://wiki.iota.org/chrysalis-docs/tutorials/mainnet_hornet_node_k8s) 
+
 ## Prerequisites
 
 * Get access to a Kubernetes (K8s) cluster and install the `kubectl` command line tool.
