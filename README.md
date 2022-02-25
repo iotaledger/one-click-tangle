@@ -87,7 +87,7 @@ chmod +x private-tangle.sh
 
 You may also want to [deploy a Tangle Explorer](./explorer). 
 
-Additional instructions can be found on this [tutorial](https://docs.iota.org/docs/hornet/1.1/tutorials/one-click-private-tangle). 
+Additional instructions can be found on this [tutorial](https://wiki.iota.org/chrysalis-docs/tutorials/one_click_private_tangle). 
 
 ## Supporting the project
 
