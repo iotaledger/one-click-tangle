@@ -173,8 +173,8 @@ generateSnapshot () {
 
   # Generate the snapshot
   cd snapshots/private-tangle
-  docker-compose run --rm -v "$PWD:/output_dir" node tool snap-gen "private-tangle"\
-   "$(cat ../../address.txt)" 1000000000 /output_dir/full_snapshot.bin
+  docker-compose run --rm -v "$PWD:/output_dir" node tool snap-gen --networkID "private-tangle"\
+   --mintAddress "$(cat ../../address.txt)" --treasuryAllocation 1000000000 --outputPath /output_dir/full_snapshot.bin
 
   echo "Initial Ed25519 Address generated. You can find the keys at key-pair.txt and the address at address.txt"
 
@@ -187,7 +187,9 @@ generateSnapshot () {
 setupCoordinator () {
   local coo_key_pair_file=coo-milestones-key-pair.txt
 
-  docker-compose run --rm coo tool ed25519-key > "$coo_key_pair_file"
+  # For Hornet 1.2.0 we need to use 1.1.3 as there is no command line tool for
+  # generating the Ed25519 private key
+  docker run --rm -it gohornet/hornet:1.1.3 tool ed25519-key > "$coo_key_pair_file"
   # Private Key is exported as it is needed to run the Coordinator
   export COO_PRV_KEYS="$(getPrivateKey $coo_key_pair_file)"
 
