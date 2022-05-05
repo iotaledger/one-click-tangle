@@ -187,9 +187,7 @@ generateSnapshot () {
 setupCoordinator () {
   local coo_key_pair_file=coo-milestones-key-pair.txt
 
-  # For Hornet 1.2.0 we need to use 1.1.3 as there is no command line tool for
-  # generating the Ed25519 private key
-  docker run --rm -it gohornet/hornet:1.1.3 tool ed25519-key > "$coo_key_pair_file"
+  docker-compose run --rm node tool ed25519-key > "$coo_key_pair_file"
   # Private Key is exported as it is needed to run the Coordinator
   export COO_PRV_KEYS="$(getPrivateKey $coo_key_pair_file)"
 
