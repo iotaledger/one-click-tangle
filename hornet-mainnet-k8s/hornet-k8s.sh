@@ -109,7 +109,7 @@ createPrivateKeys () {
         fi
 
         # We need to store this to later perform the Node peering
-        p2p_identity=$(docker run -it -v "$PWD/config/keys:/p2pstore/" gohornet/hornet:1.1.3 tool p2pidentity-extract /p2pstore |\
+        p2p_identity=$(docker run -it -v "$PWD/config/keys:/p2pstore/" gohornet/hornet:1.2.1 tool p2pidentity-extract --databasePath /p2pstore |\
           tail -n 1 | cut -f 2 -d : | tr -d '\r\n ')          
         p2p_identities[i]="$p2p_identity"
 

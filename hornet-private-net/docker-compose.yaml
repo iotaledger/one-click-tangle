@@ -11,7 +11,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.2.0
+    image: gohornet/hornet:1.2.1
     restart: unless-stopped
     container_name: coo
     stop_grace_period: 5m
@@ -35,7 +35,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.2.0
+    image: gohornet/hornet:1.2.1
     restart: unless-stopped
     container_name: node1
     stop_grace_period: 5m
@@ -64,7 +64,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.2.0
+    image: gohornet/hornet:1.2.1
     restart: unless-stopped
     container_name: spammer
     stop_grace_period: 5m
@@ -86,7 +86,7 @@ services:
     # network_mode: host
     networks:
       - tangle
-    image: gohornet/hornet:1.2.0
+    image: gohornet/hornet:1.2.1
     restart: unless-stopped
     container_name: node-autopeering
     stop_grace_period: 5m
