@@ -53,7 +53,7 @@ spec:
               readOnly: false
       containers:
       - name: hornet
-        image: gohornet/hornet:1.2.1
+        image: iotaledger/hornet:1.2.4
         envFrom:
         - secretRef:         
             name: hornet-secret

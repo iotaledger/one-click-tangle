@@ -18,7 +18,7 @@
 
 ## About
 
-This repository is where the IOTA Foundation hosts the open-source code for deploying Chrysalis IOTA Nodes and Networks "in one click".
+This repository is where the IOTA Foundation hosts the open-source code for deploying Chrysalis IOTA Nodes and Networks "in one click". If you are looking how to deploy Shimmer Nodes you should check the [Node Setup Repository](https://github.com/iotaledger/node-docker-setup). Those scripts are also compatible with Chrysalis.
 
 The code is composed of:
 
