@@ -8,15 +8,15 @@ On the AWS Marketplace you can find the Hornet product [here](https://aws.amazon
 
 NB: Optionally you can pass the  `-p` option to specify a multi-address peer as detailed [here](https://hornet.docs.iota.org/post_installation/peering.html). 
 
-If you want to install a different Hornet Docker image / version than `gohornet/hornet:latest` you can do so by passing the `-i` option. 
+If you want to install a different Hornet Docker image / version than `iotaledger/hornet:1.2.4` you can do so by passing the `-i` option. 
 
 3. The bootstrap and installation process will be initiated. 
 
-4. Please note that the Hornet related config files are located at `one-click-tangle/hornet-mainnet/config/`. The Tangle DB files are located at `db/mainnet`. 
+4. Please note that the Hornet related config files are located at `one-click-tangle/hornet-mainnet/config/`. The Tangle DB files are located at `db/mainnet`.
 
 ## Dashboard
 
-You can get access to the Hornet dashboard by opening on your Web Browser the following page: `http://<your_ec2_machine_address>:8081`. 
+You can get access to the Hornet dashboard by opening on your Web Browser the following page: `http://<your_ec2_machine_address>:8081`.
 
 The username and password of the dashboard application is `admin`. You can set a new password by executing
 
@@ -48,7 +48,7 @@ docker ps -a
 
 ```console
 CONTAINER ID   IMAGE                   COMMAND                  CREATED          STATUS          PORTS                                                                                             NAMES
-eec6d1dd21c5   gohornet/hornet:latest             "/app/hornet"            10 minutes ago   Up 10 minutes   0.0.0.0:8081->8081/tcp, 0.0.0.0:14265->14265/tcp, 5556/tcp, 0.0.0.0:15600->15600/tcp, 14626/udp   hornet
+eec6d1dd21c5   iotaledger/hornet:1.2.4             "/app/hornet"            10 minutes ago   Up 10 minutes   0.0.0.0:8081->8081/tcp, 0.0.0.0:14265->14265/tcp, 5556/tcp, 0.0.0.0:15600->15600/tcp, 14626/udp   hornet
 ```
 
 ## Node Operations

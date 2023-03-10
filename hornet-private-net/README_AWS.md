@@ -29,10 +29,10 @@ docker ps -a
 CONTAINER ID   IMAGE                        COMMAND                  CREATED         STATUS         PORTS      NAMES
 07bbdbb89201   iotaledger/explorer-webapp   "docker-entrypoint.s…"   5 seconds ago   Up 2 seconds   0.0.0.0:8082->80/tcp explorer-webapp
 c68ca2deec5c   iotaledger/explorer-api      "docker-entrypoint.s…"   8 seconds ago   Up 5 seconds   0.0.0.0:4000->4000/tcp      explorer-api
-f82a28f90c71   gohornet/hornet:latest       "/app/hornet"            6 minutes ago   Up 6 minutes   0.0.0.0:1883->1883/tcp, 0.0.0.0:8081->8081/tcp, 0.0.0.0:14265->14265/tcp, 14626/udp, 15600/tcp   node1
-e0e8b6a44239   gohornet/hornet:latest       "/app/hornet"            6 minutes ago   Up 6 minutes   8081/tcp, 14265/tcp, 15600/tcp, 14626/udp  spammer
-44fcdfd7cc5f   gohornet/hornet:latest       "/app/hornet"            6 minutes ago   Up 6 minutes   8081/tcp, 14265/tcp, 15600/tcp, 14626/udp coo
-353b9358bde7   gohornet/hornet:latest       "/app/hornet"            3 minutes ago   Up 3 minutes   1883/tcp, 8081/tcp, 14265/tcp, 15600/tcp, 0.0.0.0:14626->14626/udp  node-autopeering
+f82a28f90c71   iotaledger/hornet:1.2.4       "/app/hornet"            6 minutes ago   Up 6 minutes   0.0.0.0:1883->1883/tcp, 0.0.0.0:8081->8081/tcp, 0.0.0.0:14265->14265/tcp, 14626/udp, 15600/tcp   node1
+e0e8b6a44239   iotaledger/hornet:1.2.4       "/app/hornet"            6 minutes ago   Up 6 minutes   8081/tcp, 14265/tcp, 15600/tcp, 14626/udp  spammer
+44fcdfd7cc5f   iotaledger/hornet:1.2.4       "/app/hornet"            6 minutes ago   Up 6 minutes   8081/tcp, 14265/tcp, 15600/tcp, 14626/udp coo
+353b9358bde7   iotaledger/hornet:1.2.4       "/app/hornet"            3 minutes ago   Up 3 minutes   1883/tcp, 8081/tcp, 14265/tcp, 15600/tcp, 0.0.0.0:14626->14626/udp  node-autopeering
 ```
 
 The three Hornet nodes (`coo`, `spammer` and ``node1`), the Explorer (API and Web App) and the autopeering entry node (`node-autopeering`). 
